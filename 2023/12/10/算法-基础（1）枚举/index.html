@@ -1,0 +1,229 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>算法-基础（1）枚举 | Wh1teJ0ker</title><meta name="author" content="Wh1teJ0ker"><meta name="copyright" content="Wh1teJ0ker"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="算法-基础（1）枚举 算法思想 定义 枚举算法是一种通过系统地列举问题的所有可能解或所有可能情况，从中找到符合特定条件的解决方案的算法。这种算法通常是基于穷举搜索的思想，它尝试遍历问题的所有可能性，直到找到满足条件的解或达到问题的结束条件。 步骤  确定问题的解空间： 确定问题可能解存在的范围，也就是问题的解空间。 生成可能的解： 在解空间内系统地生成可能的解，可以通过逐个枚举、组合或排列等方式进">
+<meta property="og:type" content="article">
+<meta property="og:title" content="算法-基础（1）枚举">
+<meta property="og:url" content="https://wh1tej0ker.github.io/2023/12/10/%E7%AE%97%E6%B3%95-%E5%9F%BA%E7%A1%80%EF%BC%881%EF%BC%89%E6%9E%9A%E4%B8%BE/index.html">
+<meta property="og:site_name" content="Wh1teJ0ker">
+<meta property="og:description" content="算法-基础（1）枚举 算法思想 定义 枚举算法是一种通过系统地列举问题的所有可能解或所有可能情况，从中找到符合特定条件的解决方案的算法。这种算法通常是基于穷举搜索的思想，它尝试遍历问题的所有可能性，直到找到满足条件的解或达到问题的结束条件。 步骤  确定问题的解空间： 确定问题可能解存在的范围，也就是问题的解空间。 生成可能的解： 在解空间内系统地生成可能的解，可以通过逐个枚举、组合或排列等方式进">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s2.loli.net/2023/12/10/OaX234khLZW6NB5.jpg">
+<meta property="article:published_time" content="2023-12-09T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-12-09T17:05:41.857Z">
+<meta property="article:author" content="Wh1teJ0ker">
+<meta property="article:tag" content="枚举">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2023/12/10/OaX234khLZW6NB5.jpg"><link rel="shortcut icon" href="/images/image.ico"><link rel="canonical" href="https://wh1tej0ker.github.io/2023/12/10/%E7%AE%97%E6%B3%95-%E5%9F%BA%E7%A1%80%EF%BC%881%EF%BC%89%E6%9E%9A%E4%B8%BE/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":true,"top_n_per_article":1,"unescape":true,"languages":{"hits_empty":"找不到您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '算法-基础（1）枚举',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2023-12-10 01:05:41'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = (url,id = false) => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      if (id) link.id = id
+      link.onerror = reject
+      link.onload = link.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        link.onload = link.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://s2.loli.net/2023/09/28/jQUKLPy1q8umXSY.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">30</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">26</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">12</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background-image: url('https://s2.loli.net/2023/09/28/4rzwiJm9xgjnycp.jpg')"><nav id="nav"><span id="blog-info"><a href="/" title="Wh1teJ0ker"><img class="site-icon" src="https://s2.loli.net/2023/09/28/jQUKLPy1q8umXSY.jpg"/><span class="site-name">Wh1teJ0ker</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">算法-基础（1）枚举</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-12-09T16:00:00.000Z" title="发表于 2023-12-10 00:00:00">2023-12-10</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-12-09T17:05:41.857Z" title="更新于 2023-12-10 01:05:41">2023-12-10</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E7%AE%97%E6%B3%95/">算法</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E7%AE%97%E6%B3%95/%E5%9F%BA%E7%A1%80/">基础</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="算法-基础（1）枚举"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h2 id="算法-基础（1）枚举">算法-基础（1）枚举</h2>
+<h2 id="算法思想">算法思想</h2>
+<h3 id="定义">定义</h3>
+<p>枚举算法是一种通过系统地列举问题的所有可能解或所有可能情况，从中找到符合特定条件的解决方案的算法。这种算法通常是基于穷举搜索的思想，它尝试遍历问题的所有可能性，直到找到满足条件的解或达到问题的结束条件。</p>
+<h3 id="步骤">步骤</h3>
+<ol>
+<li><strong>确定问题的解空间：</strong> 确定问题可能解存在的范围，也就是问题的解空间。</li>
+<li><strong>生成可能的解：</strong> 在解空间内系统地生成可能的解，可以通过逐个枚举、组合或排列等方式进行。</li>
+<li><strong>检验解的有效性：</strong> 对生成的每个可能解进行检验，验证是否满足问题的条件或约束。</li>
+<li><strong>记录或输出解：</strong> 如果某个生成的解满足问题的条件，将其记录或输出作为问题的解。</li>
+<li><strong>终止条件：</strong> 当找到一个或多个满足条件的解，或者遍历完整个解空间后，终止算法。</li>
+</ol>
+<h3 id="复杂度分析">复杂度分析</h3>
+<p>枚举算法的时间复杂度通常取决于解空间的大小。如果解空间的大小为N，那么枚举算法的时间复杂度可以表示为<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>N</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(N)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span><span class="mclose">)</span></span></span></span></p>
+<h3 id="个人理解及经验">个人理解及经验</h3>
+<p>枚举算法的思想很简单，就是一种穷尽的列出所有可能的结果。就像是在CTF比赛中所碰到的md5缺失问题，解出来的脚本本质也是对字符串缺失进行一种枚举，以期望获得原始结果，同时很多数据库的撞库或者参数的爆破，本质都是一种枚举。</p>
+<p>但存在的问题就是，一旦数据量过大，枚举就会局限于算力本身，因此，在算法比赛中注重时间和空间效率的背景下，几乎不存在只靠单纯枚举就得出结果的情况。反而是网安领域，很多时候都是在枚举。</p>
+<p>枚举应该是基础中的基础了，尽可能缩小问题的解空间，优化枚举范围或者是行之有效的手段，但是也不要因此遗漏一些可能性哦。</p>
+<h2 id="问题实例">问题实例</h2>
+<h3 id="NOIP1997-普及组-棋盘问题">[NOIP1997 普及组] 棋盘问题</h3>
+<h4 id="题目描述">题目描述</h4>
+<p>设有一个 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>N</mi><mo>×</mo><mi>M</mi></mrow><annotation encoding="application/x-tex">N \times M</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7667em;vertical-align:-0.0833em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">M</span></span></span></span> 方格的棋盘 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><mn>1</mn><mo>≤</mo><mi>N</mi><mo>≤</mo><mn>100</mn><mo separator="true">,</mo><mn>1</mn><mo>≤</mo><mi>M</mi><mo>≤</mo><mn>100</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(1≤N≤100,1≤M≤100)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord">1</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≤</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8193em;vertical-align:-0.136em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≤</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8389em;vertical-align:-0.1944em;"></span><span class="mord">100</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">1</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≤</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8193em;vertical-align:-0.136em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">M</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≤</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">100</span><span class="mclose">)</span></span></span></span></p>
+<p>求出该棋盘中包含有多少个正方形、多少个长方形（不包括正方形）。</p>
+<p>例如：当 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>N</mi><mo>=</mo><mn>2</mn><mo separator="true">,</mo><mi>M</mi><mo>=</mo><mn>3</mn></mrow><annotation encoding="application/x-tex">N=2, M=3</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8778em;vertical-align:-0.1944em;"></span><span class="mord">2</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">M</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">3</span></span></span></span> 时：</p>
+<p><img src="https://cdn.luogu.com.cn/upload/image_hosting/kkidop2i.png" alt=""></p>
+<p>正方形的个数有 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>8</mn></mrow><annotation encoding="application/x-tex">8</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">8</span></span></span></span> 个：即边长为 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn></mrow><annotation encoding="application/x-tex">1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">1</span></span></span></span> 的正方形有 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>6</mn></mrow><annotation encoding="application/x-tex">6</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">6</span></span></span></span> 个；边长为 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>2</mn></mrow><annotation encoding="application/x-tex">2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">2</span></span></span></span> 的正方形有 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>2</mn></mrow><annotation encoding="application/x-tex">2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">2</span></span></span></span> 个。</p>
+<p>长方形的个数有 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>10</mn></mrow><annotation encoding="application/x-tex">10</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">10</span></span></span></span> 个：</p>
+<p>即</p>
+<ul>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>2</mn><mo>×</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">2 \times 1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">2</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">1</span></span></span></span> 的长方形有 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>4</mn></mrow><annotation encoding="application/x-tex">4</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">4</span></span></span></span> 个：</li>
+</ul>
+<p><img src="https://cdn.luogu.com.cn/upload/image_hosting/vhazon60.png" alt=""></p>
+<ul>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mo>×</mo><mn>2</mn></mrow><annotation encoding="application/x-tex">1 \times 2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">1</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">2</span></span></span></span> 的长方形有 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>3</mn></mrow><annotation encoding="application/x-tex">3</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">3</span></span></span></span> 个：</li>
+</ul>
+<p><img src="https://cdn.luogu.com.cn/upload/image_hosting/jr40fqzv.png" alt=""></p>
+<ul>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>3</mn><mo>×</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">3 \times 1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">3</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">1</span></span></span></span> 的长方形有 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>2</mn></mrow><annotation encoding="application/x-tex">2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">2</span></span></span></span> 个：</li>
+</ul>
+<p><img src="https://cdn.luogu.com.cn/upload/image_hosting/ja0mx48f.png" alt=""></p>
+<ul>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>3</mn><mo>×</mo><mn>2</mn></mrow><annotation encoding="application/x-tex">3 \times 2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">3</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">2</span></span></span></span> 的长方形有 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn></mrow><annotation encoding="application/x-tex">1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">1</span></span></span></span> 个：</li>
+</ul>
+<p><img src="https://cdn.luogu.com.cn/upload/image_hosting/kkidop2i.png" alt=""></p>
+<h4 id="输入格式">输入格式</h4>
+<p>一行两个整数 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>N</mi><mo separator="true">,</mo><mi>M</mi></mrow><annotation encoding="application/x-tex">N,M</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8778em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">M</span></span></span></span>。</p>
+<h4 id="输出格式">输出格式</h4>
+<p>一行两个整数，表示正方形的个数与长方形的个数。</p>
+<h4 id="样例-1">样例 #1</h4>
+<h5 id="样例输入-1">样例输入 #1</h5>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">2 3</span><br></pre></td></tr></table></figure>
+<h5 id="样例输出-1">样例输出 #1</h5>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">8 10</span><br></pre></td></tr></table></figure>
+<h4 id="解题">解题</h4>
+<h5 id="C">C++</h5>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="type">int</span> N,M;</span><br><span class="line">    cin &gt;&gt; N &gt;&gt; M;</span><br><span class="line">    <span class="type">int</span> i,j,k,l;</span><br><span class="line">    <span class="type">int</span> sum1=<span class="number">0</span>;</span><br><span class="line">    <span class="type">int</span> sum2=<span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;=N;i++)&#123;</span><br><span class="line">        <span class="keyword">for</span>(j=<span class="number">0</span>;j&lt;=M;j++)&#123;</span><br><span class="line">            <span class="keyword">for</span>(k=i+<span class="number">1</span>;k&lt;=N;k++)&#123;</span><br><span class="line">                <span class="keyword">for</span>(l=j+<span class="number">1</span>;l&lt;=M;l++)&#123;</span><br><span class="line">                    <span class="type">int</span> c1,c2;</span><br><span class="line">                    c1 = k-i;</span><br><span class="line">                    c2 = l-j;</span><br><span class="line">                    <span class="keyword">if</span>(c1&gt;<span class="number">0</span>&amp;c2&gt;<span class="number">0</span>)&#123;</span><br><span class="line">                        <span class="keyword">if</span>(c1==c2)&#123;</span><br><span class="line">                            sum1 ++;</span><br><span class="line">                        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">                            sum2 ++;</span><br><span class="line">                        &#125;</span><br><span class="line">                        </span><br><span class="line">                        </span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    cout &lt;&lt; sum1 &lt;&lt; <span class="string">&quot; &quot;</span> &lt;&lt; sum2 &lt;&lt;endl;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="Python">Python</h5>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">N, M = <span class="built_in">input</span>().split()</span><br><span class="line">N = <span class="built_in">int</span>(N)</span><br><span class="line">M = <span class="built_in">int</span>(M)</span><br><span class="line">sum1 = <span class="number">0</span></span><br><span class="line">sum2 = <span class="number">0</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(N + <span class="number">1</span>):</span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(M + <span class="number">1</span>):</span><br><span class="line">        <span class="keyword">for</span> k <span class="keyword">in</span> <span class="built_in">range</span>(i + <span class="number">1</span>, N + <span class="number">1</span>):</span><br><span class="line">            <span class="keyword">for</span> l <span class="keyword">in</span> <span class="built_in">range</span>(j + <span class="number">1</span>, M + <span class="number">1</span>):</span><br><span class="line">                c1 = k - i</span><br><span class="line">                c2 = l - j</span><br><span class="line">                <span class="keyword">if</span> c1 &gt; <span class="number">0</span> <span class="keyword">and</span> c2 &gt; <span class="number">0</span>:</span><br><span class="line">                    <span class="keyword">if</span> c1 == c2:</span><br><span class="line">                        sum1 += <span class="number">1</span></span><br><span class="line">                    <span class="keyword">else</span>:</span><br><span class="line">                        sum2 += <span class="number">1</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(sum1, sum2)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h4 id="总结">总结</h4>
+<p>上述代码所用的就是纯粹的暴力解法，也就是枚举的方法，将每一个节点都进行了遍历，算出所有，长方形的就加长方形的，正方形的就加正方形的。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="https://wh1tej0ker.github.io">Wh1teJ0ker</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://wh1tej0ker.github.io/2023/12/10/%E7%AE%97%E6%B3%95-%E5%9F%BA%E7%A1%80%EF%BC%881%EF%BC%89%E6%9E%9A%E4%B8%BE/">https://wh1tej0ker.github.io/2023/12/10/%E7%AE%97%E6%B3%95-%E5%9F%BA%E7%A1%80%EF%BC%881%EF%BC%89%E6%9E%9A%E4%B8%BE/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://wh1tej0ker.github.io" target="_blank">Wh1teJ0ker</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E6%9E%9A%E4%B8%BE/">枚举</a></div><div class="post_share"><div class="social-share" data-image="https://s2.loli.net/2023/12/10/OaX234khLZW6NB5.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2023/12/09/%E9%85%8D%E7%BD%AE-%E7%8E%AF%E5%A2%83%EF%BC%888%EF%BC%89Latex/" title="配置-环境（8）Latex"><img class="cover" src="https://s2.loli.net/2023/10/25/ZMaxqKn69BfGNO2.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">配置-环境（8）Latex</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://s2.loli.net/2023/09/28/jQUKLPy1q8umXSY.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Wh1teJ0ker</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">30</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">26</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">12</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/Wh1teJ0ker"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AE%97%E6%B3%95-%E5%9F%BA%E7%A1%80%EF%BC%881%EF%BC%89%E6%9E%9A%E4%B8%BE"><span class="toc-number">1.</span> <span class="toc-text">算法-基础（1）枚举</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AE%97%E6%B3%95%E6%80%9D%E6%83%B3"><span class="toc-number">2.</span> <span class="toc-text">算法思想</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9A%E4%B9%89"><span class="toc-number">2.1.</span> <span class="toc-text">定义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%AD%A5%E9%AA%A4"><span class="toc-number">2.2.</span> <span class="toc-text">步骤</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%8D%E6%9D%82%E5%BA%A6%E5%88%86%E6%9E%90"><span class="toc-number">2.3.</span> <span class="toc-text">复杂度分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%AA%E4%BA%BA%E7%90%86%E8%A7%A3%E5%8F%8A%E7%BB%8F%E9%AA%8C"><span class="toc-number">2.4.</span> <span class="toc-text">个人理解及经验</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%97%AE%E9%A2%98%E5%AE%9E%E4%BE%8B"><span class="toc-number">3.</span> <span class="toc-text">问题实例</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#NOIP1997-%E6%99%AE%E5%8F%8A%E7%BB%84-%E6%A3%8B%E7%9B%98%E9%97%AE%E9%A2%98"><span class="toc-number">3.1.</span> <span class="toc-text">[NOIP1997 普及组] 棋盘问题</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E7%9B%AE%E6%8F%8F%E8%BF%B0"><span class="toc-number">3.1.1.</span> <span class="toc-text">题目描述</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%BE%93%E5%85%A5%E6%A0%BC%E5%BC%8F"><span class="toc-number">3.1.2.</span> <span class="toc-text">输入格式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%BE%93%E5%87%BA%E6%A0%BC%E5%BC%8F"><span class="toc-number">3.1.3.</span> <span class="toc-text">输出格式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A0%B7%E4%BE%8B-1"><span class="toc-number">3.1.4.</span> <span class="toc-text">样例 #1</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%A0%B7%E4%BE%8B%E8%BE%93%E5%85%A5-1"><span class="toc-number">3.1.4.1.</span> <span class="toc-text">样例输入 #1</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%A0%B7%E4%BE%8B%E8%BE%93%E5%87%BA-1"><span class="toc-number">3.1.4.2.</span> <span class="toc-text">样例输出 #1</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A7%A3%E9%A2%98"><span class="toc-number">3.1.5.</span> <span class="toc-text">解题</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#C"><span class="toc-number">3.1.5.1.</span> <span class="toc-text">C++</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Python"><span class="toc-number">3.1.5.2.</span> <span class="toc-text">Python</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">3.1.6.</span> <span class="toc-text">总结</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2023/12/10/%E7%AE%97%E6%B3%95-%E5%9F%BA%E7%A1%80%EF%BC%881%EF%BC%89%E6%9E%9A%E4%B8%BE/" title="算法-基础（1）枚举"><img src="https://s2.loli.net/2023/12/10/OaX234khLZW6NB5.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="算法-基础（1）枚举"/></a><div class="content"><a class="title" href="/2023/12/10/%E7%AE%97%E6%B3%95-%E5%9F%BA%E7%A1%80%EF%BC%881%EF%BC%89%E6%9E%9A%E4%B8%BE/" title="算法-基础（1）枚举">算法-基础（1）枚举</a><time datetime="2023-12-09T16:00:00.000Z" title="发表于 2023-12-10 00:00:00">2023-12-10</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/12/09/%E9%85%8D%E7%BD%AE-%E7%8E%AF%E5%A2%83%EF%BC%888%EF%BC%89Latex/" title="配置-环境（8）Latex"><img src="https://s2.loli.net/2023/10/25/ZMaxqKn69BfGNO2.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="配置-环境（8）Latex"/></a><div class="content"><a class="title" href="/2023/12/09/%E9%85%8D%E7%BD%AE-%E7%8E%AF%E5%A2%83%EF%BC%888%EF%BC%89Latex/" title="配置-环境（8）Latex">配置-环境（8）Latex</a><time datetime="2023-12-08T16:00:00.000Z" title="发表于 2023-12-09 00:00:00">2023-12-09</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/12/08/%E9%85%8D%E7%BD%AE-%E7%8E%AF%E5%A2%83%EF%BC%887%EF%BC%89Php/" title="配置-环境（7）Php"><img src="https://s2.loli.net/2023/10/25/ZMaxqKn69BfGNO2.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="配置-环境（7）Php"/></a><div class="content"><a class="title" href="/2023/12/08/%E9%85%8D%E7%BD%AE-%E7%8E%AF%E5%A2%83%EF%BC%887%EF%BC%89Php/" title="配置-环境（7）Php">配置-环境（7）Php</a><time datetime="2023-12-07T16:00:00.000Z" title="发表于 2023-12-08 00:00:00">2023-12-08</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/12/07/%E9%85%8D%E7%BD%AE-%E7%8E%AF%E5%A2%83%EF%BC%884%EF%BC%89Java/" title="配置-环境（4）Java"><img src="https://s2.loli.net/2023/10/25/ZMaxqKn69BfGNO2.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="配置-环境（4）Java"/></a><div class="content"><a class="title" href="/2023/12/07/%E9%85%8D%E7%BD%AE-%E7%8E%AF%E5%A2%83%EF%BC%884%EF%BC%89Java/" title="配置-环境（4）Java">配置-环境（4）Java</a><time datetime="2023-12-06T16:00:00.000Z" title="发表于 2023-12-07 00:00:00">2023-12-07</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/12/05/%E9%85%8D%E7%BD%AE-%E7%8E%AF%E5%A2%83%EF%BC%883%EF%BC%89Python/" title="配置-环境（3）Python"><img src="https://s2.loli.net/2023/10/25/ZMaxqKn69BfGNO2.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="配置-环境（3）Python"/></a><div class="content"><a class="title" href="/2023/12/05/%E9%85%8D%E7%BD%AE-%E7%8E%AF%E5%A2%83%EF%BC%883%EF%BC%89Python/" title="配置-环境（3）Python">配置-环境（3）Python</a><time datetime="2023-12-04T16:00:00.000Z" title="发表于 2023-12-05 00:00:00">2023-12-05</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2023 By Wh1teJ0ker</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">Hi, welcome to my Blog !!</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"></div><script defer="defer" id="fluttering_ribbon" mobile="true" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-fluttering-ribbon.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = false;
+document.body.addEventListener('input', POWERMODE);
+</script><script id="click-show-text" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/click-show-text.min.js" data-mobile="false" data-text="富强,民主,文明,和谐,自由,平等,公正,法治,爱国,敬业,诚信,友善" data-fontsize="15px" data-random="false" async="async"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div class="no-result" id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>
