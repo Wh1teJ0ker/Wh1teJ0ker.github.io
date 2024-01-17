@@ -1,104 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>20230xGameWeek1-Writeup</title>
-    <url>/2023/10/24/20230xGameWeek1-Writeup/</url>
-    <content><![CDATA[<h1>20230xGameWeek1-Writeup</h1>
-<h2 id="Web">Web</h2>
-<h3 id="Sign-In">Sign In</h3>
-<p>f12查看源代码，在main.js中找到flag</p>
-<p><img src="https://s2.loli.net/2023/10/19/8XbFGiRmQf6jdlk.png" alt=""></p>
-<h3 id="baby-php">baby_php</h3>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="comment">// flag in flag.php</span></span><br><span class="line"><span class="title function_ invoke__">highlight_file</span>(<span class="keyword">__FILE__</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;a&#x27;</span>]) &amp;&amp; <span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;b&#x27;</span>]) &amp;&amp; <span class="keyword">isset</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;c&#x27;</span>]) &amp;&amp; <span class="keyword">isset</span>(<span class="variable">$_COOKIE</span>[<span class="string">&#x27;name&#x27;</span>])) &#123;</span><br><span class="line">    <span class="variable">$a</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;a&#x27;</span>];</span><br><span class="line">    <span class="variable">$b</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;b&#x27;</span>];</span><br><span class="line">    <span class="variable">$c</span> = <span class="variable">$_POST</span>[<span class="string">&#x27;c&#x27;</span>];</span><br><span class="line">    <span class="variable">$name</span> = <span class="variable">$_COOKIE</span>[<span class="string">&#x27;name&#x27;</span>];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (<span class="variable">$a</span> != <span class="variable">$b</span> &amp;&amp; <span class="title function_ invoke__">md5</span>(<span class="variable">$a</span>) == <span class="title function_ invoke__">md5</span>(<span class="variable">$b</span>)) &#123;</span><br><span class="line">        <span class="keyword">if</span> (!<span class="title function_ invoke__">is_numeric</span>(<span class="variable">$c</span>) &amp;&amp; <span class="variable">$c</span> != <span class="number">1024</span> &amp;&amp; <span class="title function_ invoke__">intval</span>(<span class="variable">$c</span>) == <span class="number">1024</span>) &#123;</span><br><span class="line">            <span class="keyword">include</span>(<span class="variable">$name</span>.<span class="string">&#x27;.php&#x27;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
-<p>简单来分析解读一下，首先时读取了两个get参数a和b，一个post参数c，以及一个cookie。</p>
-<p>对于两个get参数a和b的要求时值不相等，但是md5相等，因此我们可以去了解一下MD5绕过，通过0e绕过即可过第一层。然后需要绕过is_numeric和intval， 这两个都是php弱类型的相关函数绕过，之后会开文章进行总结。</p>
-<p>在进行以上绕过之后，还需要对最后存在一个可控cookie参数name进行进一步的利用，通过php伪协议进行读取。</p>
-<p><img src="https://s2.loli.net/2023/10/21/xp7u6a9TAWHh1zy.png" alt=""></p>
-<p>然后将结果进行解码，得到</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">$flag = &#x27;0xGame&#123;43bb3e24-0824-48cb-95d0-c471540c0953&#125;&#x27;;</span><br><span class="line">?</span><br></pre></td></tr></table></figure>
-<h3 id="hello-http">hello_http</h3>
-<p>这题所考察的就是http相关知识</p>
-<p>第一步是传入get参数，需要传一个/?query=ctf</p>
-<img src="https://s2.loli.net/2023/10/21/LS35EKV8d9FARpv.png"  />
-<p>第二步是传入post参数，action=getflag</p>
-<p><img src="https://s2.loli.net/2023/10/21/LPm4GfCjn3X5KyQ.png" alt=""></p>
-<p>第三步是改变身份认证，在cookie参数中写入role=admin</p>
-<p><img src="https://s2.loli.net/2023/10/21/bhacRA5L9zNdr6H.png" alt=""></p>
-<p>第四步是本地ip，相关参数有X-Forwarded-For，伪造127.0.0.1</p>
-<p><img src="https://s2.loli.net/2023/10/21/w9nH8JUbxcCi4TZ.png" alt=""></p>
-<p>第五步是User-Agent，中名为用户代理，可以进行伪造HarmonyOS Browser</p>
-<p><img src="https://s2.loli.net/2023/10/21/gCNPT9rqOtJVB4o.png" alt=""></p>
-<p>第六步是Referer 请求头包含了当前请求页面的来源页面的地址，<a href="http://xn--ys-jk3c39f.mihoyo.com">传入ys.mihoyo.com</a></p>
-<p><img src="https://s2.loli.net/2023/10/21/RkzZV2cBXCnmjfx.png" alt=""></p>
-<p>最终得到flag</p>
-<p><img src="https://s2.loli.net/2023/10/21/eL257NWDcK8gAuI.png" alt=""></p>
-<h3 id="repo-leak">repo_leak</h3>
-<p>顾名思义，这是信息泄露相关。这里所考察的是git泄露</p>
-<p>题目提示</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Using Git for version control</span><br></pre></td></tr></table></figure>
-<p>然后使用githack获取git源，使用命令查看并回退版本</p>
-<p><img src="https://s2.loli.net/2023/10/23/WhFzge2GH9yrKcX.png" alt=""></p>
-<p><img src="https://s2.loli.net/2023/10/23/YaoVBvlz9761esZ.png" alt=""></p>
-<p>最后在本地起一个http服务</p>
-<p><img src="https://s2.loli.net/2023/10/23/gyjd9ZoVWkXhJ3v.png" alt=""></p>
-<p>得到flag</p>
-<p><img src="https://s2.loli.net/2023/10/23/AYNoBeOdJs4rDcF.png" alt=""></p>
-<h3 id="ping">ping</h3>
-<p>首先f12在源码中找到提示</p>
-<p><img src="https://s2.loli.net/2023/10/23/oj6R4OdAN83pgCV.png" alt=""></p>
-<p>打开api.php得到</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line"></span><br><span class="line">function sanitize($s) &#123;</span><br><span class="line">    $s = str_replace(&#x27;;&#x27;, &#x27;&#x27;, $s);</span><br><span class="line">    $s = str_replace(&#x27; &#x27;, &#x27;&#x27;, $s);</span><br><span class="line">    $s = str_replace(&#x27;/&#x27;, &#x27;&#x27;, $s);</span><br><span class="line">    $s = str_replace(&#x27;flag&#x27;, &#x27;&#x27;, $s);</span><br><span class="line">    return $s;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">if (isset($_GET[&#x27;source&#x27;])) &#123;</span><br><span class="line">    highlight_file(__FILE__);</span><br><span class="line">    die();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">if (!isset($_POST[&#x27;ip&#x27;])) &#123;</span><br><span class="line">    die(&#x27;No IP Address&#x27;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$ip = $_POST[&#x27;ip&#x27;];</span><br><span class="line"></span><br><span class="line">$ip = sanitize($ip);</span><br><span class="line"></span><br><span class="line">if (!preg_match(&#x27;/((\d&#123;1,2&#125;|1\d\d|2[0-4]\d|25[0-5])\.)&#123;3&#125;(\d&#123;1,2&#125;|1\d\d|2[0-4]\d|25[0-5])/&#x27;, $ip)) &#123;</span><br><span class="line">    die(&#x27;Invalid IP Address&#x27;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">system(&#x27;ping -c 4 &#x27;.$ip. &#x27; 2&gt;&amp;1&#x27;);</span><br><span class="line"></span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
-<p>这里使用function封装了一个单元，将使用sanitize函数replace了一些字符</p>
-<p>同时使用了preg_match 会匹配⼀个 IP 的正则表达式，需要绕过</p>
-<p>前端做的部分限制，可以通过bp抓包绕过</p>
-<p><img src="https://s2.loli.net/2023/10/23/4xbqaRCzc8r9vWA.png" alt=""></p>
-<h3 id="相关知识点总结">相关知识点总结</h3>
-<ol>
-<li>F12查看源代码</li>
-<li>md5绕过</li>
-<li>is_numeric函数，intval() 函数绕过</li>
-<li>php伪协议</li>
-<li>http参数相关</li>
-<li>git泄露</li>
-</ol>
-<h2 id="Misc">Misc</h2>
-<h3 id="SignIn">SignIn</h3>
-<p>两次编码转换</p>
-<p><img src="https://s2.loli.net/2023/10/24/Pzn3UJwAL1iBgYl.png" alt=""></p>
-<h3 id="重生之我在教学楼打cs">重生之我在教学楼打cs</h3>
-<p>这题没意思，看看就行</p>
-<h3 id="shark-shark">shark shark</h3>
-<p>打开是一个流量包，仔细观察可以找到一个长度很大的tcp流</p>
-<p><img src="https://s2.loli.net/2023/10/24/ndDvtlF7IgkQNsr.png" alt=""></p>
-<p>追踪可以看到504B开头，明显是一个压缩包</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">504b0304140009000800017e3b573440eb40380000002c00000008000000666c61672e74787474f54e6e559873f67e32d14b6572f12401b92b622d75b576fd8e73fcb0f080c8d232420e19a36ac5d6852ca66d16ba25b8727e2e42d21889504b07083440eb40380000002c000000504b01021f00140009000800017e3b573440eb40380000002c000000080024000000000000002000000000000000666c61672e7478740a00200000000000010018000d740af216f1d90156fc2fa417f1d90195872fa417f1d901504b050600000000010001005a0000006e0000000000</span><br></pre></td></tr></table></figure>
-<p>十六进制导入010，得到压缩包，发现需要密码</p>
-<p><img src="https://s2.loli.net/2023/10/24/Rj81PYvGXHImFfc.png" alt="https://s2.loli.net/2023/10/24/Rj81PYvGXHImFfc.png"></p>
-<p>追踪其他tcp流得到密码</p>
-<img src="https://s2.loli.net/2023/10/24/ioUgQ7XmBPlZIS8.png" style="zoom:67%;" />
-<p>打开压缩包得到flag</p>
-<img src="https://s2.loli.net/2023/10/24/w8zIivrHjVlmLN5.png" style="zoom:67%;" />
-<h3 id="hide-and-seek">hide and seek</h3>
-<p>使用stegseek弱口令爆破得到</p>
-<p><img src="https://s2.loli.net/2023/10/26/M2oHPUlO9wqg4BZ.png" alt=""></p>
-<h3 id="least-and-most">least and most</h3>
-<p>分别使用了lsb（最低有效位）和msb（最高有效位）</p>
-<h2 id="Reverse">Reverse</h2>
-<h3 id="数字筑基">数字筑基</h3>
-<p>这题考察的就是二进制转换为十六进制</p>
-<p><img src="https://s2.loli.net/2023/10/23/bHcE4uajoyhAfGp.png" alt=""></p>
-<h3 id="代码金丹">代码金丹</h3>
-<p>用ida打开后，f5反编译得到flag</p>
-<p><img src="https://s2.loli.net/2023/10/24/lNXt5HA74hDCI21.png" alt=""></p>
-]]></content>
-      <categories>
-        <category>Writeup</category>
-      </categories>
-      <tags>
-        <tag>0xGame</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>2023 SYCGeekchallenge-Writeup-Misc</title>
     <url>/2023/12/02/2023%20SYCGeekchallenge-Writeup-Misc/</url>
     <content><![CDATA[<h1>2023 SYCGeekchallenge-Writeup-Misc</h1>
@@ -269,6 +171,205 @@
       </tags>
   </entry>
   <entry>
+    <title>2023NepNep-Writeup</title>
+    <url>/2023/09/29/2023NepNep-Writeup/</url>
+    <content><![CDATA[<h1>2023NepNep-Writeup</h1>
+<h2 id="Web">Web</h2>
+<h3 id="ez-java-checkin">ez_java_checkin</h3>
+<p>提示管理员登陆，admin默认</p>
+<p><img src="https://s2.loli.net/2023/09/29/eTOApcdyrMXtwzR.png" alt=""></p>
+<p>发现rememberMe=deleteMe，查询找到相关漏洞</p>
+<p>工具一把梭</p>
+<p><img src="https://s2.loli.net/2023/09/29/zTWpvLM6VZRPdxO.png" alt=""></p>
+<p>注入内存马</p>
+<p><img src="https://s2.loli.net/2023/09/29/VIqdTD8banlQ3uX.png" alt=""></p>
+<p>连接webshell</p>
+<p><img src="https://s2.loli.net/2023/09/29/w2NgWBtjGOxZAHU.png" alt=""></p>
+<p>开始寻找flag，在start.sh中找到</p>
+<p><img src="https://s2.loli.net/2023/09/29/s4phrUitKWZTBvN.png" alt=""></p>
+<h2 id="Misc">Misc</h2>
+<h3 id="CheckIn">CheckIn</h3>
+<p><img src="https://s2.loli.net/2023/09/29/TWKFvQROpV9ySxu.png" alt=""></p>
+<h3 id="与AI共舞的哈夫曼">与AI共舞的哈夫曼</h3>
+<p>给的是一段压缩算法，根据提示交给chtgpt</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">import heapq</span><br><span class="line"></span><br><span class="line">class HuffmanNode:</span><br><span class="line">    def __init__(self, char, freq):</span><br><span class="line">        self.char = char</span><br><span class="line">        self.freq = freq</span><br><span class="line">        self.left = None</span><br><span class="line">        self.right = None</span><br><span class="line"></span><br><span class="line">    def __lt__(self, other):</span><br><span class="line">        return self.freq &lt; other.freq</span><br><span class="line"></span><br><span class="line">def build_huffman_tree(frequencies):</span><br><span class="line">    heap = [HuffmanNode(char, freq) for char, freq in frequencies.items()]</span><br><span class="line">    heapq.heapify(heap)</span><br><span class="line"></span><br><span class="line">    while len(heap) &gt; 1:</span><br><span class="line">        left = heapq.heappop(heap)</span><br><span class="line">        right = heapq.heappop(heap)</span><br><span class="line">        merged = HuffmanNode(None, left.freq + right.freq)</span><br><span class="line">        merged.left = left</span><br><span class="line">        merged.right = right</span><br><span class="line">        heapq.heappush(heap, merged)</span><br><span class="line"></span><br><span class="line">    return heap[0]</span><br><span class="line"></span><br><span class="line">def decompress(input_file, output_file):</span><br><span class="line">    with open(input_file, &#x27;rb&#x27;) as f:</span><br><span class="line">        data = f.read()</span><br><span class="line"></span><br><span class="line">    num_symbols = data[0]</span><br><span class="line">    frequencies = &#123;&#125;</span><br><span class="line">    offset = 1</span><br><span class="line"></span><br><span class="line">    for i in range(num_symbols):</span><br><span class="line">        byte = data[offset]</span><br><span class="line">        freq = (data[offset + 1] &lt;&lt; 24) | (data[offset + 2] &lt;&lt; 16) | (data[offset + 3] &lt;&lt; 8) | data[offset + 4]</span><br><span class="line">        frequencies[byte] = freq</span><br><span class="line">        offset += 5</span><br><span class="line"></span><br><span class="line">    root = build_huffman_tree(frequencies)</span><br><span class="line"></span><br><span class="line">    decoded_data = &#x27;&#x27;</span><br><span class="line">    current_node = root</span><br><span class="line"></span><br><span class="line">    for byte in data[offset:]:</span><br><span class="line">        bits = bin(byte)[2:].rjust(8, &#x27;0&#x27;)</span><br><span class="line">        for bit in bits:</span><br><span class="line">            if bit == &#x27;0&#x27;:</span><br><span class="line">                current_node = current_node.left</span><br><span class="line">            else:</span><br><span class="line">                current_node = current_node.right</span><br><span class="line"></span><br><span class="line">            if current_node.char is not None:</span><br><span class="line">                decoded_data += chr(current_node.char)</span><br><span class="line">                current_node = root</span><br><span class="line"></span><br><span class="line">    with open(output_file, &#x27;w&#x27;, encoding=&#x27;utf-8&#x27;) as f:</span><br><span class="line">        f.write(decoded_data)</span><br><span class="line"></span><br><span class="line">if __name__ == &quot;__main__&quot;:</span><br><span class="line">    compressed_file = &#x27;compressed.bin&#x27;</span><br><span class="line">    decompressed_file = &#x27;decompressed.txt&#x27;</span><br><span class="line"></span><br><span class="line">    # 解压缩文件</span><br><span class="line">    decompress(compressed_file, decompressed_file)</span><br></pre></td></tr></table></figure>
+<p><img src="https://s2.loli.net/2023/09/29/o5xBwTz7MJUCFi2.png" alt=""></p>
+<h3 id="小叮弹钢琴">小叮弹钢琴</h3>
+<p>首先给的一段音频，用Au打开，发现包含两个内容，一个明显是十六制数字，另外一个怀疑是摩斯密码，手写下来解码得到一段明文</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">YOUSHOULDUSETHISTOXORSOMETHING</span><br></pre></td></tr></table></figure>
+<p>根据提示，考虑异或解密，手搓了一段脚本</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cipher_text_hex = &quot;0x370a05303c290e045005031c2b1858473a5f052117032c39230f005d1e17&quot;</span><br><span class="line">cipher_text_bytes = bytes.fromhex(cipher_text_hex[2:])</span><br><span class="line">key = &quot;YOUSHOULDUSETHISTOXORSOMETHING&quot;</span><br><span class="line">key_bytes = key.encode()</span><br><span class="line">plain_text_bytes = bytearray(len(cipher_text_bytes))</span><br><span class="line"></span><br><span class="line">for i in range(len(cipher_text_bytes)):</span><br><span class="line">    plain_text_bytes[i] = cipher_text_bytes[i] ^ key_bytes[i % len(key_bytes)]</span><br><span class="line"></span><br><span class="line">decrypted_text = plain_text_bytes.decode()</span><br><span class="line"></span><br><span class="line">print(&quot;Decrypted Text:&quot;, decrypted_text)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>但是解下来出现了nep字样，但是字符不对劲</p>
+<p><img src="https://s2.loli.net/2023/09/29/FoR42QkXEf7JsSh.png" alt=""></p>
+<p>然后用CyberChef一把梭，得到了结果</p>
+<p><img src="https://s2.loli.net/2023/09/29/DpPRqJvEW8SImNB.png" alt=""></p>
+<p>应该是脚本存在问题，但是代码能力有限，真想不出来了，等赛后wp吧</p>
+<h3 id="codes">codes</h3>
+<p>根据提示，flag在环境变量中</p>
+<p>根据查找，有一下几种方法</p>
+<ol>
+<li>
+<p><strong>使用 <code>extern char **environ</code> 全局变量：</strong></p>
+<p>这是一种直接的方法，使用全局变量 <code>environ</code>，它是一个指向指针的指针，用于存储环境变量的字符串数组。遍历这个数组并打印环境变量的值。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="keyword">extern</span> <span class="type">char</span> **environ;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="type">int</span> i = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span> (environ[i] != <span class="literal">NULL</span>) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;%s\n&quot;</span>, environ[i]);</span><br><span class="line">        i++;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p><strong>使用 <code>getenv()</code> 函数：</strong></p>
+<p><code>getenv()</code> 函数允许你通过指定环境变量名称来获取其值。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="type">const</span> <span class="type">char</span>* env_var_name = <span class="string">&quot;PATH&quot;</span>;</span><br><span class="line">    <span class="type">char</span>* env_var_value = getenv(env_var_name);</span><br><span class="line">    <span class="keyword">if</span> (env_var_value != <span class="literal">NULL</span>) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;%s=%s\n&quot;</span>, env_var_name, env_var_value);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;Environment variable &#x27;%s&#x27; not found.\n&quot;</span>, env_var_name);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p><strong>使用 <code>main()</code> 函数的参数 <code>char *argv[]</code>：</strong></p>
+<p>程序的启动参数中也包含了环境变量信息。这种方法需要一些额外的解析工作。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[], <span class="type">char</span> *envp[])</span> &#123;</span><br><span class="line">    <span class="type">int</span> i = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span> (envp[i] != <span class="literal">NULL</span>) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;%s\n&quot;</span>, envp[i]);</span><br><span class="line">        i++;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>逐个尝试，全部失败了</p>
+<p>开始尝试各种绕过姿势</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">extern char **en\</span><br><span class="line">viron;</span><br><span class="line"></span><br><span class="line">int main() &#123;</span><br><span class="line">    int i = 0;</span><br><span class="line">    while (en\</span><br><span class="line">viron[i] != NULL) &#123;</span><br><span class="line">        printf(&quot;%s\n&quot;, en\</span><br><span class="line">viron[i]);</span><br><span class="line">        i++;</span><br><span class="line">    &#125;</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>最终得到flag</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Nepctf&#123;easy_codes_3a5786c2-dd96-46bd-9909-23f894dc8d2a_[TEAM_HASH]&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="ConnectedFive">ConnectedFive</h3>
+<p><img src="https://s2.loli.net/2023/09/29/DIuOpeSJkYsTxWf.png" alt=""></p>
+<p>万宁，果真折磨</p>
+<h3 id="陌生的语言">陌生的语言</h3>
+<p>没啥好说的，上图，比较好奇出题人到底是怎么找到的这个图</p>
+<p><img src="https://s2.loli.net/2023/09/29/ifCgDS2O9Jzdw1y.jpg" alt=""></p>
+<p><img src="https://s2.loli.net/2023/09/29/wofOdTlQaR38XpE.png" alt=""></p>
+<p>然后将对应一下，最终成功提交上去的flag为</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">NepCTF&#123;NEPNEP_A_BELIEVING_HEART_IS_YOUR_MAGIC&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="你也喜欢三月七么">你也喜欢三月七么</h3>
+<p>拿到手刚开始以为这个题是密码的，当然，也确实有部分是，但主要可能是考察阅读理解。我还想再说一句，星穹铁道，启动！</p>
+<p>首先先来看一下附件给了我们什么内容</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">salt_lenth= 10 </span><br><span class="line">key_lenth= 16 </span><br><span class="line">iv= 88219bdee9c396eca3c637c0ea436058 #原始iv转hex的值</span><br><span class="line">ciphertext= b700ae6d0cc979a4401f3dd440bf9703b292b57b6a16b79ade01af58025707fbc29941105d7f50f2657cf7eac735a800ecccdfd42bf6c6ce3b00c8734bf500c819e99e074f481dbece626ccc2f6e0562a81fe84e5dd9750f5a0bb7c20460577547d3255ba636402d6db8777e0c5a429d07a821bf7f9e0186e591dfcfb3bfedfc</span><br></pre></td></tr></table></figure>
+<p>第一个是salt的长度，第二个是key的长度，第三个是偏移量iv，第四个就是相对应的密文了</p>
+<p>其次，来分析一下题目给的提示</p>
+<p><u><strong>三月七：耶，终于来到Nepnep星球啦，让我看看正在火热进行的Hacker夺旗大赛群聊。啊！开拓者，这群名看起来怪怪的诶。 （伸出脑袋，凑近群名，轻轻的闻了一下）哇，好咸诶，开拓者你快来看看！</strong></u></p>
+<p><u><strong>开拓者（U_id）：(端着下巴，磨蹭了一下，眼神若有所思）这好像需要经过啥256处理一下才能得到我们需要的关键。</strong></u></p>
+<p>第一次阅读的时候我的关注点就是再256和群名两个关键上，256是指向hash算法，群名自然是跟附件中没有给出的key（PS：题目中关键的英文也是key）有关。</p>
+<p>但是我刚开始完全没有注意到一个长度的问题，也就是salt_lenth= 10 和key_lenth= 16，而是将NepCTF 2023直接哈希计算了，中间留了空格（PS：因为我看群名也是留了空格的），甚至因为存在salt这个量还在考虑是否算法还进行了变种，然后尝试aes解密失败了。后来又从题目里的关键提示，也就是三月七闻群名好咸，咸指的自然就是盐，而盐的英文是salt。意识到这一点，也就开始知道为什么给出了两个长度值了salt的长度是提示使用NepCTF2023（PS:不加空格，刚好十个字），然后开始计算哈希256，得到的是</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">dd8e671df3882c5be6423cd030bd7cb69671ef27dfe7a541903edc4e23168009</span><br></pre></td></tr></table></figure>
+<p>但是长度是32个字节，所以需要截取出一半作为key，具体代码实现如下</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">from Crypto.Cipher import AES</span><br><span class="line">import binascii</span><br><span class="line"></span><br><span class="line">*#* *提供的信息</span><br><span class="line">*key_hex = &quot;dd8e671df3882c5be6423cd030bd7cb6&quot;</span><br><span class="line">iv_hex = &quot;88219bdee9c396eca3c637c0ea436058&quot;</span><br><span class="line">ciphertext_hex = &quot;b700ae6d0cc979a4401f3dd440bf9703b292b57b6a16b79ade01af58025707fbc29941105d7f50f2657cf7eac735a800ecccdfd42bf6c6ce3b00c8734bf500c819e99e074f481dbece626ccc2f6e0562a81fe84e5dd9750f5a0bb7c20460577547d3255ba636402d6db8777e0c5a429d07a821bf7f9e0186e591dfcfb3bfedfc&quot;</span><br><span class="line"></span><br><span class="line">*#* *将十六进制的**key**、**iv**和**ciphertext**转换为字节串</span><br><span class="line">*key = binascii.unhexlify(key_hex)</span><br><span class="line">iv = binascii.unhexlify(iv_hex)</span><br><span class="line">ciphertext = binascii.unhexlify(ciphertext_hex)</span><br><span class="line"></span><br><span class="line">*#* *创建**AES**解密器对象</span><br><span class="line">*cipher = AES.new(key, AES.MODE_CBC, iv)</span><br><span class="line"></span><br><span class="line">*#* *解密数据</span><br><span class="line">*decrypted_data = cipher.decrypt(ciphertext)</span><br><span class="line"></span><br><span class="line">*#* *将解密后的字节数据转换为字符串</span><br><span class="line">*decrypted_string = decrypted_data.decode(&#x27;utf-8&#x27;)</span><br><span class="line"></span><br><span class="line">*#* *打印解密后的字符串</span><br><span class="line">*print(decrypted_string)</span><br></pre></td></tr></table></figure>
+<p>最终计算下来结果为一串十六进制</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">6148523063484d364c793970625763784c6d6c745a3352774c6d4e76625338794d44497a4c7a41334c7a49304c336c5061316858553070554c6e42755a773d3d</span><br></pre></td></tr></table></figure>
+<p>然后转字符，转base64得到网址</p>
+<p><strong><a href="https://img1.imgtp.com/2023/07/24/yOkXWSJT.png">https://img1.imgtp.com/2023/07/24/yOkXWSJT.png</a></strong></p>
+<p>下载下来一张图片</p>
+<p><img src="https://s2.loli.net/2023/09/29/8eWuRQc2y3htlYi.png" alt=""></p>
+<p>然后第一反应识图，结果google继陌生的语言后又失效喽（悲</p>
+<p>后来又想到题目一开始就有了提示，星穹铁道，然后搜索相关的文字，找到了贝洛伯格特殊文字</p>
+<p><img src="https://s2.loli.net/2023/09/29/biMX7Bx8CuJwScr.jpg" alt=""></p>
+<p>然后跟表对照得到最终的flag</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">NepCTF&#123;HRP_aIways_likes_March_7th&#125;</span><br></pre></td></tr></table></figure>
+<p>(PS:做图文题做到够，麻了)</p>
+]]></content>
+      <categories>
+        <category>Writeup</category>
+      </categories>
+      <tags>
+        <tag>NepNep</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>20230xGameWeek1-Writeup</title>
+    <url>/2023/10/24/20230xGameWeek1-Writeup/</url>
+    <content><![CDATA[<h1>20230xGameWeek1-Writeup</h1>
+<h2 id="Web">Web</h2>
+<h3 id="Sign-In">Sign In</h3>
+<p>f12查看源代码，在main.js中找到flag</p>
+<p><img src="https://s2.loli.net/2023/10/19/8XbFGiRmQf6jdlk.png" alt=""></p>
+<h3 id="baby-php">baby_php</h3>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="comment">// flag in flag.php</span></span><br><span class="line"><span class="title function_ invoke__">highlight_file</span>(<span class="keyword">__FILE__</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;a&#x27;</span>]) &amp;&amp; <span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;b&#x27;</span>]) &amp;&amp; <span class="keyword">isset</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;c&#x27;</span>]) &amp;&amp; <span class="keyword">isset</span>(<span class="variable">$_COOKIE</span>[<span class="string">&#x27;name&#x27;</span>])) &#123;</span><br><span class="line">    <span class="variable">$a</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;a&#x27;</span>];</span><br><span class="line">    <span class="variable">$b</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;b&#x27;</span>];</span><br><span class="line">    <span class="variable">$c</span> = <span class="variable">$_POST</span>[<span class="string">&#x27;c&#x27;</span>];</span><br><span class="line">    <span class="variable">$name</span> = <span class="variable">$_COOKIE</span>[<span class="string">&#x27;name&#x27;</span>];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (<span class="variable">$a</span> != <span class="variable">$b</span> &amp;&amp; <span class="title function_ invoke__">md5</span>(<span class="variable">$a</span>) == <span class="title function_ invoke__">md5</span>(<span class="variable">$b</span>)) &#123;</span><br><span class="line">        <span class="keyword">if</span> (!<span class="title function_ invoke__">is_numeric</span>(<span class="variable">$c</span>) &amp;&amp; <span class="variable">$c</span> != <span class="number">1024</span> &amp;&amp; <span class="title function_ invoke__">intval</span>(<span class="variable">$c</span>) == <span class="number">1024</span>) &#123;</span><br><span class="line">            <span class="keyword">include</span>(<span class="variable">$name</span>.<span class="string">&#x27;.php&#x27;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<p>简单来分析解读一下，首先时读取了两个get参数a和b，一个post参数c，以及一个cookie。</p>
+<p>对于两个get参数a和b的要求时值不相等，但是md5相等，因此我们可以去了解一下MD5绕过，通过0e绕过即可过第一层。然后需要绕过is_numeric和intval， 这两个都是php弱类型的相关函数绕过，之后会开文章进行总结。</p>
+<p>在进行以上绕过之后，还需要对最后存在一个可控cookie参数name进行进一步的利用，通过php伪协议进行读取。</p>
+<p><img src="https://s2.loli.net/2023/10/21/xp7u6a9TAWHh1zy.png" alt=""></p>
+<p>然后将结果进行解码，得到</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">$flag = &#x27;0xGame&#123;43bb3e24-0824-48cb-95d0-c471540c0953&#125;&#x27;;</span><br><span class="line">?</span><br></pre></td></tr></table></figure>
+<h3 id="hello-http">hello_http</h3>
+<p>这题所考察的就是http相关知识</p>
+<p>第一步是传入get参数，需要传一个/?query=ctf</p>
+<img src="https://s2.loli.net/2023/10/21/LS35EKV8d9FARpv.png"  />
+<p>第二步是传入post参数，action=getflag</p>
+<p><img src="https://s2.loli.net/2023/10/21/LPm4GfCjn3X5KyQ.png" alt=""></p>
+<p>第三步是改变身份认证，在cookie参数中写入role=admin</p>
+<p><img src="https://s2.loli.net/2023/10/21/bhacRA5L9zNdr6H.png" alt=""></p>
+<p>第四步是本地ip，相关参数有X-Forwarded-For，伪造127.0.0.1</p>
+<p><img src="https://s2.loli.net/2023/10/21/w9nH8JUbxcCi4TZ.png" alt=""></p>
+<p>第五步是User-Agent，中名为用户代理，可以进行伪造HarmonyOS Browser</p>
+<p><img src="https://s2.loli.net/2023/10/21/gCNPT9rqOtJVB4o.png" alt=""></p>
+<p>第六步是Referer 请求头包含了当前请求页面的来源页面的地址，<a href="http://xn--ys-jk3c39f.mihoyo.com">传入ys.mihoyo.com</a></p>
+<p><img src="https://s2.loli.net/2023/10/21/RkzZV2cBXCnmjfx.png" alt=""></p>
+<p>最终得到flag</p>
+<p><img src="https://s2.loli.net/2023/10/21/eL257NWDcK8gAuI.png" alt=""></p>
+<h3 id="repo-leak">repo_leak</h3>
+<p>顾名思义，这是信息泄露相关。这里所考察的是git泄露</p>
+<p>题目提示</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Using Git for version control</span><br></pre></td></tr></table></figure>
+<p>然后使用githack获取git源，使用命令查看并回退版本</p>
+<p><img src="https://s2.loli.net/2023/10/23/WhFzge2GH9yrKcX.png" alt=""></p>
+<p><img src="https://s2.loli.net/2023/10/23/YaoVBvlz9761esZ.png" alt=""></p>
+<p>最后在本地起一个http服务</p>
+<p><img src="https://s2.loli.net/2023/10/23/gyjd9ZoVWkXhJ3v.png" alt=""></p>
+<p>得到flag</p>
+<p><img src="https://s2.loli.net/2023/10/23/AYNoBeOdJs4rDcF.png" alt=""></p>
+<h3 id="ping">ping</h3>
+<p>首先f12在源码中找到提示</p>
+<p><img src="https://s2.loli.net/2023/10/23/oj6R4OdAN83pgCV.png" alt=""></p>
+<p>打开api.php得到</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line"></span><br><span class="line">function sanitize($s) &#123;</span><br><span class="line">    $s = str_replace(&#x27;;&#x27;, &#x27;&#x27;, $s);</span><br><span class="line">    $s = str_replace(&#x27; &#x27;, &#x27;&#x27;, $s);</span><br><span class="line">    $s = str_replace(&#x27;/&#x27;, &#x27;&#x27;, $s);</span><br><span class="line">    $s = str_replace(&#x27;flag&#x27;, &#x27;&#x27;, $s);</span><br><span class="line">    return $s;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">if (isset($_GET[&#x27;source&#x27;])) &#123;</span><br><span class="line">    highlight_file(__FILE__);</span><br><span class="line">    die();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">if (!isset($_POST[&#x27;ip&#x27;])) &#123;</span><br><span class="line">    die(&#x27;No IP Address&#x27;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$ip = $_POST[&#x27;ip&#x27;];</span><br><span class="line"></span><br><span class="line">$ip = sanitize($ip);</span><br><span class="line"></span><br><span class="line">if (!preg_match(&#x27;/((\d&#123;1,2&#125;|1\d\d|2[0-4]\d|25[0-5])\.)&#123;3&#125;(\d&#123;1,2&#125;|1\d\d|2[0-4]\d|25[0-5])/&#x27;, $ip)) &#123;</span><br><span class="line">    die(&#x27;Invalid IP Address&#x27;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">system(&#x27;ping -c 4 &#x27;.$ip. &#x27; 2&gt;&amp;1&#x27;);</span><br><span class="line"></span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+<p>这里使用function封装了一个单元，将使用sanitize函数replace了一些字符</p>
+<p>同时使用了preg_match 会匹配⼀个 IP 的正则表达式，需要绕过</p>
+<p>前端做的部分限制，可以通过bp抓包绕过</p>
+<p><img src="https://s2.loli.net/2023/10/23/4xbqaRCzc8r9vWA.png" alt=""></p>
+<h3 id="相关知识点总结">相关知识点总结</h3>
+<ol>
+<li>F12查看源代码</li>
+<li>md5绕过</li>
+<li>is_numeric函数，intval() 函数绕过</li>
+<li>php伪协议</li>
+<li>http参数相关</li>
+<li>git泄露</li>
+</ol>
+<h2 id="Misc">Misc</h2>
+<h3 id="SignIn">SignIn</h3>
+<p>两次编码转换</p>
+<p><img src="https://s2.loli.net/2023/10/24/Pzn3UJwAL1iBgYl.png" alt=""></p>
+<h3 id="重生之我在教学楼打cs">重生之我在教学楼打cs</h3>
+<p>这题没意思，看看就行</p>
+<h3 id="shark-shark">shark shark</h3>
+<p>打开是一个流量包，仔细观察可以找到一个长度很大的tcp流</p>
+<p><img src="https://s2.loli.net/2023/10/24/ndDvtlF7IgkQNsr.png" alt=""></p>
+<p>追踪可以看到504B开头，明显是一个压缩包</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">504b0304140009000800017e3b573440eb40380000002c00000008000000666c61672e74787474f54e6e559873f67e32d14b6572f12401b92b622d75b576fd8e73fcb0f080c8d232420e19a36ac5d6852ca66d16ba25b8727e2e42d21889504b07083440eb40380000002c000000504b01021f00140009000800017e3b573440eb40380000002c000000080024000000000000002000000000000000666c61672e7478740a00200000000000010018000d740af216f1d90156fc2fa417f1d90195872fa417f1d901504b050600000000010001005a0000006e0000000000</span><br></pre></td></tr></table></figure>
+<p>十六进制导入010，得到压缩包，发现需要密码</p>
+<p><img src="https://s2.loli.net/2023/10/24/Rj81PYvGXHImFfc.png" alt="https://s2.loli.net/2023/10/24/Rj81PYvGXHImFfc.png"></p>
+<p>追踪其他tcp流得到密码</p>
+<img src="https://s2.loli.net/2023/10/24/ioUgQ7XmBPlZIS8.png" style="zoom:67%;" />
+<p>打开压缩包得到flag</p>
+<img src="https://s2.loli.net/2023/10/24/w8zIivrHjVlmLN5.png" style="zoom:67%;" />
+<h3 id="hide-and-seek">hide and seek</h3>
+<p>使用stegseek弱口令爆破得到</p>
+<p><img src="https://s2.loli.net/2023/10/26/M2oHPUlO9wqg4BZ.png" alt=""></p>
+<h3 id="least-and-most">least and most</h3>
+<p>分别使用了lsb（最低有效位）和msb（最高有效位）</p>
+<h2 id="Reverse">Reverse</h2>
+<h3 id="数字筑基">数字筑基</h3>
+<p>这题考察的就是二进制转换为十六进制</p>
+<p><img src="https://s2.loli.net/2023/10/23/bHcE4uajoyhAfGp.png" alt=""></p>
+<h3 id="代码金丹">代码金丹</h3>
+<p>用ida打开后，f5反编译得到flag</p>
+<p><img src="https://s2.loli.net/2023/10/24/lNXt5HA74hDCI21.png" alt=""></p>
+]]></content>
+      <categories>
+        <category>Writeup</category>
+      </categories>
+      <tags>
+        <tag>0xGame</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>2023HITCTF-Misc-Writeup</title>
     <url>/2023/11/30/2023HITCTF-Misc-Writeup/</url>
     <content><![CDATA[<h1>2023HITCTF-Misc-Writeup</h1>
@@ -407,104 +508,173 @@
       </tags>
   </entry>
   <entry>
-    <title>2023NepNep-Writeup</title>
-    <url>/2023/09/29/2023NepNep-Writeup/</url>
-    <content><![CDATA[<h1>2023NepNep-Writeup</h1>
-<h2 id="Web">Web</h2>
-<h3 id="ez-java-checkin">ez_java_checkin</h3>
-<p>提示管理员登陆，admin默认</p>
-<p><img src="https://s2.loli.net/2023/09/29/eTOApcdyrMXtwzR.png" alt=""></p>
-<p>发现rememberMe=deleteMe，查询找到相关漏洞</p>
-<p>工具一把梭</p>
-<p><img src="https://s2.loli.net/2023/09/29/zTWpvLM6VZRPdxO.png" alt=""></p>
-<p>注入内存马</p>
-<p><img src="https://s2.loli.net/2023/09/29/VIqdTD8banlQ3uX.png" alt=""></p>
-<p>连接webshell</p>
-<p><img src="https://s2.loli.net/2023/09/29/w2NgWBtjGOxZAHU.png" alt=""></p>
-<p>开始寻找flag，在start.sh中找到</p>
-<p><img src="https://s2.loli.net/2023/09/29/s4phrUitKWZTBvN.png" alt=""></p>
-<h2 id="Misc">Misc</h2>
-<h3 id="CheckIn">CheckIn</h3>
-<p><img src="https://s2.loli.net/2023/09/29/TWKFvQROpV9ySxu.png" alt=""></p>
-<h3 id="与AI共舞的哈夫曼">与AI共舞的哈夫曼</h3>
-<p>给的是一段压缩算法，根据提示交给chtgpt</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">import heapq</span><br><span class="line"></span><br><span class="line">class HuffmanNode:</span><br><span class="line">    def __init__(self, char, freq):</span><br><span class="line">        self.char = char</span><br><span class="line">        self.freq = freq</span><br><span class="line">        self.left = None</span><br><span class="line">        self.right = None</span><br><span class="line"></span><br><span class="line">    def __lt__(self, other):</span><br><span class="line">        return self.freq &lt; other.freq</span><br><span class="line"></span><br><span class="line">def build_huffman_tree(frequencies):</span><br><span class="line">    heap = [HuffmanNode(char, freq) for char, freq in frequencies.items()]</span><br><span class="line">    heapq.heapify(heap)</span><br><span class="line"></span><br><span class="line">    while len(heap) &gt; 1:</span><br><span class="line">        left = heapq.heappop(heap)</span><br><span class="line">        right = heapq.heappop(heap)</span><br><span class="line">        merged = HuffmanNode(None, left.freq + right.freq)</span><br><span class="line">        merged.left = left</span><br><span class="line">        merged.right = right</span><br><span class="line">        heapq.heappush(heap, merged)</span><br><span class="line"></span><br><span class="line">    return heap[0]</span><br><span class="line"></span><br><span class="line">def decompress(input_file, output_file):</span><br><span class="line">    with open(input_file, &#x27;rb&#x27;) as f:</span><br><span class="line">        data = f.read()</span><br><span class="line"></span><br><span class="line">    num_symbols = data[0]</span><br><span class="line">    frequencies = &#123;&#125;</span><br><span class="line">    offset = 1</span><br><span class="line"></span><br><span class="line">    for i in range(num_symbols):</span><br><span class="line">        byte = data[offset]</span><br><span class="line">        freq = (data[offset + 1] &lt;&lt; 24) | (data[offset + 2] &lt;&lt; 16) | (data[offset + 3] &lt;&lt; 8) | data[offset + 4]</span><br><span class="line">        frequencies[byte] = freq</span><br><span class="line">        offset += 5</span><br><span class="line"></span><br><span class="line">    root = build_huffman_tree(frequencies)</span><br><span class="line"></span><br><span class="line">    decoded_data = &#x27;&#x27;</span><br><span class="line">    current_node = root</span><br><span class="line"></span><br><span class="line">    for byte in data[offset:]:</span><br><span class="line">        bits = bin(byte)[2:].rjust(8, &#x27;0&#x27;)</span><br><span class="line">        for bit in bits:</span><br><span class="line">            if bit == &#x27;0&#x27;:</span><br><span class="line">                current_node = current_node.left</span><br><span class="line">            else:</span><br><span class="line">                current_node = current_node.right</span><br><span class="line"></span><br><span class="line">            if current_node.char is not None:</span><br><span class="line">                decoded_data += chr(current_node.char)</span><br><span class="line">                current_node = root</span><br><span class="line"></span><br><span class="line">    with open(output_file, &#x27;w&#x27;, encoding=&#x27;utf-8&#x27;) as f:</span><br><span class="line">        f.write(decoded_data)</span><br><span class="line"></span><br><span class="line">if __name__ == &quot;__main__&quot;:</span><br><span class="line">    compressed_file = &#x27;compressed.bin&#x27;</span><br><span class="line">    decompressed_file = &#x27;decompressed.txt&#x27;</span><br><span class="line"></span><br><span class="line">    # 解压缩文件</span><br><span class="line">    decompress(compressed_file, decompressed_file)</span><br></pre></td></tr></table></figure>
-<p><img src="https://s2.loli.net/2023/09/29/o5xBwTz7MJUCFi2.png" alt=""></p>
-<h3 id="小叮弹钢琴">小叮弹钢琴</h3>
-<p>首先给的一段音频，用Au打开，发现包含两个内容，一个明显是十六制数字，另外一个怀疑是摩斯密码，手写下来解码得到一段明文</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">YOUSHOULDUSETHISTOXORSOMETHING</span><br></pre></td></tr></table></figure>
-<p>根据提示，考虑异或解密，手搓了一段脚本</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cipher_text_hex = &quot;0x370a05303c290e045005031c2b1858473a5f052117032c39230f005d1e17&quot;</span><br><span class="line">cipher_text_bytes = bytes.fromhex(cipher_text_hex[2:])</span><br><span class="line">key = &quot;YOUSHOULDUSETHISTOXORSOMETHING&quot;</span><br><span class="line">key_bytes = key.encode()</span><br><span class="line">plain_text_bytes = bytearray(len(cipher_text_bytes))</span><br><span class="line"></span><br><span class="line">for i in range(len(cipher_text_bytes)):</span><br><span class="line">    plain_text_bytes[i] = cipher_text_bytes[i] ^ key_bytes[i % len(key_bytes)]</span><br><span class="line"></span><br><span class="line">decrypted_text = plain_text_bytes.decode()</span><br><span class="line"></span><br><span class="line">print(&quot;Decrypted Text:&quot;, decrypted_text)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>但是解下来出现了nep字样，但是字符不对劲</p>
-<p><img src="https://s2.loli.net/2023/09/29/FoR42QkXEf7JsSh.png" alt=""></p>
-<p>然后用CyberChef一把梭，得到了结果</p>
-<p><img src="https://s2.loli.net/2023/09/29/DpPRqJvEW8SImNB.png" alt=""></p>
-<p>应该是脚本存在问题，但是代码能力有限，真想不出来了，等赛后wp吧</p>
-<h3 id="codes">codes</h3>
-<p>根据提示，flag在环境变量中</p>
-<p>根据查找，有一下几种方法</p>
-<ol>
-<li>
-<p><strong>使用 <code>extern char **environ</code> 全局变量：</strong></p>
-<p>这是一种直接的方法，使用全局变量 <code>environ</code>，它是一个指向指针的指针，用于存储环境变量的字符串数组。遍历这个数组并打印环境变量的值。</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="keyword">extern</span> <span class="type">char</span> **environ;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="type">int</span> i = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span> (environ[i] != <span class="literal">NULL</span>) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;%s\n&quot;</span>, environ[i]);</span><br><span class="line">        i++;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-<li>
-<p><strong>使用 <code>getenv()</code> 函数：</strong></p>
-<p><code>getenv()</code> 函数允许你通过指定环境变量名称来获取其值。</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="type">const</span> <span class="type">char</span>* env_var_name = <span class="string">&quot;PATH&quot;</span>;</span><br><span class="line">    <span class="type">char</span>* env_var_value = getenv(env_var_name);</span><br><span class="line">    <span class="keyword">if</span> (env_var_value != <span class="literal">NULL</span>) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;%s=%s\n&quot;</span>, env_var_name, env_var_value);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;Environment variable &#x27;%s&#x27; not found.\n&quot;</span>, env_var_name);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-<li>
-<p><strong>使用 <code>main()</code> 函数的参数 <code>char *argv[]</code>：</strong></p>
-<p>程序的启动参数中也包含了环境变量信息。这种方法需要一些额外的解析工作。</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[], <span class="type">char</span> *envp[])</span> &#123;</span><br><span class="line">    <span class="type">int</span> i = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span> (envp[i] != <span class="literal">NULL</span>) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;%s\n&quot;</span>, envp[i]);</span><br><span class="line">        i++;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<p>逐个尝试，全部失败了</p>
-<p>开始尝试各种绕过姿势</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">extern char **en\</span><br><span class="line">viron;</span><br><span class="line"></span><br><span class="line">int main() &#123;</span><br><span class="line">    int i = 0;</span><br><span class="line">    while (en\</span><br><span class="line">viron[i] != NULL) &#123;</span><br><span class="line">        printf(&quot;%s\n&quot;, en\</span><br><span class="line">viron[i]);</span><br><span class="line">        i++;</span><br><span class="line">    &#125;</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>最终得到flag</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Nepctf&#123;easy_codes_3a5786c2-dd96-46bd-9909-23f894dc8d2a_[TEAM_HASH]&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="ConnectedFive">ConnectedFive</h3>
-<p><img src="https://s2.loli.net/2023/09/29/DIuOpeSJkYsTxWf.png" alt=""></p>
-<p>万宁，果真折磨</p>
-<h3 id="陌生的语言">陌生的语言</h3>
-<p>没啥好说的，上图，比较好奇出题人到底是怎么找到的这个图</p>
-<p><img src="https://s2.loli.net/2023/09/29/ifCgDS2O9Jzdw1y.jpg" alt=""></p>
-<p><img src="https://s2.loli.net/2023/09/29/wofOdTlQaR38XpE.png" alt=""></p>
-<p>然后将对应一下，最终成功提交上去的flag为</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">NepCTF&#123;NEPNEP_A_BELIEVING_HEART_IS_YOUR_MAGIC&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="你也喜欢三月七么">你也喜欢三月七么</h3>
-<p>拿到手刚开始以为这个题是密码的，当然，也确实有部分是，但主要可能是考察阅读理解。我还想再说一句，星穹铁道，启动！</p>
-<p>首先先来看一下附件给了我们什么内容</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">salt_lenth= 10 </span><br><span class="line">key_lenth= 16 </span><br><span class="line">iv= 88219bdee9c396eca3c637c0ea436058 #原始iv转hex的值</span><br><span class="line">ciphertext= b700ae6d0cc979a4401f3dd440bf9703b292b57b6a16b79ade01af58025707fbc29941105d7f50f2657cf7eac735a800ecccdfd42bf6c6ce3b00c8734bf500c819e99e074f481dbece626ccc2f6e0562a81fe84e5dd9750f5a0bb7c20460577547d3255ba636402d6db8777e0c5a429d07a821bf7f9e0186e591dfcfb3bfedfc</span><br></pre></td></tr></table></figure>
-<p>第一个是salt的长度，第二个是key的长度，第三个是偏移量iv，第四个就是相对应的密文了</p>
-<p>其次，来分析一下题目给的提示</p>
-<p><u><strong>三月七：耶，终于来到Nepnep星球啦，让我看看正在火热进行的Hacker夺旗大赛群聊。啊！开拓者，这群名看起来怪怪的诶。 （伸出脑袋，凑近群名，轻轻的闻了一下）哇，好咸诶，开拓者你快来看看！</strong></u></p>
-<p><u><strong>开拓者（U_id）：(端着下巴，磨蹭了一下，眼神若有所思）这好像需要经过啥256处理一下才能得到我们需要的关键。</strong></u></p>
-<p>第一次阅读的时候我的关注点就是再256和群名两个关键上，256是指向hash算法，群名自然是跟附件中没有给出的key（PS：题目中关键的英文也是key）有关。</p>
-<p>但是我刚开始完全没有注意到一个长度的问题，也就是salt_lenth= 10 和key_lenth= 16，而是将NepCTF 2023直接哈希计算了，中间留了空格（PS：因为我看群名也是留了空格的），甚至因为存在salt这个量还在考虑是否算法还进行了变种，然后尝试aes解密失败了。后来又从题目里的关键提示，也就是三月七闻群名好咸，咸指的自然就是盐，而盐的英文是salt。意识到这一点，也就开始知道为什么给出了两个长度值了salt的长度是提示使用NepCTF2023（PS:不加空格，刚好十个字），然后开始计算哈希256，得到的是</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">dd8e671df3882c5be6423cd030bd7cb69671ef27dfe7a541903edc4e23168009</span><br></pre></td></tr></table></figure>
-<p>但是长度是32个字节，所以需要截取出一半作为key，具体代码实现如下</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">from Crypto.Cipher import AES</span><br><span class="line">import binascii</span><br><span class="line"></span><br><span class="line">*#* *提供的信息</span><br><span class="line">*key_hex = &quot;dd8e671df3882c5be6423cd030bd7cb6&quot;</span><br><span class="line">iv_hex = &quot;88219bdee9c396eca3c637c0ea436058&quot;</span><br><span class="line">ciphertext_hex = &quot;b700ae6d0cc979a4401f3dd440bf9703b292b57b6a16b79ade01af58025707fbc29941105d7f50f2657cf7eac735a800ecccdfd42bf6c6ce3b00c8734bf500c819e99e074f481dbece626ccc2f6e0562a81fe84e5dd9750f5a0bb7c20460577547d3255ba636402d6db8777e0c5a429d07a821bf7f9e0186e591dfcfb3bfedfc&quot;</span><br><span class="line"></span><br><span class="line">*#* *将十六进制的**key**、**iv**和**ciphertext**转换为字节串</span><br><span class="line">*key = binascii.unhexlify(key_hex)</span><br><span class="line">iv = binascii.unhexlify(iv_hex)</span><br><span class="line">ciphertext = binascii.unhexlify(ciphertext_hex)</span><br><span class="line"></span><br><span class="line">*#* *创建**AES**解密器对象</span><br><span class="line">*cipher = AES.new(key, AES.MODE_CBC, iv)</span><br><span class="line"></span><br><span class="line">*#* *解密数据</span><br><span class="line">*decrypted_data = cipher.decrypt(ciphertext)</span><br><span class="line"></span><br><span class="line">*#* *将解密后的字节数据转换为字符串</span><br><span class="line">*decrypted_string = decrypted_data.decode(&#x27;utf-8&#x27;)</span><br><span class="line"></span><br><span class="line">*#* *打印解密后的字符串</span><br><span class="line">*print(decrypted_string)</span><br></pre></td></tr></table></figure>
-<p>最终计算下来结果为一串十六进制</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">6148523063484d364c793970625763784c6d6c745a3352774c6d4e76625338794d44497a4c7a41334c7a49304c336c5061316858553070554c6e42755a773d3d</span><br></pre></td></tr></table></figure>
-<p>然后转字符，转base64得到网址</p>
-<p><strong><a href="https://img1.imgtp.com/2023/07/24/yOkXWSJT.png">https://img1.imgtp.com/2023/07/24/yOkXWSJT.png</a></strong></p>
-<p>下载下来一张图片</p>
-<p><img src="https://s2.loli.net/2023/09/29/8eWuRQc2y3htlYi.png" alt=""></p>
-<p>然后第一反应识图，结果google继陌生的语言后又失效喽（悲</p>
-<p>后来又想到题目一开始就有了提示，星穹铁道，然后搜索相关的文字，找到了贝洛伯格特殊文字</p>
-<p><img src="https://s2.loli.net/2023/09/29/biMX7Bx8CuJwScr.jpg" alt=""></p>
-<p>然后跟表对照得到最终的flag</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">NepCTF&#123;HRP_aIways_likes_March_7th&#125;</span><br></pre></td></tr></table></figure>
-<p>(PS:做图文题做到够，麻了)</p>
+    <title>AI-CTF（3）network-in-network</title>
+    <url>/2023/12/01/AI-CTF%EF%BC%883%EF%BC%89network-in-network/</url>
+    <content><![CDATA[<h1>AI-CTF（3）network-in-network</h1>
+<p>本题来自2023HITCTF，这是赛后进行的复现</p>
+<p>有被骂到，qwq~~</p>
+<p><img src="https://s2.loli.net/2023/12/01/bB4Tfy8JHpP2Nd9.png" alt=""></p>
+<p>首先来看问题代码</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"><span class="keyword">import</span> torchvision.transforms <span class="keyword">as</span> transforms</span><br><span class="line"><span class="keyword">import</span> torchvision</span><br><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line">file = Image.<span class="built_in">open</span>(<span class="string">&#x27;origin.jpg&#x27;</span>)</span><br><span class="line">trans = transforms.Compose([</span><br><span class="line">    transforms.ToTensor(),</span><br><span class="line">])</span><br><span class="line">m = trans(file)</span><br><span class="line">torch.manual_seed(<span class="number">0x2daa1a1</span>)</span><br><span class="line">net = nn.Sequential(</span><br><span class="line">    nn.Conv2d(<span class="number">3</span>, <span class="number">5</span>, <span class="number">3</span>),</span><br><span class="line">    nn.ReLU(),</span><br><span class="line">    nn.Conv2d(<span class="number">5</span>, <span class="number">10</span>, <span class="number">5</span>),</span><br><span class="line">    nn.ReLU(),</span><br><span class="line">    nn.MaxPool2d(<span class="number">2</span>),</span><br><span class="line">    nn.Linear(<span class="number">317</span>, <span class="number">800</span>),</span><br><span class="line">    nn.Conv2d(<span class="number">10</span>, <span class="number">1</span>, <span class="number">1</span>),</span><br><span class="line">    nn.Sigmoid()</span><br><span class="line">)</span><br><span class="line">torchvision.utils.save_image(net(m).squeeze(), <span class="string">&#x27;enc.png&#x27;</span>)</span><br><span class="line">torch.save(net, <span class="string">&#x27;net.pt&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>简单解释</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">file = Image.<span class="built_in">open</span>(<span class="string">&#x27;origin.jpg&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>使用 PIL 打开一张名为 ‘origin.jpg’ 的图像。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">trans = transforms.Compose([</span><br><span class="line">    transforms.ToTensor(),</span><br><span class="line">])</span><br></pre></td></tr></table></figure>
+<p>创建一个图像转换操作的管道，将图像转换为 PyTorch 的张量（tensor）。<code>transforms.ToTensor()</code> 将图像转换为张量。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">m = trans(file)</span><br></pre></td></tr></table></figure>
+<p>通过上面的转换管道，将图像 ‘origin.jpg’ 转换为张量 <code>m</code>。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">torch.manual_seed(<span class="number">0x2daa1a1</span>)</span><br></pre></td></tr></table></figure>
+<p>设置 PyTorch 的随机种子，以确保结果的可重复性。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">net = nn.Sequential(</span><br><span class="line">    nn.Conv2d(<span class="number">3</span>, <span class="number">5</span>, <span class="number">3</span>),</span><br><span class="line">    nn.ReLU(),</span><br><span class="line">    nn.Conv2d(<span class="number">5</span>, <span class="number">10</span>, <span class="number">5</span>),</span><br><span class="line">    nn.ReLU(),</span><br><span class="line">    nn.MaxPool2d(<span class="number">2</span>),</span><br><span class="line">    nn.Linear(<span class="number">317</span>, <span class="number">800</span>),</span><br><span class="line">    nn.Conv2d(<span class="number">10</span>, <span class="number">1</span>, <span class="number">1</span>),</span><br><span class="line">    nn.Sigmoid()</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<p>构建一个简单的卷积神经网络（CNN）模型。该模型由以下层组成：</p>
+<ul>
+<li>一个卷积层 (<code>nn.Conv2d</code>)，输入通道数为 3，输出通道数为 5，卷积核大小为 3。</li>
+<li>一个 ReLU 激活函数 (<code>nn.ReLU</code>)。</li>
+<li>一个卷积层，输入通道数为 5，输出通道数为 10，卷积核大小为 5。</li>
+<li>一个 ReLU 激活函数。</li>
+<li>一个最大池化层 (<code>nn.MaxPool2d</code>)，池化窗口大小为 2。</li>
+<li>一个全连接层 (<code>nn.Linear</code>)，输入特征数为 317，输出特征数为 800。</li>
+<li>一个卷积层，输入通道数为 10，输出通道数为 1，卷积核大小为 1。</li>
+<li>一个 Sigmoid 激活函数 (<code>nn.Sigmoid</code>)。</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">torchvision.utils.save_image(net(m).squeeze(), <span class="string">&#x27;enc.png&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>使用模型对输入图像进行处理，将处理后的张量通过 <code>squeeze()</code> 去掉维度为 1 的尺寸，然后使用 <code>torchvision.utils.save_image</code> 将处理后的图像保存为 ‘enc.png’。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">torch.save(net, <span class="string">&#x27;net.pt&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>其实，这题的重点问题模型的输出逆推。首先，是前面卷积层卷积核小，仅捕捉局部细节特征，对整体图像不会有太大影响。其次，在全连接层，将十个通道进行了归一化处理，因此我们所能得到的仅是全连接层后被均值处理后的图像。</p>
+<p>被困难卡住了，得弄明白回来补充</p>
 ]]></content>
       <categories>
-        <category>Writeup</category>
+        <category>AI</category>
+        <category>AI-CTF</category>
       </categories>
       <tags>
-        <tag>NepNep</tag>
+        <tag>HITCTF</tag>
+        <tag>AI</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>AI-安全（1）总述</title>
+    <url>/2023/11/15/AI-%E5%AE%89%E5%85%A8%EF%BC%881%EF%BC%89%E6%80%BB%E8%BF%B0/</url>
+    <content><![CDATA[<h1>AI安全</h1>
+<p>近期开始对AI安全开始研究，顺带记录下自己的学习研究过程。</p>
+<p>参考了腾讯出品的AI安全威胁矩阵。个人觉得分类相当合理，极具参考价值。</p>
+<p><a href="https://matrix.tencent.com/">AI安全威胁矩阵 </a></p>
+<p>这是引用的其中的一段话：</p>
+<p><strong>在过去的几年中，人工智能技术已在许多领域得到广泛应用，包括图像处理，语音识别，自然语言处理等。因此，在安全关键型应用程序中，人工智能技术的安全性问题日益成为人们关注的焦点。研究社区和工业公司。除了性能之外，工程师和用户还应考虑AI系统的安全性问题，并确保AI模型满足不同业务场景的需求，避免恶意控制，影响，欺诈，错误和隐私泄露所造成的严重后果。</strong></p>
+<p><strong>为了向开发人员和用户提供有关AI系统安全问题的更好指南，本矩阵旨在发布一个框架，以基于ATT＆CK范式从对手的角度阐明攻击过程和特定的攻击技术，该方法是在网络安全领域已经相对成熟。了解和识别这些技术有助于AI开发人员和维护人员在整个生命周期和相应的解决方案中认识到AI系统的潜在风险，从而为AI系统的应用和部署提供必不可少的技术保证。</strong></p>
+<p><img src="https://s2.loli.net/2023/11/14/zn3K7xhvJZCeVRf.png" alt=""></p>
+<p>学习心得及相关记录如下：</p>
+<p><a href="https://wh1tej0ker.github.io/2023/11/16/AI-%E5%AE%89%E5%85%A8%EF%BC%882%EF%BC%89%E6%A2%AF%E5%BA%A6%E6%B3%84%E9%9C%B2%E6%94%BB%E5%87%BB/">梯度泄露攻击 | Wh1teJ0ker</a></p>
+<p>AI相关CTF赛题：</p>
+<p><a href="https://wh1tej0ker.github.io/2023/11/17/AI-CTF%EF%BC%881%EF%BC%89Alice/">AI-CTF（1）Alice-AI系列 | Wh1teJ0ker</a></p>
+<p><a href="https://wh1tej0ker.github.io/2023/11/18/AI-CTF%EF%BC%882%EF%BC%89LeNet/">AI-CTF（2）LeNet | Wh1teJ0ker</a></p>
+<p><a href="https://wh1tej0ker.github.io/2023/12/01/AI-CTF%EF%BC%883%EF%BC%89network-in-network/">AI-CTF（3）network-in-network | Wh1teJ0ker</a></p>
+]]></content>
+      <categories>
+        <category>AI</category>
+        <category>AI安全</category>
+      </categories>
+      <tags>
+        <tag>AI</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>CTFshow-信息搜集</title>
+    <url>/2023/12/19/CTFshow-%E4%BF%A1%E6%81%AF%E6%90%9C%E9%9B%86/</url>
+    <content><![CDATA[<h1>CTFshow-信息搜集</h1>
+<h2 id="web1">web1</h2>
+<p>f12，前端js敏感泄露</p>
+<p><img src="https://s2.loli.net/2023/12/19/3wpAmDHNfxPEKC5.png" alt="ctfshow_xinxisouji_1"></p>
+<h2 id="web2">web2</h2>
+<p>禁止了f12，但仍然可以通过查看源码发方式去发现flag</p>
+<p><img src="https://s2.loli.net/2023/12/19/gK3hSrmNvXBjlUt.png" alt="ctfshow_xinxisouji_2"></p>
+<h2 id="web3">web3</h2>
+<p>flag藏在响应包中</p>
+<p><img src="https://s2.loli.net/2023/12/19/OWwmaN8i9KSdCPs.png" alt="ctfshow_xinxisouji_3"></p>
+<h2 id="web4">web4</h2>
+<p>查看robots.txt泄露信息，访问相应目录得到flag</p>
+<p><img src="https://s2.loli.net/2023/12/19/pQaHgDOAEG3YsBf.png" alt="ctfshow_xinxisouji_4"></p>
+<h2 id="web5">web5</h2>
+<p>存在源码泄露，访问index.phps，下载得到flag</p>
+<p><img src="https://s2.loli.net/2023/12/19/QtJiznrYFUC79BE.png" alt="ctfshow_xinxisouji_5"></p>
+<h2 id="web6">web6</h2>
+<p>同信息泄露，访问www.zip，得到源码的压缩包</p>
+<p><img src="https://s2.loli.net/2023/12/19/uxXkLBZlwHhgdMs.png" alt="ctfshow_xinxisouji_6"></p>
+<h2 id="web7">web7</h2>
+<p>版本控制，明显提示了git泄露</p>
+<p>访问.git</p>
+<p><img src="https://s2.loli.net/2023/12/19/f9VyPXODWpjYmFQ.png" alt="ctfshow_xinxisouji_7"></p>
+<h2 id="web8">web8</h2>
+<p>版本控制，跟上一题有所区别，是svn泄露</p>
+<p>访问.svn</p>
+<p><img src="https://s2.loli.net/2023/12/19/RmQ5zOPCyESpoUw.png" alt="ctfshow_xinxisouji_8"></p>
+<h2 id="web9">web9</h2>
+<p>提示vim，存在缓存泄露</p>
+<p>访问index.php.swp</p>
+<p><img src="https://s2.loli.net/2023/12/19/JUEIWPLwMlaTY6A.png" alt="ctfshow_xinxisouji_9"></p>
+<h2 id="web10">web10</h2>
+<p>直接查看cookie即得到</p>
+<p><img src="https://s2.loli.net/2023/12/19/S5qH9XU2pR7AhK1.png" alt="ctfshow_xinxisouji_10"></p>
+<h2 id="web11">web11</h2>
+<p>考察的是DNS解析相关，刚好填补了知识点的空缺</p>
+<p><img src="https://s2.loli.net/2023/12/19/bYNALzscdjB36IC.png" alt="ctfshow_xinxisouji_11"></p>
+<h2 id="web12">web12</h2>
+<p>主页面地下一串数字，即是密码</p>
+<p>访问robots.txt，得到管理员后台路径/admin</p>
+<p>然后账号admin，密码372619038</p>
+<p>既得flag</p>
+<h2 id="web13">web13</h2>
+<p>页面下方documents点击</p>
+<p><img src="https://s2.loli.net/2023/12/19/mBFd3P1wbSTnE7i.png" alt="ctfshow_xinxisouji_12"></p>
+<p>然后发现开发者文档</p>
+<p><img src="https://s2.loli.net/2023/12/19/lBcnrqbRNGmzPTC.png" alt="ctfshow_xinxisouji_13"></p>
+<p>登录即得flag</p>
+<p><img src="https://s2.loli.net/2023/12/19/GbsVhao8P9mkrA5.png" alt="ctfshow_xinxisouji_14"></p>
+<h2 id="web14">web14</h2>
+<p>存在编辑器</p>
+<p><img src="https://s2.loli.net/2023/12/19/DdokiKVFqbNJYsH.png" alt="ctfshow_xinxisouji_15"></p>
+<p>文件上传处存在源码泄露</p>
+<p><img src="https://s2.loli.net/2023/12/19/o71TQKGNUfObIgZ.png" alt="ctfshow_xinxisouji_16"></p>
+<p>然后找到相应的flag文件</p>
+<p>访问对应路径/nothinghere/fl000g.txt 得到flag</p>
+<h2 id="web15">web15</h2>
+<p>扫描发现存在后台/admin</p>
+<p>然后根据邮箱进行社工，发现密保答案，重置密码</p>
+<p>登录得到flag</p>
+<h2 id="web16">web16</h2>
+<p>探针默认名称为</p>
+<p>tz.php，访问后在phpinfo中找到flag</p>
+<p><img src="https://s2.loli.net/2023/12/19/Cg3GD1Awu2ab97M.png" alt="ctfshow_xinxisouji_17"></p>
+<p><img src="https://s2.loli.net/2023/12/19/HmRYp3f4cjheEk2.png" alt="ctfshow_xinxisouji_18"></p>
+<h2 id="web17">web17</h2>
+<p>扫描后发现存在backup.sql泄露</p>
+<p>然后在文件中发现flag</p>
+<p><img src="https://s2.loli.net/2023/12/19/itj8EzL5TxlUFCJ.png" alt="ctfshow_xinxisouji_19"></p>
+<h2 id="web18">web18</h2>
+<p>源码中存在敏感信息</p>
+<p><img src="https://s2.loli.net/2023/12/19/5Xn4w8eKkVYld7g.png" alt="ctfshow_xinxisouji_20"></p>
+<p><img src="https://s2.loli.net/2023/12/19/5Xn4w8eKkVYld7g.png" alt="ctfshow_xinxisouji_20"></p>
+<p>解密后访问110.php</p>
+<h2 id="web19">web19</h2>
+<p>前端加密，参数保存在js中</p>
+<p><img src="https://s2.loli.net/2023/12/19/sNkwgWSCDFxVcey.png" alt="ctfshow_xinxisouji_22"></p>
+<p>根据源码，aes加密，CBC模式，zeropadding填充</p>
+<p>然后解密可得密码</p>
+<p><img src="https://s2.loli.net/2023/12/19/bKWAzSZkBwdQsRe.png" alt="ctfshow_xinxisouji_23"></p>
+<p>最后进行登录，获得flag</p>
+<p><img src="https://s2.loli.net/2023/12/19/j6gUmZuhnMx5ri1.png" alt="ctfshow_xinxisouji_24"></p>
+<h2 id="web20">web20</h2>
+<p>访问/db/db.mdb</p>
+<p>下载库，查找flag</p>
+<p><img src="https://s2.loli.net/2023/12/19/9nHjpeWtQJxYvba.png" alt="ctfshow_xinxisouji_25"></p>
+<h2 id="总结">总结</h2>
+<p>信息泄露问题很普遍，前期的信息搜集很重要，无论是在CTF赛事中，还是在实战。</p>
+]]></content>
+      <categories>
+        <category>CTFshow</category>
+      </categories>
+      <tags>
+        <tag>信息泄露</tag>
       </tags>
   </entry>
   <entry>
@@ -665,77 +835,6 @@
       </tags>
   </entry>
   <entry>
-    <title>AI-CTF（3）network-in-network</title>
-    <url>/2023/12/01/AI-CTF%EF%BC%883%EF%BC%89network-in-network/</url>
-    <content><![CDATA[<h1>AI-CTF（3）network-in-network</h1>
-<p>本题来自2023HITCTF，这是赛后进行的复现</p>
-<p>有被骂到，qwq~~</p>
-<p><img src="https://s2.loli.net/2023/12/01/bB4Tfy8JHpP2Nd9.png" alt=""></p>
-<p>首先来看问题代码</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"><span class="keyword">import</span> torchvision.transforms <span class="keyword">as</span> transforms</span><br><span class="line"><span class="keyword">import</span> torchvision</span><br><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line">file = Image.<span class="built_in">open</span>(<span class="string">&#x27;origin.jpg&#x27;</span>)</span><br><span class="line">trans = transforms.Compose([</span><br><span class="line">    transforms.ToTensor(),</span><br><span class="line">])</span><br><span class="line">m = trans(file)</span><br><span class="line">torch.manual_seed(<span class="number">0x2daa1a1</span>)</span><br><span class="line">net = nn.Sequential(</span><br><span class="line">    nn.Conv2d(<span class="number">3</span>, <span class="number">5</span>, <span class="number">3</span>),</span><br><span class="line">    nn.ReLU(),</span><br><span class="line">    nn.Conv2d(<span class="number">5</span>, <span class="number">10</span>, <span class="number">5</span>),</span><br><span class="line">    nn.ReLU(),</span><br><span class="line">    nn.MaxPool2d(<span class="number">2</span>),</span><br><span class="line">    nn.Linear(<span class="number">317</span>, <span class="number">800</span>),</span><br><span class="line">    nn.Conv2d(<span class="number">10</span>, <span class="number">1</span>, <span class="number">1</span>),</span><br><span class="line">    nn.Sigmoid()</span><br><span class="line">)</span><br><span class="line">torchvision.utils.save_image(net(m).squeeze(), <span class="string">&#x27;enc.png&#x27;</span>)</span><br><span class="line">torch.save(net, <span class="string">&#x27;net.pt&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<p>简单解释</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">file = Image.<span class="built_in">open</span>(<span class="string">&#x27;origin.jpg&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<p>使用 PIL 打开一张名为 ‘origin.jpg’ 的图像。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">trans = transforms.Compose([</span><br><span class="line">    transforms.ToTensor(),</span><br><span class="line">])</span><br></pre></td></tr></table></figure>
-<p>创建一个图像转换操作的管道，将图像转换为 PyTorch 的张量（tensor）。<code>transforms.ToTensor()</code> 将图像转换为张量。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">m = trans(file)</span><br></pre></td></tr></table></figure>
-<p>通过上面的转换管道，将图像 ‘origin.jpg’ 转换为张量 <code>m</code>。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">torch.manual_seed(<span class="number">0x2daa1a1</span>)</span><br></pre></td></tr></table></figure>
-<p>设置 PyTorch 的随机种子，以确保结果的可重复性。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">net = nn.Sequential(</span><br><span class="line">    nn.Conv2d(<span class="number">3</span>, <span class="number">5</span>, <span class="number">3</span>),</span><br><span class="line">    nn.ReLU(),</span><br><span class="line">    nn.Conv2d(<span class="number">5</span>, <span class="number">10</span>, <span class="number">5</span>),</span><br><span class="line">    nn.ReLU(),</span><br><span class="line">    nn.MaxPool2d(<span class="number">2</span>),</span><br><span class="line">    nn.Linear(<span class="number">317</span>, <span class="number">800</span>),</span><br><span class="line">    nn.Conv2d(<span class="number">10</span>, <span class="number">1</span>, <span class="number">1</span>),</span><br><span class="line">    nn.Sigmoid()</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
-<p>构建一个简单的卷积神经网络（CNN）模型。该模型由以下层组成：</p>
-<ul>
-<li>一个卷积层 (<code>nn.Conv2d</code>)，输入通道数为 3，输出通道数为 5，卷积核大小为 3。</li>
-<li>一个 ReLU 激活函数 (<code>nn.ReLU</code>)。</li>
-<li>一个卷积层，输入通道数为 5，输出通道数为 10，卷积核大小为 5。</li>
-<li>一个 ReLU 激活函数。</li>
-<li>一个最大池化层 (<code>nn.MaxPool2d</code>)，池化窗口大小为 2。</li>
-<li>一个全连接层 (<code>nn.Linear</code>)，输入特征数为 317，输出特征数为 800。</li>
-<li>一个卷积层，输入通道数为 10，输出通道数为 1，卷积核大小为 1。</li>
-<li>一个 Sigmoid 激活函数 (<code>nn.Sigmoid</code>)。</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">torchvision.utils.save_image(net(m).squeeze(), <span class="string">&#x27;enc.png&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<p>使用模型对输入图像进行处理，将处理后的张量通过 <code>squeeze()</code> 去掉维度为 1 的尺寸，然后使用 <code>torchvision.utils.save_image</code> 将处理后的图像保存为 ‘enc.png’。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">torch.save(net, <span class="string">&#x27;net.pt&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<p>其实，这题的重点问题模型的输出逆推。首先，是前面卷积层卷积核小，仅捕捉局部细节特征，对整体图像不会有太大影响。其次，在全连接层，将十个通道进行了归一化处理，因此我们所能得到的仅是全连接层后被均值处理后的图像。</p>
-<p>被困难卡住了，得弄明白回来补充</p>
-]]></content>
-      <categories>
-        <category>AI</category>
-        <category>AI-CTF</category>
-      </categories>
-      <tags>
-        <tag>HITCTF</tag>
-        <tag>AI</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>AI-安全（1）总述</title>
-    <url>/2023/11/15/AI-%E5%AE%89%E5%85%A8%EF%BC%881%EF%BC%89%E6%80%BB%E8%BF%B0/</url>
-    <content><![CDATA[<h1>AI安全</h1>
-<p>近期开始对AI安全开始研究，顺带记录下自己的学习研究过程。</p>
-<p>参考了腾讯出品的AI安全威胁矩阵。个人觉得分类相当合理，极具参考价值。</p>
-<p><a href="https://matrix.tencent.com/">AI安全威胁矩阵 </a></p>
-<p>这是引用的其中的一段话：</p>
-<p><strong>在过去的几年中，人工智能技术已在许多领域得到广泛应用，包括图像处理，语音识别，自然语言处理等。因此，在安全关键型应用程序中，人工智能技术的安全性问题日益成为人们关注的焦点。研究社区和工业公司。除了性能之外，工程师和用户还应考虑AI系统的安全性问题，并确保AI模型满足不同业务场景的需求，避免恶意控制，影响，欺诈，错误和隐私泄露所造成的严重后果。</strong></p>
-<p><strong>为了向开发人员和用户提供有关AI系统安全问题的更好指南，本矩阵旨在发布一个框架，以基于ATT＆CK范式从对手的角度阐明攻击过程和特定的攻击技术，该方法是在网络安全领域已经相对成熟。了解和识别这些技术有助于AI开发人员和维护人员在整个生命周期和相应的解决方案中认识到AI系统的潜在风险，从而为AI系统的应用和部署提供必不可少的技术保证。</strong></p>
-<p><img src="https://s2.loli.net/2023/11/14/zn3K7xhvJZCeVRf.png" alt=""></p>
-<p>学习心得及相关记录如下：</p>
-<p><a href="https://wh1tej0ker.github.io/2023/11/16/AI-%E5%AE%89%E5%85%A8%EF%BC%882%EF%BC%89%E6%A2%AF%E5%BA%A6%E6%B3%84%E9%9C%B2%E6%94%BB%E5%87%BB/">梯度泄露攻击 | Wh1teJ0ker</a></p>
-<p>AI相关CTF赛题：</p>
-<p><a href="https://wh1tej0ker.github.io/2023/11/17/AI-CTF%EF%BC%881%EF%BC%89Alice/">AI-CTF（1）Alice-AI系列 | Wh1teJ0ker</a></p>
-<p><a href="https://wh1tej0ker.github.io/2023/11/18/AI-CTF%EF%BC%882%EF%BC%89LeNet/">AI-CTF（2）LeNet | Wh1teJ0ker</a></p>
-<p><a href="https://wh1tej0ker.github.io/2023/12/01/AI-CTF%EF%BC%883%EF%BC%89network-in-network/">AI-CTF（3）network-in-network | Wh1teJ0ker</a></p>
-]]></content>
-      <categories>
-        <category>AI</category>
-        <category>AI安全</category>
-      </categories>
-      <tags>
-        <tag>AI</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>AI-安全（2）梯度泄露攻击</title>
     <url>/2023/11/16/AI-%E5%AE%89%E5%85%A8%EF%BC%882%EF%BC%89%E6%A2%AF%E5%BA%A6%E6%B3%84%E9%9C%B2%E6%94%BB%E5%87%BB/</url>
     <content><![CDATA[<h1>梯度泄露攻击</h1>
@@ -784,105 +883,6 @@
       <tags>
         <tag>AI</tag>
         <tag>梯度泄露攻击</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>CTFshow-信息搜集</title>
-    <url>/2023/12/19/CTFshow-%E4%BF%A1%E6%81%AF%E6%90%9C%E9%9B%86/</url>
-    <content><![CDATA[<h1>CTFshow-信息搜集</h1>
-<h2 id="web1">web1</h2>
-<p>f12，前端js敏感泄露</p>
-<p><img src="https://s2.loli.net/2023/12/19/3wpAmDHNfxPEKC5.png" alt="ctfshow_xinxisouji_1"></p>
-<h2 id="web2">web2</h2>
-<p>禁止了f12，但仍然可以通过查看源码发方式去发现flag</p>
-<p><img src="https://s2.loli.net/2023/12/19/gK3hSrmNvXBjlUt.png" alt="ctfshow_xinxisouji_2"></p>
-<h2 id="web3">web3</h2>
-<p>flag藏在响应包中</p>
-<p><img src="https://s2.loli.net/2023/12/19/OWwmaN8i9KSdCPs.png" alt="ctfshow_xinxisouji_3"></p>
-<h2 id="web4">web4</h2>
-<p>查看robots.txt泄露信息，访问相应目录得到flag</p>
-<p><img src="https://s2.loli.net/2023/12/19/pQaHgDOAEG3YsBf.png" alt="ctfshow_xinxisouji_4"></p>
-<h2 id="web5">web5</h2>
-<p>存在源码泄露，访问index.phps，下载得到flag</p>
-<p><img src="https://s2.loli.net/2023/12/19/QtJiznrYFUC79BE.png" alt="ctfshow_xinxisouji_5"></p>
-<h2 id="web6">web6</h2>
-<p>同信息泄露，访问www.zip，得到源码的压缩包</p>
-<p><img src="https://s2.loli.net/2023/12/19/uxXkLBZlwHhgdMs.png" alt="ctfshow_xinxisouji_6"></p>
-<h2 id="web7">web7</h2>
-<p>版本控制，明显提示了git泄露</p>
-<p>访问.git</p>
-<p><img src="https://s2.loli.net/2023/12/19/f9VyPXODWpjYmFQ.png" alt="ctfshow_xinxisouji_7"></p>
-<h2 id="web8">web8</h2>
-<p>版本控制，跟上一题有所区别，是svn泄露</p>
-<p>访问.svn</p>
-<p><img src="https://s2.loli.net/2023/12/19/RmQ5zOPCyESpoUw.png" alt="ctfshow_xinxisouji_8"></p>
-<h2 id="web9">web9</h2>
-<p>提示vim，存在缓存泄露</p>
-<p>访问index.php.swp</p>
-<p><img src="https://s2.loli.net/2023/12/19/JUEIWPLwMlaTY6A.png" alt="ctfshow_xinxisouji_9"></p>
-<h2 id="web10">web10</h2>
-<p>直接查看cookie即得到</p>
-<p><img src="https://s2.loli.net/2023/12/19/S5qH9XU2pR7AhK1.png" alt="ctfshow_xinxisouji_10"></p>
-<h2 id="web11">web11</h2>
-<p>考察的是DNS解析相关，刚好填补了知识点的空缺</p>
-<p><img src="https://s2.loli.net/2023/12/19/bYNALzscdjB36IC.png" alt="ctfshow_xinxisouji_11"></p>
-<h2 id="web12">web12</h2>
-<p>主页面地下一串数字，即是密码</p>
-<p>访问robots.txt，得到管理员后台路径/admin</p>
-<p>然后账号admin，密码372619038</p>
-<p>既得flag</p>
-<h2 id="web13">web13</h2>
-<p>页面下方documents点击</p>
-<p><img src="https://s2.loli.net/2023/12/19/mBFd3P1wbSTnE7i.png" alt="ctfshow_xinxisouji_12"></p>
-<p>然后发现开发者文档</p>
-<p><img src="https://s2.loli.net/2023/12/19/lBcnrqbRNGmzPTC.png" alt="ctfshow_xinxisouji_13"></p>
-<p>登录即得flag</p>
-<p><img src="https://s2.loli.net/2023/12/19/GbsVhao8P9mkrA5.png" alt="ctfshow_xinxisouji_14"></p>
-<h2 id="web14">web14</h2>
-<p>存在编辑器</p>
-<p><img src="https://s2.loli.net/2023/12/19/DdokiKVFqbNJYsH.png" alt="ctfshow_xinxisouji_15"></p>
-<p>文件上传处存在源码泄露</p>
-<p><img src="https://s2.loli.net/2023/12/19/o71TQKGNUfObIgZ.png" alt="ctfshow_xinxisouji_16"></p>
-<p>然后找到相应的flag文件</p>
-<p>访问对应路径/nothinghere/fl000g.txt 得到flag</p>
-<h2 id="web15">web15</h2>
-<p>扫描发现存在后台/admin</p>
-<p>然后根据邮箱进行社工，发现密保答案，重置密码</p>
-<p>登录得到flag</p>
-<h2 id="web16">web16</h2>
-<p>探针默认名称为</p>
-<p>tz.php，访问后在phpinfo中找到flag</p>
-<p><img src="https://s2.loli.net/2023/12/19/Cg3GD1Awu2ab97M.png" alt="ctfshow_xinxisouji_17"></p>
-<p><img src="https://s2.loli.net/2023/12/19/HmRYp3f4cjheEk2.png" alt="ctfshow_xinxisouji_18"></p>
-<h2 id="web17">web17</h2>
-<p>扫描后发现存在backup.sql泄露</p>
-<p>然后在文件中发现flag</p>
-<p><img src="https://s2.loli.net/2023/12/19/itj8EzL5TxlUFCJ.png" alt="ctfshow_xinxisouji_19"></p>
-<h2 id="web18">web18</h2>
-<p>源码中存在敏感信息</p>
-<p><img src="https://s2.loli.net/2023/12/19/5Xn4w8eKkVYld7g.png" alt="ctfshow_xinxisouji_20"></p>
-<p><img src="https://s2.loli.net/2023/12/19/5Xn4w8eKkVYld7g.png" alt="ctfshow_xinxisouji_20"></p>
-<p>解密后访问110.php</p>
-<h2 id="web19">web19</h2>
-<p>前端加密，参数保存在js中</p>
-<p><img src="https://s2.loli.net/2023/12/19/sNkwgWSCDFxVcey.png" alt="ctfshow_xinxisouji_22"></p>
-<p>根据源码，aes加密，CBC模式，zeropadding填充</p>
-<p>然后解密可得密码</p>
-<p><img src="https://s2.loli.net/2023/12/19/bKWAzSZkBwdQsRe.png" alt="ctfshow_xinxisouji_23"></p>
-<p>最后进行登录，获得flag</p>
-<p><img src="https://s2.loli.net/2023/12/19/j6gUmZuhnMx5ri1.png" alt="ctfshow_xinxisouji_24"></p>
-<h2 id="web20">web20</h2>
-<p>访问/db/db.mdb</p>
-<p>下载库，查找flag</p>
-<p><img src="https://s2.loli.net/2023/12/19/9nHjpeWtQJxYvba.png" alt="ctfshow_xinxisouji_25"></p>
-<h2 id="总结">总结</h2>
-<p>信息泄露问题很普遍，前期的信息搜集很重要，无论是在CTF赛事中，还是在实战。</p>
-]]></content>
-      <categories>
-        <category>CTFshow</category>
-      </categories>
-      <tags>
-        <tag>信息泄露</tag>
       </tags>
   </entry>
   <entry>
