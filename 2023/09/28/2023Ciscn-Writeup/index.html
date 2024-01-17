@@ -1,0 +1,236 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>2023Ciscn-Writeup | Wh1teJ0ker</title><meta name="author" content="Wh1teJ0ker"><meta name="copyright" content="Wh1teJ0ker"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="2023Ciscn-Writeup Misc 签到卡 前往公众号查看提示  print(open(‘&#x2F;flag’).read())  被加密的生产流量 下载附件得到一个modbus.pcap，用wireshark打开后，查看Modbus&#x2F;TCP协议，按正常顺序排序。  在正常的数据流之后，在末尾段发现异常字母，逐一提取拼接，得到一个字符串  将字符串进行base32编码，得到flag  国粹 下载">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2023Ciscn-Writeup">
+<meta property="og:url" content="https://wh1tej0ker.github.io/2023/09/28/2023Ciscn-Writeup/index.html">
+<meta property="og:site_name" content="Wh1teJ0ker">
+<meta property="og:description" content="2023Ciscn-Writeup Misc 签到卡 前往公众号查看提示  print(open(‘&#x2F;flag’).read())  被加密的生产流量 下载附件得到一个modbus.pcap，用wireshark打开后，查看Modbus&#x2F;TCP协议，按正常顺序排序。  在正常的数据流之后，在末尾段发现异常字母，逐一提取拼接，得到一个字符串  将字符串进行base32编码，得到flag  国粹 下载">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s2.loli.net/2023/09/29/Eak5dtX7C8KevMz.png">
+<meta property="article:published_time" content="2023-09-27T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-09-28T18:40:47.048Z">
+<meta property="article:author" content="Wh1teJ0ker">
+<meta property="article:tag" content="ciscn">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2023/09/29/Eak5dtX7C8KevMz.png"><link rel="shortcut icon" href="/images/image.ico"><link rel="canonical" href="https://wh1tej0ker.github.io/2023/09/28/2023Ciscn-Writeup/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":true,"top_n_per_article":1,"unescape":true,"languages":{"hits_empty":"找不到您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '2023Ciscn-Writeup',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2023-09-29 02:40:47'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = (url,id = false) => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      if (id) link.id = id
+      link.onerror = reject
+      link.onload = link.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        link.onload = link.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://s2.loli.net/2023/09/28/jQUKLPy1q8umXSY.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">13</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">12</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">5</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background-image: url('https://s2.loli.net/2023/09/28/4rzwiJm9xgjnycp.jpg')"><nav id="nav"><span id="blog-info"><a href="/" title="Wh1teJ0ker"><img class="site-icon" src="https://s2.loli.net/2023/09/28/jQUKLPy1q8umXSY.jpg"/><span class="site-name">Wh1teJ0ker</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">2023Ciscn-Writeup</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-09-27T16:00:00.000Z" title="发表于 2023-09-28 00:00:00">2023-09-28</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-09-28T18:40:47.048Z" title="更新于 2023-09-29 02:40:47">2023-09-29</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Writeup/">Writeup</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="2023Ciscn-Writeup"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1>2023Ciscn-Writeup</h1>
+<h2 id="Misc">Misc</h2>
+<h3 id="签到卡">签到卡</h3>
+<p>前往公众号查看提示</p>
+<img src="https://s2.loli.net/2023/09/29/oJZMzENhLVPRB3H.jpg" style="zoom: 50%;" />
+<p>print(open(‘/flag’).read())</p>
+<img src="https://s2.loli.net/2023/09/29/vP81gtA4meOCbzx.jpg" style="zoom: 65%;" />
+<h3 id="被加密的生产流量">被加密的生产流量</h3>
+<p>下载附件得到一个modbus.pcap，用wireshark打开后，查看Modbus/TCP协议，按正常顺序排序。</p>
+<p><img src="https://s2.loli.net/2023/09/29/xVKGsjTdmtwIy43.jpg" alt=""></p>
+<p>在正常的数据流之后，在末尾段发现异常字母，逐一提取拼接，得到一个字符串</p>
+<p><img src="https://s2.loli.net/2023/09/29/n3l2yedwSfrbTUM.jpg" alt=""></p>
+<p>将字符串进行base32编码，得到flag</p>
+<p><img src="https://s2.loli.net/2023/09/29/KeXyMoC7NsWmgpl.jpg" alt=""></p>
+<h3 id="国粹">国粹</h3>
+<p>下载附件给出了三个图</p>
+<p>观察题目那图发现多出一个一万，拼接考虑成x轴和y轴，猜测与坐标有关</p>
+<p>一万到九万是1-9，一筒到九筒是10-18，一条到九条是19-27，东南西北中发白是28-34，春夏秋冬梅兰竹菊是35-42</p>
+<p>所以将a中的作为横坐标，k作为纵坐标进行绘图</p>
+<p>得到最终的flag为flag{202305012359}</p>
+<h2 id="crypto">crypto</h2>
+<h3 id="国密">国密</h3>
+<p>下载附件，查看提示，根据其密钥分发流程进行操作</p>
+<p><img src="https://s2.loli.net/2023/09/29/HTBcAo3kXvmD2Z5.jpg" alt=""></p>
+<p>首先发送</p>
+<p><code>curl -d &quot;name=%E7%8E%8B%E5%98%89%E5%AE%87&amp;school=%E5%93%88%E5%B0%94%E6%BB%A8%E7%90%86%E5%B7%A5%E5%A4%A7%E5%AD%A6&amp;phone=17625419356&quot; http://39.106.48.123:24920/api/login</code></p>
+<p>得到用户id</p>
+<p><code>&quot;id&quot;: &quot;7a86f8de-7824-48a7-957d-2896a8fcf7ce&quot;</code></p>
+<p>生成SM2算法的公钥和密钥</p>
+<p><code>A_Public_Key:C25D0FF8A640422159ABC18A2DE046F33E348A788356E09514C0FD47023D04621D43926D0E76B7325AA3FC5B1C9C1F44A46AED2E91198FFA0FE83990F326EB0B</code><br>
+<code>A_Private_Key:CB42D512CD6C0E170CDE1F7611946C797ED546BD017BF784CF954E1D4F4D2CAB</code></p>
+<p>发送公钥</p>
+<p>curl -d “id=7a86f8de-7824-48a7-957d-2896a8fcf7ce&amp;publicKey=C25D0FF8A640422159ABC18A2DE046F33E348A788356E09514C0FD47023D04621D43926D0E76B7325AA3FC5B1C9C1F44A46AED2E91198FFA0FE83990F326EB0B” <a target="_blank" rel="noopener" href="http://39.106.48.123:24920/api/allkey">http://39.106.48.123:24920/api/allkey</a></p>
+<p>得到结果</p>
+<p><code>&#123;</code><br>
+<code>&quot;message&quot;: &quot;success&quot;,</code><br>
+<code>&quot;data&quot;: &#123;</code><br>
+<code>&quot;publicKey&quot;: &quot;0463e8cc27aa0be1438ad237b6f9bcf2180baf4ed91cb1706ad6beed7d4c91cedc387b93f47ddae75e949b3a0fcc17332614dbbc72ff3f4426bf4f0744b6af6d3b&quot;,</code><br>
+<code>&quot;privateKey&quot;: &quot;0b31854a2fdb1c7da50dc8850223b35099d92bd001fa8d9aa70e0a91292a7e00&quot;,</code><br>
+<code>&quot;randomString&quot;: &quot;036942bd54cf3183089cd6c2ea2962d8cccf37b3ac8c92a9a4663281f28ee49edd3162a0dabefba2c697c48cdd76a79ae8b6556a3957e3ad0ac89dea2f2937e2e9b446a0a907a03365ca8237e53395e914893ea55d12804396dd75f0e2cba03083d2cb7e0d50dabc9a37497c8faaa2d1&quot;,</code><br>
+<code>&quot;id&quot;: &quot;7a86f8de-7824-48a7-957d-2896a8fcf7ce&quot;</code><br>
+<code>&#125;</code><br>
+<code>&#125;</code></p>
+<p>将随机数C密文采用SM2算法解密，得到结果</p>
+<p><code>56 BE 6C 83 45 46 BE 80 76 44 C4 B5 AD C7 29 CD</code></p>
+<p>使用16字节随机数C明文，对私钥B_Private_Key密文，采用SM4ECB算法解密</p>
+<p><code>99 BE 58 13 90 48 3E 81  3C DE 0B B2 BD 27 6C 2A   98 26 16 B0 15 5D E0 6E  21 BF 41 47 73 A4 AB AE</code></p>
+<p>向服务器请求密钥，得到回应</p>
+<p><code>&#123;</code><br>
+<code>&quot;message&quot;: &quot;success&quot;,</code><br>
+<code>&quot;data&quot;: &#123;</code><br>
+<code>&quot;id&quot;: &quot;7a86f8de-7824-48a7-957d-2896a8fcf7ce&quot;,</code><br>
+<code>&quot;quantumString&quot;: &quot;a0c80a6b59232277fac84d8c2a7353435bc67bfe379ea1412146779d383a4f759d754bb8f06b6e3ae84d125b221feeb3f8c74737de7bdb821bb4725f7ae62efe5af67bbd60634e73936b34b657735e46c0c92ed91330b5d817870e48585050116cdef1f37c6d03bd2cb45d7df21e009c&quot;</code><br>
+<code>&#125;</code><br>
+<code>&#125;</code></p>
+<p>使用私钥B_Private_Key明文，对密钥D密文进行解密</p>
+<p><code>09 87 9B 5F 8D 9A 7F 83 32 7D 54 E3 59 84 38 C7</code></p>
+<p>发送验证，得到flag</p>
+<p><code>curl -d &quot;id=7a86f8de-7824-48a7-957d-2896a8fcf7ce&amp;quantumString=09879B5F8D9A7F83327D54E3598438C7&quot; http://39.106.48.123:24920/api/check</code><br>
+<code>curl -d &quot;id=7a86f8de-7824-48a7-957d-2896a8fcf7ce&quot; http://39.106.48.123:24920/api/search</code></p>
+<h3 id="Sign-in-passwd">Sign_in_passwd</h3>
+<p>观察字符串，发现是符合base64的码表，但结尾不为=，大概是换表了</p>
+<p><img src="https://s2.loli.net/2023/09/29/MspnjIl3tJThkS2.jpg" alt=""></p>
+<p>将下面的那串字符串进行url解码，以此为码表，对上面的字符串进行解码</p>
+<p><img src="https://s2.loli.net/2023/09/29/65xfZkeKvhV93YL.jpg" alt=""></p>
+<p>最终解码出来的结果不知道为什么少了一个}，手动补上</p>
+<p><img src="https://s2.loli.net/2023/09/29/At3rckvpngz1aul.jpg" alt=""></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="https://wh1tej0ker.github.io">Wh1teJ0ker</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://wh1tej0ker.github.io/2023/09/28/2023Ciscn-Writeup/">https://wh1tej0ker.github.io/2023/09/28/2023Ciscn-Writeup/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://wh1tej0ker.github.io" target="_blank">Wh1teJ0ker</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/ciscn/">ciscn</a></div><div class="post_share"><div class="social-share" data-image="https://s2.loli.net/2023/09/29/Eak5dtX7C8KevMz.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2023/09/29/2023NepNep-Writeup/" title="2023NepNep-Writeup"><img class="cover" src="https://s2.loli.net/2023/09/29/rYkW6Uqo2OKHGcQ.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">2023NepNep-Writeup</div></div></a></div><div class="next-post pull-right"><a href="/2023/01/17/CTFshow-%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/" title="CTFshow-命令执行"><img class="cover" src="https://s2.loli.net/2024/01/03/BGtWmCsvnxLPopT.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">CTFshow-命令执行</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://s2.loli.net/2023/09/28/jQUKLPy1q8umXSY.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Wh1teJ0ker</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">13</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">12</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">5</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/Wh1teJ0ker"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">1.</span> <span class="toc-text">2023Ciscn-Writeup</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Misc"><span class="toc-number">1.1.</span> <span class="toc-text">Misc</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AD%BE%E5%88%B0%E5%8D%A1"><span class="toc-number">1.1.1.</span> <span class="toc-text">签到卡</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A2%AB%E5%8A%A0%E5%AF%86%E7%9A%84%E7%94%9F%E4%BA%A7%E6%B5%81%E9%87%8F"><span class="toc-number">1.1.2.</span> <span class="toc-text">被加密的生产流量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%BD%E7%B2%B9"><span class="toc-number">1.1.3.</span> <span class="toc-text">国粹</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#crypto"><span class="toc-number">1.2.</span> <span class="toc-text">crypto</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%BD%E5%AF%86"><span class="toc-number">1.2.1.</span> <span class="toc-text">国密</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Sign-in-passwd"><span class="toc-number">1.2.2.</span> <span class="toc-text">Sign_in_passwd</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2023/12/19/CTFshow-%E4%BF%A1%E6%81%AF%E6%90%9C%E9%9B%86/" title="CTFshow-信息搜集"><img src="https://s2.loli.net/2024/01/03/BGtWmCsvnxLPopT.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="CTFshow-信息搜集"/></a><div class="content"><a class="title" href="/2023/12/19/CTFshow-%E4%BF%A1%E6%81%AF%E6%90%9C%E9%9B%86/" title="CTFshow-信息搜集">CTFshow-信息搜集</a><time datetime="2023-12-18T16:00:00.000Z" title="发表于 2023-12-19 00:00:00">2023-12-19</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/12/02/2023%20SYCGeekchallenge-Writeup-Misc/" title="2023 SYCGeekchallenge-Writeup-Misc"><img src="https://s2.loli.net/2023/12/02/C2jOkV9683qSrbi.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="2023 SYCGeekchallenge-Writeup-Misc"/></a><div class="content"><a class="title" href="/2023/12/02/2023%20SYCGeekchallenge-Writeup-Misc/" title="2023 SYCGeekchallenge-Writeup-Misc">2023 SYCGeekchallenge-Writeup-Misc</a><time datetime="2023-12-01T16:00:00.000Z" title="发表于 2023-12-02 00:00:00">2023-12-02</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/12/01/AI-CTF%EF%BC%883%EF%BC%89network-in-network/" title="AI-CTF（3）network-in-network"><img src="https://s2.loli.net/2023/11/13/MUzf5buoAOJplqh.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="AI-CTF（3）network-in-network"/></a><div class="content"><a class="title" href="/2023/12/01/AI-CTF%EF%BC%883%EF%BC%89network-in-network/" title="AI-CTF（3）network-in-network">AI-CTF（3）network-in-network</a><time datetime="2023-11-30T16:00:00.000Z" title="发表于 2023-12-01 00:00:00">2023-12-01</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/11/30/2023HITCTF-Misc-Writeup/" title="2023HITCTF-Misc-Writeup"><img src="https://s2.loli.net/2023/12/01/IqSoMpclaXziD4T.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="2023HITCTF-Misc-Writeup"/></a><div class="content"><a class="title" href="/2023/11/30/2023HITCTF-Misc-Writeup/" title="2023HITCTF-Misc-Writeup">2023HITCTF-Misc-Writeup</a><time datetime="2023-11-29T16:00:00.000Z" title="发表于 2023-11-30 00:00:00">2023-11-30</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/11/18/AI-CTF%EF%BC%882%EF%BC%89LeNet/" title="AI-CTF（2）LeNet"><img src="https://s2.loli.net/2023/11/13/MUzf5buoAOJplqh.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="AI-CTF（2）LeNet"/></a><div class="content"><a class="title" href="/2023/11/18/AI-CTF%EF%BC%882%EF%BC%89LeNet/" title="AI-CTF（2）LeNet">AI-CTF（2）LeNet</a><time datetime="2023-11-17T16:00:00.000Z" title="发表于 2023-11-18 00:00:00">2023-11-18</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2023 - 2024 By Wh1teJ0ker</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">Hi, welcome to my Blog !!</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"></div><script defer="defer" id="fluttering_ribbon" mobile="true" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-fluttering-ribbon.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = false;
+document.body.addEventListener('input', POWERMODE);
+</script><script id="click-show-text" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/click-show-text.min.js" data-mobile="false" data-text="富强,民主,文明,和谐,自由,平等,公正,法治,爱国,敬业,诚信,友善" data-fontsize="15px" data-random="false" async="async"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div class="no-result" id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>

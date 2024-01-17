@@ -1,0 +1,259 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>2023NepNep-Writeup | Wh1teJ0ker</title><meta name="author" content="Wh1teJ0ker"><meta name="copyright" content="Wh1teJ0ker"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="2023NepNep-Writeup Web ez_java_checkin 提示管理员登陆，admin默认  发现rememberMe&#x3D;deleteMe，查询找到相关漏洞 工具一把梭  注入内存马  连接webshell  开始寻找flag，在start.sh中找到  Misc CheckIn  与AI共舞的哈夫曼 给的是一段压缩算法，根据提示交给chtgpt 12345678910111213">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2023NepNep-Writeup">
+<meta property="og:url" content="https://wh1tej0ker.github.io/2023/09/29/2023NepNep-Writeup/index.html">
+<meta property="og:site_name" content="Wh1teJ0ker">
+<meta property="og:description" content="2023NepNep-Writeup Web ez_java_checkin 提示管理员登陆，admin默认  发现rememberMe&#x3D;deleteMe，查询找到相关漏洞 工具一把梭  注入内存马  连接webshell  开始寻找flag，在start.sh中找到  Misc CheckIn  与AI共舞的哈夫曼 给的是一段压缩算法，根据提示交给chtgpt 12345678910111213">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s2.loli.net/2023/09/29/rYkW6Uqo2OKHGcQ.png">
+<meta property="article:published_time" content="2023-09-28T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-09-29T06:37:22.526Z">
+<meta property="article:author" content="Wh1teJ0ker">
+<meta property="article:tag" content="NepNep">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2023/09/29/rYkW6Uqo2OKHGcQ.png"><link rel="shortcut icon" href="/images/image.ico"><link rel="canonical" href="https://wh1tej0ker.github.io/2023/09/29/2023NepNep-Writeup/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":true,"top_n_per_article":1,"unescape":true,"languages":{"hits_empty":"找不到您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '2023NepNep-Writeup',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2023-09-29 14:37:22'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = (url,id = false) => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      if (id) link.id = id
+      link.onerror = reject
+      link.onload = link.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        link.onload = link.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://s2.loli.net/2023/09/28/jQUKLPy1q8umXSY.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">13</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">12</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">5</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background-image: url('https://s2.loli.net/2023/09/28/4rzwiJm9xgjnycp.jpg')"><nav id="nav"><span id="blog-info"><a href="/" title="Wh1teJ0ker"><img class="site-icon" src="https://s2.loli.net/2023/09/28/jQUKLPy1q8umXSY.jpg"/><span class="site-name">Wh1teJ0ker</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">2023NepNep-Writeup</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-09-28T16:00:00.000Z" title="发表于 2023-09-29 00:00:00">2023-09-29</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-09-29T06:37:22.526Z" title="更新于 2023-09-29 14:37:22">2023-09-29</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Writeup/">Writeup</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="2023NepNep-Writeup"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1>2023NepNep-Writeup</h1>
+<h2 id="Web">Web</h2>
+<h3 id="ez-java-checkin">ez_java_checkin</h3>
+<p>提示管理员登陆，admin默认</p>
+<p><img src="https://s2.loli.net/2023/09/29/eTOApcdyrMXtwzR.png" alt=""></p>
+<p>发现rememberMe=deleteMe，查询找到相关漏洞</p>
+<p>工具一把梭</p>
+<p><img src="https://s2.loli.net/2023/09/29/zTWpvLM6VZRPdxO.png" alt=""></p>
+<p>注入内存马</p>
+<p><img src="https://s2.loli.net/2023/09/29/VIqdTD8banlQ3uX.png" alt=""></p>
+<p>连接webshell</p>
+<p><img src="https://s2.loli.net/2023/09/29/w2NgWBtjGOxZAHU.png" alt=""></p>
+<p>开始寻找flag，在start.sh中找到</p>
+<p><img src="https://s2.loli.net/2023/09/29/s4phrUitKWZTBvN.png" alt=""></p>
+<h2 id="Misc">Misc</h2>
+<h3 id="CheckIn">CheckIn</h3>
+<p><img src="https://s2.loli.net/2023/09/29/TWKFvQROpV9ySxu.png" alt=""></p>
+<h3 id="与AI共舞的哈夫曼">与AI共舞的哈夫曼</h3>
+<p>给的是一段压缩算法，根据提示交给chtgpt</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><span class="line">import heapq</span><br><span class="line"></span><br><span class="line">class HuffmanNode:</span><br><span class="line">    def __init__(self, char, freq):</span><br><span class="line">        self.char = char</span><br><span class="line">        self.freq = freq</span><br><span class="line">        self.left = None</span><br><span class="line">        self.right = None</span><br><span class="line"></span><br><span class="line">    def __lt__(self, other):</span><br><span class="line">        return self.freq &lt; other.freq</span><br><span class="line"></span><br><span class="line">def build_huffman_tree(frequencies):</span><br><span class="line">    heap = [HuffmanNode(char, freq) for char, freq in frequencies.items()]</span><br><span class="line">    heapq.heapify(heap)</span><br><span class="line"></span><br><span class="line">    while len(heap) &gt; 1:</span><br><span class="line">        left = heapq.heappop(heap)</span><br><span class="line">        right = heapq.heappop(heap)</span><br><span class="line">        merged = HuffmanNode(None, left.freq + right.freq)</span><br><span class="line">        merged.left = left</span><br><span class="line">        merged.right = right</span><br><span class="line">        heapq.heappush(heap, merged)</span><br><span class="line"></span><br><span class="line">    return heap[0]</span><br><span class="line"></span><br><span class="line">def decompress(input_file, output_file):</span><br><span class="line">    with open(input_file, &#x27;rb&#x27;) as f:</span><br><span class="line">        data = f.read()</span><br><span class="line"></span><br><span class="line">    num_symbols = data[0]</span><br><span class="line">    frequencies = &#123;&#125;</span><br><span class="line">    offset = 1</span><br><span class="line"></span><br><span class="line">    for i in range(num_symbols):</span><br><span class="line">        byte = data[offset]</span><br><span class="line">        freq = (data[offset + 1] &lt;&lt; 24) | (data[offset + 2] &lt;&lt; 16) | (data[offset + 3] &lt;&lt; 8) | data[offset + 4]</span><br><span class="line">        frequencies[byte] = freq</span><br><span class="line">        offset += 5</span><br><span class="line"></span><br><span class="line">    root = build_huffman_tree(frequencies)</span><br><span class="line"></span><br><span class="line">    decoded_data = &#x27;&#x27;</span><br><span class="line">    current_node = root</span><br><span class="line"></span><br><span class="line">    for byte in data[offset:]:</span><br><span class="line">        bits = bin(byte)[2:].rjust(8, &#x27;0&#x27;)</span><br><span class="line">        for bit in bits:</span><br><span class="line">            if bit == &#x27;0&#x27;:</span><br><span class="line">                current_node = current_node.left</span><br><span class="line">            else:</span><br><span class="line">                current_node = current_node.right</span><br><span class="line"></span><br><span class="line">            if current_node.char is not None:</span><br><span class="line">                decoded_data += chr(current_node.char)</span><br><span class="line">                current_node = root</span><br><span class="line"></span><br><span class="line">    with open(output_file, &#x27;w&#x27;, encoding=&#x27;utf-8&#x27;) as f:</span><br><span class="line">        f.write(decoded_data)</span><br><span class="line"></span><br><span class="line">if __name__ == &quot;__main__&quot;:</span><br><span class="line">    compressed_file = &#x27;compressed.bin&#x27;</span><br><span class="line">    decompressed_file = &#x27;decompressed.txt&#x27;</span><br><span class="line"></span><br><span class="line">    # 解压缩文件</span><br><span class="line">    decompress(compressed_file, decompressed_file)</span><br></pre></td></tr></table></figure>
+<p><img src="https://s2.loli.net/2023/09/29/o5xBwTz7MJUCFi2.png" alt=""></p>
+<h3 id="小叮弹钢琴">小叮弹钢琴</h3>
+<p>首先给的一段音频，用Au打开，发现包含两个内容，一个明显是十六制数字，另外一个怀疑是摩斯密码，手写下来解码得到一段明文</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">YOUSHOULDUSETHISTOXORSOMETHING</span><br></pre></td></tr></table></figure>
+<p>根据提示，考虑异或解密，手搓了一段脚本</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">cipher_text_hex = &quot;0x370a05303c290e045005031c2b1858473a5f052117032c39230f005d1e17&quot;</span><br><span class="line">cipher_text_bytes = bytes.fromhex(cipher_text_hex[2:])</span><br><span class="line">key = &quot;YOUSHOULDUSETHISTOXORSOMETHING&quot;</span><br><span class="line">key_bytes = key.encode()</span><br><span class="line">plain_text_bytes = bytearray(len(cipher_text_bytes))</span><br><span class="line"></span><br><span class="line">for i in range(len(cipher_text_bytes)):</span><br><span class="line">    plain_text_bytes[i] = cipher_text_bytes[i] ^ key_bytes[i % len(key_bytes)]</span><br><span class="line"></span><br><span class="line">decrypted_text = plain_text_bytes.decode()</span><br><span class="line"></span><br><span class="line">print(&quot;Decrypted Text:&quot;, decrypted_text)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>但是解下来出现了nep字样，但是字符不对劲</p>
+<p><img src="https://s2.loli.net/2023/09/29/FoR42QkXEf7JsSh.png" alt=""></p>
+<p>然后用CyberChef一把梭，得到了结果</p>
+<p><img src="https://s2.loli.net/2023/09/29/DpPRqJvEW8SImNB.png" alt=""></p>
+<p>应该是脚本存在问题，但是代码能力有限，真想不出来了，等赛后wp吧</p>
+<h3 id="codes">codes</h3>
+<p>根据提示，flag在环境变量中</p>
+<p>根据查找，有一下几种方法</p>
+<ol>
+<li>
+<p><strong>使用 <code>extern char **environ</code> 全局变量：</strong></p>
+<p>这是一种直接的方法，使用全局变量 <code>environ</code>，它是一个指向指针的指针，用于存储环境变量的字符串数组。遍历这个数组并打印环境变量的值。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="keyword">extern</span> <span class="type">char</span> **environ;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="type">int</span> i = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span> (environ[i] != <span class="literal">NULL</span>) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;%s\n&quot;</span>, environ[i]);</span><br><span class="line">        i++;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p><strong>使用 <code>getenv()</code> 函数：</strong></p>
+<p><code>getenv()</code> 函数允许你通过指定环境变量名称来获取其值。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="type">const</span> <span class="type">char</span>* env_var_name = <span class="string">&quot;PATH&quot;</span>;</span><br><span class="line">    <span class="type">char</span>* env_var_value = getenv(env_var_name);</span><br><span class="line">    <span class="keyword">if</span> (env_var_value != <span class="literal">NULL</span>) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;%s=%s\n&quot;</span>, env_var_name, env_var_value);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;Environment variable &#x27;%s&#x27; not found.\n&quot;</span>, env_var_name);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p><strong>使用 <code>main()</code> 函数的参数 <code>char *argv[]</code>：</strong></p>
+<p>程序的启动参数中也包含了环境变量信息。这种方法需要一些额外的解析工作。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[], <span class="type">char</span> *envp[])</span> &#123;</span><br><span class="line">    <span class="type">int</span> i = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span> (envp[i] != <span class="literal">NULL</span>) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;%s\n&quot;</span>, envp[i]);</span><br><span class="line">        i++;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>逐个尝试，全部失败了</p>
+<p>开始尝试各种绕过姿势</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">extern char **en\</span><br><span class="line">viron;</span><br><span class="line"></span><br><span class="line">int main() &#123;</span><br><span class="line">    int i = 0;</span><br><span class="line">    while (en\</span><br><span class="line">viron[i] != NULL) &#123;</span><br><span class="line">        printf(&quot;%s\n&quot;, en\</span><br><span class="line">viron[i]);</span><br><span class="line">        i++;</span><br><span class="line">    &#125;</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>最终得到flag</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Nepctf&#123;easy_codes_3a5786c2-dd96-46bd-9909-23f894dc8d2a_[TEAM_HASH]&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="ConnectedFive">ConnectedFive</h3>
+<p><img src="https://s2.loli.net/2023/09/29/DIuOpeSJkYsTxWf.png" alt=""></p>
+<p>万宁，果真折磨</p>
+<h3 id="陌生的语言">陌生的语言</h3>
+<p>没啥好说的，上图，比较好奇出题人到底是怎么找到的这个图</p>
+<p><img src="https://s2.loli.net/2023/09/29/ifCgDS2O9Jzdw1y.jpg" alt=""></p>
+<p><img src="https://s2.loli.net/2023/09/29/wofOdTlQaR38XpE.png" alt=""></p>
+<p>然后将对应一下，最终成功提交上去的flag为</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">NepCTF&#123;NEPNEP_A_BELIEVING_HEART_IS_YOUR_MAGIC&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="你也喜欢三月七么">你也喜欢三月七么</h3>
+<p>拿到手刚开始以为这个题是密码的，当然，也确实有部分是，但主要可能是考察阅读理解。我还想再说一句，星穹铁道，启动！</p>
+<p>首先先来看一下附件给了我们什么内容</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">salt_lenth= 10 </span><br><span class="line">key_lenth= 16 </span><br><span class="line">iv= 88219bdee9c396eca3c637c0ea436058 #原始iv转hex的值</span><br><span class="line">ciphertext= b700ae6d0cc979a4401f3dd440bf9703b292b57b6a16b79ade01af58025707fbc29941105d7f50f2657cf7eac735a800ecccdfd42bf6c6ce3b00c8734bf500c819e99e074f481dbece626ccc2f6e0562a81fe84e5dd9750f5a0bb7c20460577547d3255ba636402d6db8777e0c5a429d07a821bf7f9e0186e591dfcfb3bfedfc</span><br></pre></td></tr></table></figure>
+<p>第一个是salt的长度，第二个是key的长度，第三个是偏移量iv，第四个就是相对应的密文了</p>
+<p>其次，来分析一下题目给的提示</p>
+<p><u><strong>三月七：耶，终于来到Nepnep星球啦，让我看看正在火热进行的Hacker夺旗大赛群聊。啊！开拓者，这群名看起来怪怪的诶。 （伸出脑袋，凑近群名，轻轻的闻了一下）哇，好咸诶，开拓者你快来看看！</strong></u></p>
+<p><u><strong>开拓者（U_id）：(端着下巴，磨蹭了一下，眼神若有所思）这好像需要经过啥256处理一下才能得到我们需要的关键。</strong></u></p>
+<p>第一次阅读的时候我的关注点就是再256和群名两个关键上，256是指向hash算法，群名自然是跟附件中没有给出的key（PS：题目中关键的英文也是key）有关。</p>
+<p>但是我刚开始完全没有注意到一个长度的问题，也就是salt_lenth= 10 和key_lenth= 16，而是将NepCTF 2023直接哈希计算了，中间留了空格（PS：因为我看群名也是留了空格的），甚至因为存在salt这个量还在考虑是否算法还进行了变种，然后尝试aes解密失败了。后来又从题目里的关键提示，也就是三月七闻群名好咸，咸指的自然就是盐，而盐的英文是salt。意识到这一点，也就开始知道为什么给出了两个长度值了salt的长度是提示使用NepCTF2023（PS:不加空格，刚好十个字），然后开始计算哈希256，得到的是</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dd8e671df3882c5be6423cd030bd7cb69671ef27dfe7a541903edc4e23168009</span><br></pre></td></tr></table></figure>
+<p>但是长度是32个字节，所以需要截取出一半作为key，具体代码实现如下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">from Crypto.Cipher import AES</span><br><span class="line">import binascii</span><br><span class="line"></span><br><span class="line">*#* *提供的信息</span><br><span class="line">*key_hex = &quot;dd8e671df3882c5be6423cd030bd7cb6&quot;</span><br><span class="line">iv_hex = &quot;88219bdee9c396eca3c637c0ea436058&quot;</span><br><span class="line">ciphertext_hex = &quot;b700ae6d0cc979a4401f3dd440bf9703b292b57b6a16b79ade01af58025707fbc29941105d7f50f2657cf7eac735a800ecccdfd42bf6c6ce3b00c8734bf500c819e99e074f481dbece626ccc2f6e0562a81fe84e5dd9750f5a0bb7c20460577547d3255ba636402d6db8777e0c5a429d07a821bf7f9e0186e591dfcfb3bfedfc&quot;</span><br><span class="line"></span><br><span class="line">*#* *将十六进制的**key**、**iv**和**ciphertext**转换为字节串</span><br><span class="line">*key = binascii.unhexlify(key_hex)</span><br><span class="line">iv = binascii.unhexlify(iv_hex)</span><br><span class="line">ciphertext = binascii.unhexlify(ciphertext_hex)</span><br><span class="line"></span><br><span class="line">*#* *创建**AES**解密器对象</span><br><span class="line">*cipher = AES.new(key, AES.MODE_CBC, iv)</span><br><span class="line"></span><br><span class="line">*#* *解密数据</span><br><span class="line">*decrypted_data = cipher.decrypt(ciphertext)</span><br><span class="line"></span><br><span class="line">*#* *将解密后的字节数据转换为字符串</span><br><span class="line">*decrypted_string = decrypted_data.decode(&#x27;utf-8&#x27;)</span><br><span class="line"></span><br><span class="line">*#* *打印解密后的字符串</span><br><span class="line">*print(decrypted_string)</span><br></pre></td></tr></table></figure>
+<p>最终计算下来结果为一串十六进制</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">6148523063484d364c793970625763784c6d6c745a3352774c6d4e76625338794d44497a4c7a41334c7a49304c336c5061316858553070554c6e42755a773d3d</span><br></pre></td></tr></table></figure>
+<p>然后转字符，转base64得到网址</p>
+<p><strong><a target="_blank" rel="noopener" href="https://img1.imgtp.com/2023/07/24/yOkXWSJT.png">https://img1.imgtp.com/2023/07/24/yOkXWSJT.png</a></strong></p>
+<p>下载下来一张图片</p>
+<p><img src="https://s2.loli.net/2023/09/29/8eWuRQc2y3htlYi.png" alt=""></p>
+<p>然后第一反应识图，结果google继陌生的语言后又失效喽（悲</p>
+<p>后来又想到题目一开始就有了提示，星穹铁道，然后搜索相关的文字，找到了贝洛伯格特殊文字</p>
+<p><img src="https://s2.loli.net/2023/09/29/biMX7Bx8CuJwScr.jpg" alt=""></p>
+<p>然后跟表对照得到最终的flag</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">NepCTF&#123;HRP_aIways_likes_March_7th&#125;</span><br></pre></td></tr></table></figure>
+<p>(PS:做图文题做到够，麻了)</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="https://wh1tej0ker.github.io">Wh1teJ0ker</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://wh1tej0ker.github.io/2023/09/29/2023NepNep-Writeup/">https://wh1tej0ker.github.io/2023/09/29/2023NepNep-Writeup/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://wh1tej0ker.github.io" target="_blank">Wh1teJ0ker</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/NepNep/">NepNep</a></div><div class="post_share"><div class="social-share" data-image="https://s2.loli.net/2023/09/29/rYkW6Uqo2OKHGcQ.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2023/10/16/2023%E9%A6%99%E5%B1%B1%E6%9D%AF-Writeup/" title="2023香山杯-Writeup"><img class="cover" src="https://s2.loli.net/2023/10/16/8IQd2FUNzDPWCbk.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">2023香山杯-Writeup</div></div></a></div><div class="next-post pull-right"><a href="/2023/09/28/2023Ciscn-Writeup/" title="2023Ciscn-Writeup"><img class="cover" src="https://s2.loli.net/2023/09/29/Eak5dtX7C8KevMz.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">2023Ciscn-Writeup</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://s2.loli.net/2023/09/28/jQUKLPy1q8umXSY.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Wh1teJ0ker</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">13</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">12</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">5</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/Wh1teJ0ker"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">1.</span> <span class="toc-text">2023NepNep-Writeup</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Web"><span class="toc-number">1.1.</span> <span class="toc-text">Web</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#ez-java-checkin"><span class="toc-number">1.1.1.</span> <span class="toc-text">ez_java_checkin</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Misc"><span class="toc-number">1.2.</span> <span class="toc-text">Misc</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#CheckIn"><span class="toc-number">1.2.1.</span> <span class="toc-text">CheckIn</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%8EAI%E5%85%B1%E8%88%9E%E7%9A%84%E5%93%88%E5%A4%AB%E6%9B%BC"><span class="toc-number">1.2.2.</span> <span class="toc-text">与AI共舞的哈夫曼</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B0%8F%E5%8F%AE%E5%BC%B9%E9%92%A2%E7%90%B4"><span class="toc-number">1.2.3.</span> <span class="toc-text">小叮弹钢琴</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#codes"><span class="toc-number">1.2.4.</span> <span class="toc-text">codes</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ConnectedFive"><span class="toc-number">1.2.5.</span> <span class="toc-text">ConnectedFive</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%99%8C%E7%94%9F%E7%9A%84%E8%AF%AD%E8%A8%80"><span class="toc-number">1.2.6.</span> <span class="toc-text">陌生的语言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%A0%E4%B9%9F%E5%96%9C%E6%AC%A2%E4%B8%89%E6%9C%88%E4%B8%83%E4%B9%88"><span class="toc-number">1.2.7.</span> <span class="toc-text">你也喜欢三月七么</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2023/12/19/CTFshow-%E4%BF%A1%E6%81%AF%E6%90%9C%E9%9B%86/" title="CTFshow-信息搜集"><img src="https://s2.loli.net/2024/01/03/BGtWmCsvnxLPopT.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="CTFshow-信息搜集"/></a><div class="content"><a class="title" href="/2023/12/19/CTFshow-%E4%BF%A1%E6%81%AF%E6%90%9C%E9%9B%86/" title="CTFshow-信息搜集">CTFshow-信息搜集</a><time datetime="2023-12-18T16:00:00.000Z" title="发表于 2023-12-19 00:00:00">2023-12-19</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/12/02/2023%20SYCGeekchallenge-Writeup-Misc/" title="2023 SYCGeekchallenge-Writeup-Misc"><img src="https://s2.loli.net/2023/12/02/C2jOkV9683qSrbi.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="2023 SYCGeekchallenge-Writeup-Misc"/></a><div class="content"><a class="title" href="/2023/12/02/2023%20SYCGeekchallenge-Writeup-Misc/" title="2023 SYCGeekchallenge-Writeup-Misc">2023 SYCGeekchallenge-Writeup-Misc</a><time datetime="2023-12-01T16:00:00.000Z" title="发表于 2023-12-02 00:00:00">2023-12-02</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/12/01/AI-CTF%EF%BC%883%EF%BC%89network-in-network/" title="AI-CTF（3）network-in-network"><img src="https://s2.loli.net/2023/11/13/MUzf5buoAOJplqh.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="AI-CTF（3）network-in-network"/></a><div class="content"><a class="title" href="/2023/12/01/AI-CTF%EF%BC%883%EF%BC%89network-in-network/" title="AI-CTF（3）network-in-network">AI-CTF（3）network-in-network</a><time datetime="2023-11-30T16:00:00.000Z" title="发表于 2023-12-01 00:00:00">2023-12-01</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/11/30/2023HITCTF-Misc-Writeup/" title="2023HITCTF-Misc-Writeup"><img src="https://s2.loli.net/2023/12/01/IqSoMpclaXziD4T.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="2023HITCTF-Misc-Writeup"/></a><div class="content"><a class="title" href="/2023/11/30/2023HITCTF-Misc-Writeup/" title="2023HITCTF-Misc-Writeup">2023HITCTF-Misc-Writeup</a><time datetime="2023-11-29T16:00:00.000Z" title="发表于 2023-11-30 00:00:00">2023-11-30</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/11/18/AI-CTF%EF%BC%882%EF%BC%89LeNet/" title="AI-CTF（2）LeNet"><img src="https://s2.loli.net/2023/11/13/MUzf5buoAOJplqh.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="AI-CTF（2）LeNet"/></a><div class="content"><a class="title" href="/2023/11/18/AI-CTF%EF%BC%882%EF%BC%89LeNet/" title="AI-CTF（2）LeNet">AI-CTF（2）LeNet</a><time datetime="2023-11-17T16:00:00.000Z" title="发表于 2023-11-18 00:00:00">2023-11-18</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2023 - 2024 By Wh1teJ0ker</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">Hi, welcome to my Blog !!</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"></div><script defer="defer" id="fluttering_ribbon" mobile="true" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-fluttering-ribbon.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = false;
+document.body.addEventListener('input', POWERMODE);
+</script><script id="click-show-text" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/click-show-text.min.js" data-mobile="false" data-text="富强,民主,文明,和谐,自由,平等,公正,法治,爱国,敬业,诚信,友善" data-fontsize="15px" data-random="false" async="async"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div class="no-result" id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>
