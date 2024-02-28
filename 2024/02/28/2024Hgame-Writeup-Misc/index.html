@@ -1,0 +1,240 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>2024Hgame-Writeup-Misc | Wh1teJ0ker</title><meta name="author" content="Wh1teJ0ker"><meta name="copyright" content="Wh1teJ0ker"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="2024Hgame-Writeup-Misc 前言 中途去做其他的了，只做了部分题，这边只给个misc的部分题解 Misc try_another_way_to_see 考点：倾斜图片生成 对png图片进行一个宽高修改，就可以看出flag了  希儿希儿希尔 考点：LSB隐写、希尔密码、图片修复 依然是先修复  分离出一个压缩包，得到一段密文 1CVOCRJGMKLDJGBQIUIVXHEYLPNW">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2024Hgame-Writeup-Misc">
+<meta property="og:url" content="https://wh1tej0ker.github.io/2024/02/28/2024Hgame-Writeup-Misc/index.html">
+<meta property="og:site_name" content="Wh1teJ0ker">
+<meta property="og:description" content="2024Hgame-Writeup-Misc 前言 中途去做其他的了，只做了部分题，这边只给个misc的部分题解 Misc try_another_way_to_see 考点：倾斜图片生成 对png图片进行一个宽高修改，就可以看出flag了  希儿希儿希尔 考点：LSB隐写、希尔密码、图片修复 依然是先修复  分离出一个压缩包，得到一段密文 1CVOCRJGMKLDJGBQIUIVXHEYLPNW">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s2.loli.net/2024/02/28/K63srF1kOcN7JDT.png">
+<meta property="article:published_time" content="2024-02-27T16:00:00.000Z">
+<meta property="article:modified_time" content="2024-02-28T14:30:26.569Z">
+<meta property="article:author" content="Wh1teJ0ker">
+<meta property="article:tag" content="Hgame">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2024/02/28/K63srF1kOcN7JDT.png"><link rel="shortcut icon" href="/images/image.ico"><link rel="canonical" href="https://wh1tej0ker.github.io/2024/02/28/2024Hgame-Writeup-Misc/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":true,"top_n_per_article":1,"unescape":true,"languages":{"hits_empty":"找不到您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '2024Hgame-Writeup-Misc',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2024-02-28 22:30:26'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = (url,id = false) => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      if (id) link.id = id
+      link.onerror = reject
+      link.onload = link.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        link.onload = link.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://s2.loli.net/2023/09/28/jQUKLPy1q8umXSY.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">23</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">19</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background-image: url('https://s2.loli.net/2023/09/28/4rzwiJm9xgjnycp.jpg')"><nav id="nav"><span id="blog-info"><a href="/" title="Wh1teJ0ker"><img class="site-icon" src="https://s2.loli.net/2023/09/28/jQUKLPy1q8umXSY.jpg"/><span class="site-name">Wh1teJ0ker</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">2024Hgame-Writeup-Misc</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2024-02-27T16:00:00.000Z" title="发表于 2024-02-28 00:00:00">2024-02-28</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2024-02-28T14:30:26.569Z" title="更新于 2024-02-28 22:30:26">2024-02-28</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Writeup/">Writeup</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="2024Hgame-Writeup-Misc"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1>2024Hgame-Writeup-Misc</h1>
+<h2 id="前言">前言</h2>
+<p>中途去做其他的了，只做了部分题，这边只给个misc的部分题解</p>
+<h2 id="Misc">Misc</h2>
+<h3 id="try-another-way-to-see">try_another_way_to_see</h3>
+<p><strong>考点：倾斜图片生成</strong></p>
+<p>对png图片进行一个宽高修改，就可以看出flag了</p>
+<p><img src="https://s2.loli.net/2024/02/28/hN1WR8fpi4goSTI.png" alt="2024Hgame_1"></p>
+<h3 id="希儿希儿希尔">希儿希儿希尔</h3>
+<p><strong>考点：LSB隐写、希尔密码、图片修复</strong></p>
+<p>依然是先修复</p>
+<p><img src="https://s2.loli.net/2024/02/28/qWIpSDiP5zxrHwY.png" alt="2024Hgame_2"></p>
+<p>分离出一个压缩包，得到一段密文</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CVOCRJGMKLDJGBQIUIVXHEYLPNWR</span><br></pre></td></tr></table></figure>
+<p><img src="https://s2.loli.net/2024/02/28/k857GEHMD6iwLqK.png" alt="2024Hgame_3"></p>
+<p>图片的LSB里藏着密钥</p>
+<p>希尔密码解密即得flag</p>
+<h3 id="来自星尘的问候">来自星尘的问候</h3>
+<p><strong>考点：steghide弱密码、图片密码</strong></p>
+<p>首先steghide的弱密码爆破，得到一个压缩包</p>
+<p>剩余都在图片之中，这种题目就emmm</p>
+<p>出一次被骂一次😀</p>
+<p><img src="https://s2.loli.net/2024/02/28/CriyEwZSTegjtqv.png" alt="2024Hgame_4"></p>
+<h3 id="simple-attack">simple_attack</h3>
+<p><strong>考点：明文攻击</strong></p>
+<p>这道题有一个坑点就是明文攻击会需要根据出题者使用的压缩软件不同，就是你出题使用的压缩软件，必须和做题对明文进行压缩的软件相同，不仅仅从压缩算法来看，具体原因未知</p>
+<p>本题最终测试出来使用的是bandzip</p>
+<p>先提取出key，然后使用的是修改压缩包原密码的方式进行提取的文件</p>
+<p>当时实际做的时候直接提取photo文件失败，才采取的上述方式</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">bkcrack.exe -C attachment.zip -c 103223779_p0.jpg -P 103223779_p0.zip -p 103223779_p0.jpg</span><br><span class="line">bkcrack.exe -C attachment.zip -k e423add9 375dcd1c 1bce583e -U flag.zip easy</span><br></pre></td></tr></table></figure>
+<p><img src="https://s2.loli.net/2024/02/28/Ht291v8dMkpcRml.png" alt="2024Hgame_5"></p>
+<p>最后在base64转图片即可</p>
+<p><img src="https://s2.loli.net/2024/02/28/Rzqt3GYFhnrg7kC.png" alt="2024Hgame_6"></p>
+<h3 id="ek1ng-want-girlfriend">ek1ng_want_girlfriend</h3>
+<p><strong>考点：文件提取</strong></p>
+<p>流量里直接提取图片，flag在右下角</p>
+<p><img src="https://s2.loli.net/2024/02/28/lwY7irV4zLckM9I.png" alt="2024Hgame_7"></p>
+<p>没有女朋友+1，呜呜呜呜~~~~~</p>
+<h3 id="ezWord">ezWord</h3>
+<p><strong>考点：word隐写，盲水印，spam message，rot8000</strong></p>
+<p>docx的本质是一个压缩文件，因此打开该文件，发现存在以下文件</p>
+<p><img src="https://s2.loli.net/2024/02/28/dvx8chnJrYi9NPX.png" alt="2024Hgame_8"></p>
+<p>盲水印得到密钥，解开压缩包</p>
+<p><img src="https://s2.loli.net/2024/02/28/BirjTEcKl23CMsn.png" alt="2024Hgame_9"></p>
+<p>压缩包有一段文本，是一种解密</p>
+<p><a target="_blank" rel="noopener" href="https://www.spammimic.com/decode.cgi">spammimic - decoded</a></p>
+<p><img src="https://s2.loli.net/2024/02/28/c8xTOYNUVejrZdn.png" alt="2024Hgame_10"></p>
+<p>这里卡了一会儿，本来以为是某种编码格式中突出的，最后发现原来是rot8000<img src="https://s2.loli.net/2024/02/28/fwAH9Tg3P42vRbh.png" alt="2024Hgame_11"></p>
+<h3 id="龙之舞">龙之舞</h3>
+<p><strong>考点：频谱隐写，deepsound，二维码修复</strong></p>
+<p>给了一段音频，然后打开查看在频谱图中发现了一段密钥</p>
+<p><img src="https://s2.loli.net/2024/02/28/ArbpHdq9IWfj2LJ.png" alt="2024Hgame_12"></p>
+<p>但是明显经过了翻转处理，读起来不太对劲</p>
+<p>最后得到的密钥为</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">5H8w1nlWCX3hQLG</span><br></pre></td></tr></table></figure>
+<p>然后deepsound解密，并且提取出文件，一个Gif</p>
+<p>我们通过分帧处理发现部分图片上存在二维码，因此将其拼接起来</p>
+<p>最终进行二维码的修复即得flag</p>
+<p><img src="https://s2.loli.net/2024/02/28/tZ1GXaDH6chuMgY.png" alt="2024Hgame_13"></p>
+<h3 id="与ai聊天">与ai聊天</h3>
+<p><img src="https://s2.loli.net/2024/02/28/7T2krtCFqy6aDz5.png" alt="2024Hgame_14"></p>
+<h3 id="简单的vmdk取证">简单的vmdk取证</h3>
+<p>要求找到windows上的密码，格式为hgame{nthash_password}</p>
+<p><img src="https://s2.loli.net/2024/02/28/15YEtdsAmWajUqy.png" alt="2024Hgame_15"></p>
+<p><img src="https://s2.loli.net/2024/02/28/IvcN7jUBfbZXx5E.png" alt="2024Hgame_16"></p>
+<h3 id="简单的取证-不过前十个有红包">简单的取证,不过前十个有红包</h3>
+<p>取证大师直接提出来了，但是我原本以为这两题是分开的，没想到是一块儿的</p>
+<p><img src="https://s2.loli.net/2024/02/28/BwMRS9z5GkEON3F.png" alt="2024Hgame_17"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">968fJD17UBzZG6e3yjF6</span><br></pre></td></tr></table></figure>
+<p>挂载即得</p>
+<p><img src="https://s2.loli.net/2024/02/28/tRS2iJWhKnuBrPT.png" alt="2024Hgame_18"></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="https://wh1tej0ker.github.io">Wh1teJ0ker</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://wh1tej0ker.github.io/2024/02/28/2024Hgame-Writeup-Misc/">https://wh1tej0ker.github.io/2024/02/28/2024Hgame-Writeup-Misc/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://wh1tej0ker.github.io" target="_blank">Wh1teJ0ker</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Hgame/">Hgame</a></div><div class="post_share"><div class="social-share" data-image="https://s2.loli.net/2024/02/28/K63srF1kOcN7JDT.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2024/02/27/Tryhackme_Diary-4/" title="Tryhackme_Diary-4"><img class="cover" src="https://s2.loli.net/2024/02/22/5QhVAUmFxNkb8JH.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Tryhackme_Diary-4</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://s2.loli.net/2023/09/28/jQUKLPy1q8umXSY.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Wh1teJ0ker</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">23</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">19</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/Wh1teJ0ker"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">1.</span> <span class="toc-text">2024Hgame-Writeup-Misc</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Misc"><span class="toc-number">1.2.</span> <span class="toc-text">Misc</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#try-another-way-to-see"><span class="toc-number">1.2.1.</span> <span class="toc-text">try_another_way_to_see</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%8C%E5%84%BF%E5%B8%8C%E5%84%BF%E5%B8%8C%E5%B0%94"><span class="toc-number">1.2.2.</span> <span class="toc-text">希儿希儿希尔</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9D%A5%E8%87%AA%E6%98%9F%E5%B0%98%E7%9A%84%E9%97%AE%E5%80%99"><span class="toc-number">1.2.3.</span> <span class="toc-text">来自星尘的问候</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#simple-attack"><span class="toc-number">1.2.4.</span> <span class="toc-text">simple_attack</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ek1ng-want-girlfriend"><span class="toc-number">1.2.5.</span> <span class="toc-text">ek1ng_want_girlfriend</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ezWord"><span class="toc-number">1.2.6.</span> <span class="toc-text">ezWord</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%BE%99%E4%B9%8B%E8%88%9E"><span class="toc-number">1.2.7.</span> <span class="toc-text">龙之舞</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%8Eai%E8%81%8A%E5%A4%A9"><span class="toc-number">1.2.8.</span> <span class="toc-text">与ai聊天</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AE%80%E5%8D%95%E7%9A%84vmdk%E5%8F%96%E8%AF%81"><span class="toc-number">1.2.9.</span> <span class="toc-text">简单的vmdk取证</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AE%80%E5%8D%95%E7%9A%84%E5%8F%96%E8%AF%81-%E4%B8%8D%E8%BF%87%E5%89%8D%E5%8D%81%E4%B8%AA%E6%9C%89%E7%BA%A2%E5%8C%85"><span class="toc-number">1.2.10.</span> <span class="toc-text">简单的取证,不过前十个有红包</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2024/02/28/2024Hgame-Writeup-Misc/" title="2024Hgame-Writeup-Misc"><img src="https://s2.loli.net/2024/02/28/K63srF1kOcN7JDT.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="2024Hgame-Writeup-Misc"/></a><div class="content"><a class="title" href="/2024/02/28/2024Hgame-Writeup-Misc/" title="2024Hgame-Writeup-Misc">2024Hgame-Writeup-Misc</a><time datetime="2024-02-27T16:00:00.000Z" title="发表于 2024-02-28 00:00:00">2024-02-28</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/02/27/Tryhackme_Diary-4/" title="Tryhackme_Diary-4"><img src="https://s2.loli.net/2024/02/22/5QhVAUmFxNkb8JH.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Tryhackme_Diary-4"/></a><div class="content"><a class="title" href="/2024/02/27/Tryhackme_Diary-4/" title="Tryhackme_Diary-4">Tryhackme_Diary-4</a><time datetime="2024-02-26T16:00:00.000Z" title="发表于 2024-02-27 00:00:00">2024-02-27</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/02/24/Tryhackme_Diary-3/" title="Tryhackme_Diary-3"><img src="https://s2.loli.net/2024/02/22/5QhVAUmFxNkb8JH.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Tryhackme_Diary-3"/></a><div class="content"><a class="title" href="/2024/02/24/Tryhackme_Diary-3/" title="Tryhackme_Diary-3">Tryhackme_Diary-3</a><time datetime="2024-02-23T16:00:00.000Z" title="发表于 2024-02-24 00:00:00">2024-02-24</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/02/22/Tryhackme_Diary-2/" title="Tryhackme_Diary-2"><img src="https://s2.loli.net/2024/02/22/5QhVAUmFxNkb8JH.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Tryhackme_Diary-2"/></a><div class="content"><a class="title" href="/2024/02/22/Tryhackme_Diary-2/" title="Tryhackme_Diary-2">Tryhackme_Diary-2</a><time datetime="2024-02-21T16:00:00.000Z" title="发表于 2024-02-22 00:00:00">2024-02-22</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/02/21/NSSCTF%20Round-17%20Basic-Writeup-Web/" title="NSSCTF Round-17 Basic-Writeup-Web"><img src="https://s2.loli.net/2024/02/21/sRlIAFm85HWou7c.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="NSSCTF Round-17 Basic-Writeup-Web"/></a><div class="content"><a class="title" href="/2024/02/21/NSSCTF%20Round-17%20Basic-Writeup-Web/" title="NSSCTF Round-17 Basic-Writeup-Web">NSSCTF Round-17 Basic-Writeup-Web</a><time datetime="2024-02-20T16:00:00.000Z" title="发表于 2024-02-21 00:00:00">2024-02-21</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2023 - 2024 By Wh1teJ0ker</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">Hi, welcome to my Blog !!</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"></div><script defer="defer" id="fluttering_ribbon" mobile="true" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-fluttering-ribbon.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = false;
+document.body.addEventListener('input', POWERMODE);
+</script><script id="click-show-text" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/click-show-text.min.js" data-mobile="false" data-text="富强,民主,文明,和谐,自由,平等,公正,法治,爱国,敬业,诚信,友善" data-fontsize="15px" data-random="false" async="async"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div class="no-result" id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>
